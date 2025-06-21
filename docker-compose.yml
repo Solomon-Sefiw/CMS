@@ -1,0 +1,43 @@
+version: "3.4"
+
+services:
+  api:
+    image: ghcr.io/Solomon-Sefiw/cmsapi:latest
+    container_name: cms-api
+    build:
+      context: .
+      dockerfile: CMS/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__CMSConnectionString=Server=10.1.10.239;Database=CMS;TrustServerCertificate=True;Encrypt=false;User Id=sa;Password=sola@9220
+    networks:
+      - backend
+
+  web:
+    image: ghcr.io/Solomon-Sefiw/cmsweb:latest
+    container_name: cms-web
+    build:
+      context: CMS.web
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    networks:
+      - backend
+
+  proxy:
+    image: ghcr.io/Solomon-Sefiw/cmsproxy:latest
+    container_name: cms-proxy
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "4000:80"
+    depends_on:
+      - web
+    networks:
+      - backend
+      - frontend
+
+networks:
+  frontend:
+  backend:

@@ -1,0 +1,77 @@
+name: Build & Publish HCMS Docker Images
+
+on:
+  workflow_dispatch: 
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+  IMG_NAME: hcmsapi
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./HCMS/Dockerfile
+            workDir: .
+            image: hcmsapi
+          - dockerfile: ./HCMS.Web/Dockerfile
+            workDir: ./HCMS.Web
+            image: hcmsweb
+          - dockerfile: ./Dockerfile.nginx
+            workDir: .
+            image: hcmsproxy
+
+    name: ${{matrix.image}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: "Create branch tag (latest)"
+        if: ${{ github.ref_name == 'main' }}
+        run: |
+          echo "DOCKER_TAG=latest" >> $GITHUB_ENV;
+
+      - name: "Create branch tag"
+        if: ${{ github.ref_name != 'main' }}
+        run: |
+          echo "DOCKER_TAG=${BRANCH_NAME//[^a-zA-Z0-9.]/_}" >> $GITHUB_ENV;
+
+      - name: "Create build version tag"
+        run: |
+          echo "BUILD_VERSION=${DOCKER_REGISTRY}/${{ env.DOCKER_USERNAME }}/${{matrix.image}}:1.0.0.${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: "Create image tag"
+        run: |
+          echo "BUILD_IMAGE=${DOCKER_REGISTRY}/${{ env.DOCKER_USERNAME }}/${{matrix.image}}:1.0.0.${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: Output Docker tags
+        run: |
+          echo "BUILD_IMAGE: $BUILD_IMAGE"
+          echo "BUILD_VERSION: $BUILD_VERSION"
+
+      - name: "Build docker image"
+        run: |
+          docker build ${{matrix.workDir}} --file ${{matrix.dockerfile}} --tag $BUILD_IMAGE --tag $BUILD_VERSION
+          echo "tags: $BUILD_IMAGE $BUILD_VERSION"
+
+      - name: "Login to Docker"
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY --username "$DOCKER_USERNAME" --password-stdin
+
+      - name: "Push image"
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          docker push $BUILD_IMAGE
+          docker push $BUILD_VERSION

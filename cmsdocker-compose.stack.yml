@@ -1,0 +1,43 @@
+version: "3.4"
+
+services:
+  api:
+    image: ghcr.io/Solomon-Sefiw/cmsapi
+    container_name: cms-api
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      # - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__CMSConnectionString=Server=10.1.10.239;Database=CMS;TrustServerCertificate=True;Encrypt=false;User Id=sa;Password=sola@9220
+      - Serilog__WriteTo__1__Args__connectionString=Server=10.1.10.239;Database=CMS;TrustServerCertificate=True;Encrypt=false;User Id=sa;Password=sola@9220
+
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
+  web:
+    image: ghcr.io/Solomon-Sefiw/cmsweb
+    container_name: cms-web
+    depends_on:
+      - api
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
+  proxy:
+    image: ghcr.io/Solomon-Sefiw/cmsproxy
+    container_name: cms-proxy
+    ports:
+      - "4000:80"
+    depends_on:
+      - web
+    networks:
+      - backend
+      - frontend
+    deploy:
+      replicas: 1
+
+networks:
+  frontend:
+  backend:
