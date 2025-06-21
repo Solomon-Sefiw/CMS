@@ -3,6 +3,7 @@ using CMS.Application.Features.Addresses.Setups.Models;
 using CMS.Application.Features.BusinessUnits.Commands.CreateBusinessUnit;
 using CMS.Application.Features.BusinessUnits.Commands.UpdateBusinessUnit;
 using CMS.Application.Features.Commands.CreateLetter;
+using CMS.Application.Features.Letter.Commands.UpdateLetter;
 using CMS.Application.Features.Letter.Models;
 using CMS.Application.Models;
 using CMS.Domain;
@@ -20,7 +21,9 @@ namespace CMS.Application.Profiles
         {
             CreateMap<HRRole, ApplicationRole>();
             CreateMap<LetterDto, Letter>().ReverseMap();
+            CreateMap<Letter, LetterDto>().ReverseMap();
             CreateMap<CreateLetterCommand, Letter>().ReverseMap();
+            CreateMap<UpdateLetterCommand, Letter>().ReverseMap();
             CreateMap<Letter, LetterDto>().ReverseMap();
             CreateMap<CreateBusinessUnitCommand, UpdateBusinessUnitCommand>().ReverseMap();
             CreateMap<Region, RegionDto>();

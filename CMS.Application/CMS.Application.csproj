@@ -29,9 +29,4 @@
     <ProjectReference Include="..\CMS.Service\CMS.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Letter\Commands\UpdateLetter\" />
-    <Folder Include="Features\Letter\Queries\" />
-  </ItemGroup>
-
 </Project>

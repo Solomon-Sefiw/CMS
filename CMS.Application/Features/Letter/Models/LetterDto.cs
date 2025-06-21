@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CMS.Domain;
 using CMS.Domain.Enum;
 using CMS.Domain.User;
 
@@ -22,5 +23,8 @@ namespace CMS.Application.Features.Letter.Models
         public HRUser Sender { get; set; }
         public string? RecipientId { get; set; }
         public HRUser Recipient { get; set; }
+        public int BusinessUnitId { get; set; }
+        public BusinessUnit BusinessUnits { get; set; }
+
     }
 }

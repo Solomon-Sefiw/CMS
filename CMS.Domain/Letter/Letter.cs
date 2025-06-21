@@ -22,6 +22,9 @@ namespace CMS.Domain.letters
         public HRUser Sender { get; set; }
         public string? RecipientId { get; set; }
         public HRUser Recipient { get; set; }
+        public int BusinessUnitId { get; set; }
+        public BusinessUnit BusinessUnits { get; set; }
+
         public ICollection<EmployeeDocument> EmployeeDocuments { get; set; }
 
     }
