@@ -120,11 +120,11 @@ export const DraftBusinessUnits: React.FC<DraftBusinessUnitsProps> = () => {
                   <TableCell sx={{ fontWeight: "bold" }}>
                     Parent BusinessUnit
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>
-                    BusinessUnit ID
+                  <TableCell sx={{ fontWeight: "bold",pr: 4 }}>
+                    BusinessUnit_ID_Schema_Pattern
                   </TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>
-                    Supervisor Name
+                    Location
                   </TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -141,6 +141,9 @@ export const DraftBusinessUnits: React.FC<DraftBusinessUnitsProps> = () => {
                       </TableCell>
                       <TableCell sx={{ verticalAlign: "top", width: 200 }}>
                         {item.businessUnitID}
+                      </TableCell>
+                            <TableCell sx={{ verticalAlign: "top", width: 200 }}>
+                        {item.address?.city}
                       </TableCell>
                       <TableCell>
                         <Box

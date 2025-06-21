@@ -20,7 +20,6 @@ namespace CMS.API.Controllers.AddressController.SubCityController
     {
 
         [HttpPost("Create", Name = "CreateSubCity")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canCreateUpdateSetup)]
         public async Task<ActionResult<int>> CreateSubCity([FromBody] CreateSubCityCommand command)
@@ -71,7 +70,6 @@ namespace CMS.API.Controllers.AddressController.SubCityController
             return Ok(await mediator.Send(command));
         }
         [HttpPatch("submit", Name = "SubmitSubCity")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canSubmitSetup)]
         public async Task<ActionResult<int>> SubmitSubCity([FromBody] SubmitSubCityCommand command)
@@ -80,7 +78,6 @@ namespace CMS.API.Controllers.AddressController.SubCityController
             return Ok(businessUnitId);
         }
         [HttpPatch("approve", Name = "ApproveSubCity")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]
         public async Task<ActionResult<int>> ApproveSubCity([FromBody] ApproveSubCityCommand command)
@@ -89,7 +86,6 @@ namespace CMS.API.Controllers.AddressController.SubCityController
             return Ok(businessUnitId);
         }
         [HttpPatch("Reject", Name = "RejectSubCity")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]
         public async Task<ActionResult<int>> RejectSubCity([FromBody] RejectSubCityCommand command)

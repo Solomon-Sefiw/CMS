@@ -98,9 +98,11 @@ export const ApprovalRequests = () => {
                   <TableCell sx={{ fontWeight: "bold" }}>
                     Parent BusinessUnit
                   </TableCell>
+                  <TableCell sx={{ fontWeight: "bold",pr: 4 }}>
+                    BusinessUnit_ID_Schema_Pattern
+                  </TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>
-                    {" "}
-                    BusinessUnit ID
+                    Location
                   </TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -117,6 +119,9 @@ export const ApprovalRequests = () => {
                       </TableCell>
                       <TableCell sx={{ verticalAlign: "top", width: 200 }}>
                         {item.businessUnitID}
+                      </TableCell>
+                            <TableCell sx={{ verticalAlign: "top", width: 200 }}>
+                        {item.address?.city}
                       </TableCell>
                       <TableCell>
                         <Box

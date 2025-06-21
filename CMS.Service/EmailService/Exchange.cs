@@ -8,62 +8,53 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace CMS.Services.EmailService
 {
-    public class Exchange : IExchangeEmail
+    // Keeping the class name as 'Exchange' as per your request
+    public class Exchange : IExchangeEmail // And keeping the interface as 'IExchangeEmail'
     {
         private readonly ILogger logger;
         private readonly IConfiguration configuration;
         private readonly IDataService dataService;
+
         public Exchange(
-            ILogger<Exchange> logger,
-            IConfiguration configuration,IDataService dataService)
+            ILogger<Exchange> logger, // Logger type updated to reflect class name
+            IConfiguration configuration,
+            IDataService dataService)
         {
             this.logger = logger;
             this.configuration = configuration;
             this.dataService = dataService;
         }
+
         public async Task<bool> SendEmails(MessageDto message)
         {
-            //var email = dataService.Emails
-            //     .Include(e => e.EmailTemplate)
-            //     .FirstOrDefault(email => email.Id == id);
+            // Retrieve SMTP settings from configuration (these are in the 'Smtp' section)
+            var smtpServer = configuration.GetValue<string>("Email:Smtp:Server");
+            var smtpPort = configuration.GetValue<int>("Email:Smtp:Port");
+            var smtpEnableSsl = configuration.GetValue<bool>("Email:Smtp:EnableSsl");
+            var smtpUsername = configuration.GetValue<string>("Email:Smtp:Username");
+            var smtpPassword = configuration.GetValue<string>("Email:Smtp:Password");
 
-            //if (email == null)
-            //{
-            //    //  logger.LogError("Unable to find email with emailId: {id}", id);
-            //    return false;
-            //}
-            //else if (email.Sent)
-            //{
-            //    //logger.LogInformation("Email already sent emailId: {id}", id);
-            //    return true;
-            //}
-            var exchangeServer = configuration.GetValue<string>("Email:Exchange:Server");
-            var exchangePort = configuration.GetValue<int>("Email:Exchange:Port");
-            var encryptedUsername = configuration.GetValue<string>("Email:Exchange:Username");
-            var encryptedPassword = configuration.GetValue<string>("Email:Exchange:Password");
-            var decryptionKey = configuration.GetValue<string>("Email:Exchange:DecryptionKey");
-
-            var exchangeUsername = Decrypt(encryptedUsername, decryptionKey);
-            var exchangePassword = Decrypt(encryptedPassword, decryptionKey);
-
-            if (string.IsNullOrWhiteSpace(exchangeServer) || exchangePort <= 0 ||
-                string.IsNullOrWhiteSpace(exchangeUsername) || string.IsNullOrWhiteSpace(exchangePassword))
+            if (string.IsNullOrWhiteSpace(smtpServer) || smtpPort <= 0 ||
+                string.IsNullOrWhiteSpace(smtpUsername) || string.IsNullOrWhiteSpace(smtpPassword))
             {
-                throw new Exception("Exchange server configuration is incomplete.");
+                throw new Exception("SMTP server configuration is incomplete. Please check appsettings.json under 'Email:Smtp'.");
             }
+
             try
             {
-                var sender = new SmtpSender(() => new SmtpClient(exchangeServer)
+                // Configure SmtpClient with details from appsettings.json's Smtp section
+                var sender = new SmtpSender(() => new SmtpClient(smtpServer)
                 {
-                    Port = exchangePort,
-                    Credentials = new NetworkCredential(exchangeUsername, exchangePassword),
+                    Port = smtpPort,
+                    Credentials = new NetworkCredential(smtpUsername, smtpPassword),
+                    EnableSsl = smtpEnableSsl // Use the EnableSsl setting
                 });
 
+                // Retrieve sender details from configuration
                 var senderName = configuration.GetValue<string>("Email:Sender:Name");
                 var senderEmailAddress = configuration.GetValue<string>("Email:Sender:EmailAddress");
 
@@ -72,39 +63,26 @@ namespace CMS.Services.EmailService
                 FluentEmail.Core.Email.DefaultRenderer = renderer;
 
                 var _email = await FluentEmail.Core.Email
-                    .From(senderEmailAddress, senderName ?? null)
+                    .From(senderEmailAddress, senderName ?? null) // Use configured sender email and name
                     .To(message.Email, message.To ?? null)
                     .Body(message.MessageContent, true)
                     .Subject(message.EmailSubject)
                     .SendAsync();
 
-                //var _email = await FluentEmail.Core.Email
-                //    .From(senderEmailAddress, senderName ?? null)
-                //.To(email.ToEmail, email.ToName ?? null)
-                //.Body(email.Body, email.IsHtml)
-                //    .Subject(email.Subject)
-                //    .SendAsync();
-
-                //email.Sent = true;
-                //dataService.Save();
-
                 return _email.Successful;
             }
             catch (Exception ex)
             {
-                logger.LogError("Failed to connect to the Exchange server : {error}", ex.Message);
+                logger.LogError(ex, "Failed to send email via SMTP (configured in 'Email:Smtp'): {error}", ex.Message);
                 return false;
             }
-
-
-
         }
 
         public async Task<bool> Send(int id)
         {
             var email = dataService.Emails
-                 .Include(e => e.EmailTemplate)
-                 .FirstOrDefault(email => email.Id == id);
+                     .Include(e => e.EmailTemplate)
+                     .FirstOrDefault(email => email.Id == id);
 
             if (email == null)
             {
@@ -116,30 +94,30 @@ namespace CMS.Services.EmailService
                 logger.LogInformation("Email already sent emailId: {id}", id);
                 return true;
             }
-            var exchangeServer = configuration.GetValue<string>("Email:Exchange:Server");
-            var exchangePort = configuration.GetValue<int>("Email:Exchange:Port");
-            var encryptedUsername = configuration.GetValue<string>("Email:Exchange:Username");
-            var encryptedPassword = configuration.GetValue<string>("Email:Exchange:Password");
-            var decryptionKey = configuration.GetValue<string>("Email:Exchange:DecryptionKey");
 
-            var exchangeUsername = Decrypt(encryptedUsername, decryptionKey);
-            var exchangePassword = Decrypt(encryptedPassword, decryptionKey);
+            // Retrieve SMTP settings from configuration (these are in the 'Smtp' section)
+            var smtpServer = configuration.GetValue<string>("Email:Smtp:Server");
+            var smtpPort = configuration.GetValue<int>("Email:Smtp:Port");
+            var smtpEnableSsl = configuration.GetValue<bool>("Email:Smtp:EnableSsl");
+            var smtpUsername = configuration.GetValue<string>("Email:Smtp:Username");
+            var smtpPassword = configuration.GetValue<string>("Email:Smtp:Password");
 
-            if (string.IsNullOrWhiteSpace(exchangeServer) || exchangePort <= 0 ||
-                string.IsNullOrWhiteSpace(exchangeUsername) || string.IsNullOrWhiteSpace(exchangePassword))
+            if (string.IsNullOrWhiteSpace(smtpServer) || smtpPort <= 0 ||
+                string.IsNullOrWhiteSpace(smtpUsername) || string.IsNullOrWhiteSpace(smtpPassword))
             {
-                throw new Exception("Exchange server configuration is incomplete.");
+                throw new Exception("SMTP server configuration is incomplete. Please check appsettings.json under 'Email:Smtp'.");
             }
             try
             {
-                var sender = new SmtpSender(() => new SmtpClient(exchangeServer)
+                // Configure SmtpClient with details from appsettings.json's Smtp section
+                var sender = new SmtpSender(() => new SmtpClient(smtpServer)
                 {
-                    Port = exchangePort,
-                    Credentials = new NetworkCredential(exchangeUsername, exchangePassword),
-
+                    Port = smtpPort,
+                    Credentials = new NetworkCredential(smtpUsername, smtpPassword),
+                    EnableSsl = smtpEnableSsl // Use the EnableSsl setting
                 });
 
-
+                // Retrieve sender details from configuration
                 var senderName = configuration.GetValue<string>("Email:Sender:Name");
                 var senderEmailAddress = configuration.GetValue<string>("Email:Sender:EmailAddress");
 
@@ -148,7 +126,7 @@ namespace CMS.Services.EmailService
                 FluentEmail.Core.Email.DefaultRenderer = renderer;
 
                 var _email = await FluentEmail.Core.Email
-                    .From(senderEmailAddress, senderName ?? null)
+                    .From(senderEmailAddress, senderName ?? null) // Use configured sender email and name
                     .To(email.ToEmail, email.ToName ?? null)
                     .Body(email.Body, email.IsHtml)
                     .Subject(email.Subject)
@@ -161,48 +139,221 @@ namespace CMS.Services.EmailService
             }
             catch (Exception ex)
             {
-                logger.LogError("Failed to connect to the Exchange server : {error}", ex.Message);
+                logger.LogError(ex, "Failed to send email via SMTP (configured in 'Email:Smtp'): {error}", ex.Message);
                 return false;
             }
-
-
-
         }
-
-
-        public static string Decrypt(string cipherText, string passPhrase)
-        {
-            var DerivationIterations = 1000;
-            var Keysize = 256;
-            var ivAndCipherText = Convert.FromBase64String(cipherText);
-            var ivStringBytes = ivAndCipherText.Take(16).ToArray();
-            var cipherTextBytes = ivAndCipherText.Skip(16).ToArray();
-
-            using (var passwordDerivation = new Rfc2898DeriveBytes(passPhrase, ivStringBytes, DerivationIterations))
-            {
-                var keyBytes = passwordDerivation.GetBytes(Keysize / 8);
-                using (var symmetricKey = new RijndaelManaged())
-                {
-                    symmetricKey.BlockSize = 128;
-                    symmetricKey.Mode = CipherMode.CFB;
-                    symmetricKey.Padding = PaddingMode.PKCS7;
-                    using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
-                    {
-                        using (var memoryStream = new MemoryStream(cipherTextBytes))
-                        {
-                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
-                            {
-                                var plainTextBytes = new byte[cipherTextBytes.Length];
-                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                                memoryStream.Close();
-                                cryptoStream.Close();
-                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }
+
+
+
+
+//using FluentEmail.Liquid;
+//using FluentEmail.Smtp;
+//using CMS.Service.Models;
+//using CMS.Services.DataService;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.Configuration;
+//using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Options;
+//using System.Net;
+//using System.Net.Mail;
+//using System.Security.Cryptography;
+//using System.Text;
+
+//namespace CMS.Services.EmailService
+//{
+//    public class Exchange : IExchangeEmail
+//    {
+//        private readonly ILogger logger;
+//        private readonly IConfiguration configuration;
+//        private readonly IDataService dataService;
+//        public Exchange(
+//            ILogger<Exchange> logger,
+//            IConfiguration configuration,IDataService dataService)
+//        {
+//            this.logger = logger;
+//            this.configuration = configuration;
+//            this.dataService = dataService;
+//        }
+//        public async Task<bool> SendEmails(MessageDto message)
+//        {
+//            //var email = dataService.Emails
+//            //     .Include(e => e.EmailTemplate)
+//            //     .FirstOrDefault(email => email.Id == id);
+
+//            //if (email == null)
+//            //{
+//            //    //  logger.LogError("Unable to find email with emailId: {id}", id);
+//            //    return false;
+//            //}
+//            //else if (email.Sent)
+//            //{
+//            //    //logger.LogInformation("Email already sent emailId: {id}", id);
+//            //    return true;
+//            //}
+//            var exchangeServer = configuration.GetValue<string>("Email:Exchange:Server");
+//            var exchangePort = configuration.GetValue<int>("Email:Exchange:Port");
+//            var encryptedUsername = configuration.GetValue<string>("Email:Exchange:Username");
+//            var encryptedPassword = configuration.GetValue<string>("Email:Exchange:Password");
+//            var decryptionKey = configuration.GetValue<string>("Email:Exchange:DecryptionKey");
+
+//            var exchangeUsername = Decrypt(encryptedUsername, decryptionKey);
+//            var exchangePassword = Decrypt(encryptedPassword, decryptionKey);
+
+//            if (string.IsNullOrWhiteSpace(exchangeServer) || exchangePort <= 0 ||
+//                string.IsNullOrWhiteSpace(exchangeUsername) || string.IsNullOrWhiteSpace(exchangePassword))
+//            {
+//                throw new Exception("Exchange server configuration is incomplete.");
+//            }
+//            try
+//            {
+//                var sender = new SmtpSender(() => new SmtpClient(exchangeServer)
+//                {
+//                    Port = exchangePort,
+//                    Credentials = new NetworkCredential(exchangeUsername, exchangePassword),
+//                });
+
+//                var senderName = configuration.GetValue<string>("Email:Sender:Name");
+//                var senderEmailAddress = configuration.GetValue<string>("Email:Sender:EmailAddress");
+
+//                FluentEmail.Core.Email.DefaultSender = sender;
+//                var renderer = new LiquidRenderer(Options.Create(new LiquidRendererOptions()));
+//                FluentEmail.Core.Email.DefaultRenderer = renderer;
+
+//                var _email = await FluentEmail.Core.Email
+//                    .From(senderEmailAddress, senderName ?? null)
+//                    .To(message.Email, message.To ?? null)
+//                    .Body(message.MessageContent, true)
+//                    .Subject(message.EmailSubject)
+//                    .SendAsync();
+
+//                //var _email = await FluentEmail.Core.Email
+//                //    .From(senderEmailAddress, senderName ?? null)
+//                //.To(email.ToEmail, email.ToName ?? null)
+//                //.Body(email.Body, email.IsHtml)
+//                //    .Subject(email.Subject)
+//                //    .SendAsync();
+
+//                //email.Sent = true;
+//                //dataService.Save();
+
+//                return _email.Successful;
+//            }
+//            catch (Exception ex)
+//            {
+//                logger.LogError("Failed to connect to the Exchange server : {error}", ex.Message);
+//                return false;
+//            }
+
+
+
+//        }
+
+//        public async Task<bool> Send(int id)
+//        {
+//            var email = dataService.Emails
+//                 .Include(e => e.EmailTemplate)
+//                 .FirstOrDefault(email => email.Id == id);
+
+//            if (email == null)
+//            {
+//                logger.LogError("Unable to find email with emailId: {id}", id);
+//                return false;
+//            }
+//            else if (email.Sent)
+//            {
+//                logger.LogInformation("Email already sent emailId: {id}", id);
+//                return true;
+//            }
+//            var exchangeServer = configuration.GetValue<string>("Email:Exchange:Server");
+//            var exchangePort = configuration.GetValue<int>("Email:Exchange:Port");
+//            var encryptedUsername = configuration.GetValue<string>("Email:Exchange:Username");
+//            var encryptedPassword = configuration.GetValue<string>("Email:Exchange:Password");
+//            var decryptionKey = configuration.GetValue<string>("Email:Exchange:DecryptionKey");
+
+//            var exchangeUsername = Decrypt(encryptedUsername, decryptionKey);
+//            var exchangePassword = Decrypt(encryptedPassword, decryptionKey);
+
+//            if (string.IsNullOrWhiteSpace(exchangeServer) || exchangePort <= 0 ||
+//                string.IsNullOrWhiteSpace(exchangeUsername) || string.IsNullOrWhiteSpace(exchangePassword))
+//            {
+//                throw new Exception("Exchange server configuration is incomplete.");
+//            }
+//            try
+//            {
+//                var sender = new SmtpSender(() => new SmtpClient(exchangeServer)
+//                {
+//                    Port = exchangePort,
+//                    Credentials = new NetworkCredential(exchangeUsername, exchangePassword),
+
+//                });
+
+
+//                var senderName = configuration.GetValue<string>("Email:Sender:Name");
+//                var senderEmailAddress = configuration.GetValue<string>("Email:Sender:EmailAddress");
+
+//                FluentEmail.Core.Email.DefaultSender = sender;
+//                var renderer = new LiquidRenderer(Options.Create(new LiquidRendererOptions()));
+//                FluentEmail.Core.Email.DefaultRenderer = renderer;
+
+//                var _email = await FluentEmail.Core.Email
+//                    .From(senderEmailAddress, senderName ?? null)
+//                    .To(email.ToEmail, email.ToName ?? null)
+//                    .Body(email.Body, email.IsHtml)
+//                    .Subject(email.Subject)
+//                    .SendAsync();
+
+//                email.Sent = true;
+//                dataService.Save();
+
+//                return _email.Successful;
+//            }
+//            catch (Exception ex)
+//            {
+//                logger.LogError("Failed to connect to the Exchange server : {error}", ex.Message);
+//                return false;
+//            }
+
+
+
+//        }
+
+
+//        public static string Decrypt(string cipherText, string passPhrase)
+//        {
+//            var DerivationIterations = 1000;
+//            var Keysize = 256;
+//            var ivAndCipherText = Convert.FromBase64String(cipherText);
+//            var ivStringBytes = ivAndCipherText.Take(16).ToArray();
+//            var cipherTextBytes = ivAndCipherText.Skip(16).ToArray();
+
+//            using (var passwordDerivation = new Rfc2898DeriveBytes(passPhrase, ivStringBytes, DerivationIterations))
+//            {
+//                var keyBytes = passwordDerivation.GetBytes(Keysize / 8);
+//                using (var symmetricKey = new RijndaelManaged())
+//                {
+//                    symmetricKey.BlockSize = 128;
+//                    symmetricKey.Mode = CipherMode.CFB;
+//                    symmetricKey.Padding = PaddingMode.PKCS7;
+//                    using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
+//                    {
+//                        using (var memoryStream = new MemoryStream(cipherTextBytes))
+//                        {
+//                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+//                            {
+//                                var plainTextBytes = new byte[cipherTextBytes.Length];
+//                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+//                                memoryStream.Close();
+//                                cryptoStream.Close();
+//                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+//    }
+//}

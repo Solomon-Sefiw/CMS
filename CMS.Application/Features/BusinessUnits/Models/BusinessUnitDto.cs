@@ -1,5 +1,6 @@
 ﻿
 using CMS.Domain;
+using CMS.Domain.Adress;
 using CMS.Domain.Enum;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,5 +21,6 @@ namespace CMS.Application.Features.BusinessUnits
 
         public ApprovalStatus ApprovalStatus { get; set; }
         public Status Status { get; set; }
+        public Address Address { get; set; }
     }
 }

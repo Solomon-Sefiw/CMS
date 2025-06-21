@@ -2,36 +2,6 @@
 
 public class UserPermissions
 {
-    public static class Employee
-    {
-        public static class PersonalInfo
-        {
-            public const string View = "canViewEmployeePersonalInfo";
-            public const string Edit = "canCreateUpdateEmployeePersonalInfo";
-            public const string Approve = "canApproveRejectEmployeePersonalInfo";
-            public const string Submit = "canSubmitEmployeePersonalInfo";
-            public const string Activate = "canActivateEmployeePersonalInfo";
-            public const string Deactivate = "canDeactivateEmployeePersonalInfo";
-        }
-        public static class EmployeeId
-        {
-            public const string View = "canViewEmployeeId";
-            public const string Edit = "canCreateUpdateEmployeeId";
-            public const string Approve = "canApproveRejectEmployeeId";
-            public const string Submit = "canSubmitEmployeeId";
-            public const string Give = "canGiveEmployeeId";
-            public const string Replace = "canReplaceEmployeeId";
-        }
-        public static class Probation
-        {
-            public const string View = "canViewEmployeeProbation";
-            public const string Approve = "canApproveRejectEmployeeProbation";
-            public const string Submit = "canSubmitEmployeeProbation";
-            public const string Terminate = "canTerminateEmployeeProbation";
-            public const string Activate = "canActivateDeactivateEmployeeProbation";
-        }
-    }
-
     public static class User
     {
         public const string View = "canViewUser";

@@ -23,7 +23,6 @@ namespace CMS.API.Controllers.BusinessUnits
     {
 
         [HttpPost("CreateBusinessUnit", Name = "CreateBusinessUnit")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canCreateUpdateSetup)]
         public async Task<ActionResult<int>> CreateBusinessUnit([FromBody] CreateBusinessUnitCommand command)
@@ -74,7 +73,7 @@ namespace CMS.API.Controllers.BusinessUnits
 
         [HttpPut("update", Name = "UpdateBusinessUnit")]
         [ProducesResponseType(200)]
-        [Authorize(Policy = AuthPolicy.Setup.canCreateUpdateSetup)]
+       // [Authorize(Policy = AuthPolicy.Setup.canCreateUpdateSetup)]
         public async Task<ActionResult<int>> UpdateBusinessUnit([FromBody] UpdateBusinessUnitCommand command)
         {
             var businessUnitId = await mediator.Send(command);
@@ -83,9 +82,8 @@ namespace CMS.API.Controllers.BusinessUnits
 
 
         [HttpPatch("submit", Name = "SubmitBusinessUnit")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
-        [Authorize(Policy = AuthPolicy.Setup.canSubmitSetup)]
+      //  [Authorize(Policy = AuthPolicy.Setup.canSubmitSetup)]
         public async Task<ActionResult<int>> SubmitBusinessUnit([FromBody] SubmitBusinessUnitCommand command)
         {
             var businessUnitId = await mediator.Send(command);
@@ -94,7 +92,6 @@ namespace CMS.API.Controllers.BusinessUnits
 
 
         [HttpPatch("approve", Name = "ApproveBusinessUnit")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]
         public async Task<ActionResult<int>> ApproveBusinessUnit([FromBody] ApproveBusinessUnitCommand command)
@@ -105,7 +102,6 @@ namespace CMS.API.Controllers.BusinessUnits
 
 
         [HttpPatch("Reject", Name = "RejectBusinessUnit")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]
         public async Task<ActionResult<int>> RejectBusinessUnit([FromBody] RejectBusinessUnitCommand command)
@@ -116,7 +112,6 @@ namespace CMS.API.Controllers.BusinessUnits
 
 
         [HttpPatch("activate", Name = "ActivateBusinessUnit")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canActivateSetup)]
         public async Task<ActionResult<int>> ActivateBusinessUnit([FromBody] ActivateBusinessUnitCommand command)
@@ -127,7 +122,6 @@ namespace CMS.API.Controllers.BusinessUnits
 
 
         [HttpPatch("deactivate", Name = "DeactivateBusinessUnit")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canDeactivateSetup)]
         public async Task<ActionResult<int>> DeactivateBusinessUnit([FromBody] DeActiveBusinessUnitCommand command)

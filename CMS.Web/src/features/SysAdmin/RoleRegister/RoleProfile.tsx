@@ -10,10 +10,8 @@ import {
   Grid,
   Tab,
   Tabs,
-  Tooltip,
   Typography,
   useTheme,
-  useMediaQuery,
 } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";

@@ -1,6 +1,5 @@
 ﻿using CMS.API.Controllers;
 using CMS.Application.Features.Commands.CreateLetter;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Api.Controllers.LetterController
@@ -10,7 +9,7 @@ namespace CMS.Api.Controllers.LetterController
     public class LetterController : BaseController<LetterController>
     {
         [HttpPost]
-        public async Task<ActionResult<int>> CreateLetter([FromForm] CreateLetterCommand command)
+        public async Task<ActionResult<int>> CreateLetter(CreateLetterCommand command)
         {
             var letterId = await mediator.Send(command);
             return letterId;

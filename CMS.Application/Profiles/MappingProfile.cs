@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using CMS.Application.Features.Addresses.Setups.Models;
+using CMS.Application.Features.BusinessUnits.Commands.CreateBusinessUnit;
+using CMS.Application.Features.BusinessUnits.Commands.UpdateBusinessUnit;
 using CMS.Application.Features.Commands.CreateLetter;
 using CMS.Application.Features.Letter.Models;
 using CMS.Application.Models;
@@ -20,6 +22,7 @@ namespace CMS.Application.Profiles
             CreateMap<LetterDto, Letter>().ReverseMap();
             CreateMap<CreateLetterCommand, Letter>().ReverseMap();
             CreateMap<Letter, LetterDto>().ReverseMap();
+            CreateMap<CreateBusinessUnitCommand, UpdateBusinessUnitCommand>().ReverseMap();
             CreateMap<Region, RegionDto>();
             CreateMap<SubCity, SubCityDto>();
             CreateMap<WorkflowEnabledEntity, WorkflowEnabledEntityDto>()

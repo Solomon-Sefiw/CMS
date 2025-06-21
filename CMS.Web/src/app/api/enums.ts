@@ -12,10 +12,7 @@ export enum MartialStatus {
 export enum ClaimCategory {
   User = 1,
   Setup,
-  PersonalInfo,
-  Probation,
   AddressAndContact,
-  EmployeeId,
   Dashboard
 }
 
@@ -270,26 +267,6 @@ export enum LanguageSkillLevel {
 }
 
 export enum Permission {
-  //EmployeeId
-  canViewEmployeeId = "canViewEmployeeId",
-  canCreateUpdateEmployeeId = "canCreateUpdateEmployeeId",
-  canApproveRejectEmployeeId = "canApproveRejectEmployeeId",
-  canSubmitEmployeeId = "canSubmitEmployeeId",
-  canGiveEmployeeId = "canGiveEmployeeId",
-  canReplaceEmployeeId = "canReplaceEmployeeId",
-  //EmployeeProbation
-  canViewEmployeeProbation = "canViewEmployeeProbation",
-  canApproveRejectEmployeeProbation = "canApproveRejectEmployeeProbation",
-  canSubmitEmployeeProbation = "canSubmitEmployeeProbation",
-  canTerminateEmployeeProbation = "canTerminateEmployeeProbation",
-  canActivateDeactivateEmployeeProbation = "canActivateDeactivateEmployeeProbation",
-  // Employee Personal Info
-  canApproveRejectEmployeePersonalInfo = "canApproveRejectEmployeePersonalInfo",
-  canCreateUpdateEmployeePersonalInfo = "canCreateUpdateEmployeePersonalInfo",
-  canViewEmployeePersonalInfo = "canViewEmployeePersonalInfo",
-  canSubmitEmployeePersonalInfo = "canSubmitEmployeePersonalInfo",
-  canActivateEmployeePersonalInfo = "canActivateEmployeePersonalInfo",
-  canDeactivateEmployeePersonalInfo = "canDeactivateEmployeePersonalInfo",
 
 //AddressContact 
   canViewAddressAndContact = "canViewAddressAndContact",

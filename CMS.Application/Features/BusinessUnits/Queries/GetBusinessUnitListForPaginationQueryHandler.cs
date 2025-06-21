@@ -37,9 +37,8 @@ public class GetBusinessUnitsListQueryHandler : IRequestHandler<GetBusinessUnits
         // Preload related data
         var businessUnitTypes = await _dataService.BusinessUnitTypes
             .ToDictionaryAsync(b => b.Value, cancellationToken);
-
-        var employees = await _dataService.Employees
-            .ToDictionaryAsync(e => e.Id, cancellationToken);
+        var addreses = await _dataService.Addresses
+            .ToDictionaryAsync(b => b.RequestId, cancellationToken);
 
         var parentBusinessUnits = await _dataService.BusinessUnits
             .Where(b => paginatedBusinessUnits.Select(p => p.ParentId).Contains(b.Id))
@@ -50,6 +49,8 @@ public class GetBusinessUnitsListQueryHandler : IRequestHandler<GetBusinessUnits
         {
             var parent = parentBusinessUnits.GetValueOrDefault(bu.ParentId);
             var businessUnitType = businessUnitTypes.GetValueOrDefault(bu.Type);
+            var address = addreses.GetValueOrDefault(bu.Id);
+
 
 
             return new BusinessUnitDto
@@ -64,7 +65,9 @@ public class GetBusinessUnitsListQueryHandler : IRequestHandler<GetBusinessUnits
                 Type = bu.Type,
                 StaffStrength = bu.StaffStrength,
                 ApprovalStatus = bu.ApprovalStatus,
-                Status = bu.Status
+                Status = bu.Status,
+                Address = addreses.ContainsKey(bu.Id) ? addreses[bu.Id] : null
+
             };
         }).ToList();
 

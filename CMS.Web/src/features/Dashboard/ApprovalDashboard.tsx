@@ -562,3 +562,456 @@
 // };
 
 // export default ApprovalDashboard;
+
+
+import React, { useState } from "react";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Badge,
+  Tooltip,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom"; // For simulating navigation
+
+// Icons for letters
+import MailOutlineIcon from '@mui/icons-material/MailOutline'; // Total letters icon
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'; // Incoming letters icon
+import OutboxIcon from '@mui/icons-material/Outbox'; // Outgoing letters icon
+import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread'; // Pending action icon
+import SendIcon from '@mui/icons-material/Send'; // Action icon for table rows
+import DescriptionIcon from '@mui/icons-material/Description'; // Generic document/letter icon
+
+// Status Icons
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DraftsIcon from '@mui/icons-material/Drafts'; // For Draft status
+import { DoNotDisturbOnTotalSilenceOutlined } from "@mui/icons-material";
+
+// --- MOCK DATA AND HOOKS FOR DEMO PURPOSES ---
+
+// Data Types for Letter Dashboard
+type LetterStatusSummaryDto = {
+  type: 'incoming' | 'outgoing' | 'pending';
+  totalCount: number;
+};
+
+interface LetterItemDto {
+  id: string;
+  letterType: string; // e.g., "Official", "Request", "Internal Memo"
+  subject: string;
+  senderRecipient: string; // Could be Sender for Incoming, Recipient for Outgoing
+  date: Date; // receivedDate or sentDate
+  status: number; // 1=Draft, 2=Pending, 3=Rejected, 4=Approved/Sent, 5=Received
+  details: string; // Short description or action required
+}
+
+interface PaginatedLettersResult {
+  items: LetterItemDto[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+}
+
+// Mock summary data
+const mockLetterStatusSummaryData: LetterStatusSummaryDto[] = [
+  { type: 'incoming', totalCount: 25 },
+  { type: 'outgoing', totalCount: 18 },
+  { type: 'pending', totalCount: 7 }, // Letters requiring action/response
+];
+
+// Mock recent letters data
+const mockLettersListData: PaginatedLettersResult = {
+  items: [
+    { id: "INC-2025-001", letterType: "Official", subject: "Invitation to Tender", senderRecipient: "Ministry of Finance", date: new Date("2025-06-20T10:00:00Z"), status: 5, details: "Received today" },
+    { id: "OUT-2025-005", letterType: "Request", subject: "Follow-up on Proposal", senderRecipient: "ABC Company", date: new Date("2025-06-19T14:30:00Z"), status: 4, details: "Sent yesterday" },
+    { id: "PEN-2025-012", letterType: "Internal Memo", subject: "Departmental Meeting Agenda", senderRecipient: "All Staff", date: new Date("2025-06-19T09:15:00Z"), status: 2, details: "Requires review" },
+    { id: "INC-2025-002", letterType: "Complaint", subject: "Service Issue Report", senderRecipient: "Client X", date: new Date("2025-06-18T11:00:00Z"), status: 2, details: "Action needed" },
+    { id: "DRAFT-2025-001", letterType: "Official", subject: "New Policy Announcement", senderRecipient: "HR Department", date: new Date("2025-06-17T16:00:00Z"), status: 1, details: "Draft saved" },
+    { id: "OUT-2025-006", letterType: "Formal Reply", subject: "Re: Your Inquiry", senderRecipient: "Government Office", date: new Date("2025-06-16T08:45:00Z"), status: 4, details: "Reply sent" },
+    { id: "PEN-2025-013", letterType: "Request", subject: "Budget Allocation Request", senderRecipient: "Finance Department", date: new Date("2025-06-15T13:00:00Z"), status: 2, details: "Awaiting approval" },
+    { id: "INC-2025-003", letterType: "Feedback", subject: "Project Progress Feedback", senderRecipient: "Development Team", date: new Date("2025-06-14T10:00:00Z"), status: 5, details: "FYI" },
+  ],
+  totalCount: 8, // Total letters in this mock list
+  pageNumber: 1,
+  pageSize: 10,
+};
+
+// Mock pagination component (replace with your actual one if available)
+type PaginationProps = {
+  pageNumber: number;
+  pageSize: number;
+  onChange: (pagination: { pageNumber: number; pageSize: number }) => void;
+  totalRowsCount: number;
+  rowsPerPageOptions: number[];
+};
+
+const Pagination = ({
+  pageNumber,
+  pageSize,
+  totalRowsCount,
+}: PaginationProps) => {
+  return (
+    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2 }}>
+      <Typography variant="body2">
+        Page {pageNumber + 1} of {Math.ceil(totalRowsCount / pageSize)}
+      </Typography>
+      {/* If you have a Material-UI Pagination component, integrate it here */}
+    </Box>
+  );
+};
+
+
+// Mocking API query functions
+const useGetLetterStatusSummaryQuery = () => ({
+  data: mockLetterStatusSummaryData,
+  isLoading: false,
+});
+
+const useGetLettersListQuery = ({
+  pageNumber,
+  pageSize,
+}: { pageNumber: number; pageSize: number }) => {
+  // Simulate pagination logic
+  const startIndex = (pageNumber - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedItems = mockLettersListData.items.slice(startIndex, endIndex);
+
+  return {
+    data: {
+      ...mockLettersListData,
+      items: paginatedItems,
+    },
+    isLoading: false,
+  };
+};
+
+// --- END MOCK DATA AND HOOKS ---
+
+
+const LetterDashboardDemo = () => {
+  const [pagination, setPagination] = useState({
+    pageNumber: 0, // 0-indexed for state, convert to 1-indexed for mock API call
+    pageSize: 10,
+  });
+
+  // Simulating API calls with mock data
+  const {
+    data: letterStatusSummaryData,
+    isLoading: isLetterStatusSummaryLoading,
+  } = useGetLetterStatusSummaryQuery();
+
+  const {
+    data: lettersListData,
+  } = useGetLettersListQuery({
+    pageNumber: pagination.pageNumber + 1, // Convert to 1-indexed for mock
+    pageSize: pagination.pageSize,
+  });
+
+
+
+  const getStatusChip = (status: number) => {
+    switch (status) {
+      case 1: // Draft
+        return (
+          <Chip
+            icon={<DraftsIcon />}
+            label="Draft"
+            color="info"
+            variant="outlined"
+          />
+        );
+      case 2: // Pending Action/Review
+        return (
+          <Chip
+            icon={<AccessTimeIcon />}
+            label="Pending"
+            color="warning"
+            variant="outlined"
+          />
+        );
+      case 3: // Rejected (e.g., internal rejection before sending)
+        return (
+          <Chip
+            icon={<DoNotDisturbOnTotalSilenceOutlined />}
+            label="Rejected"
+            color="error"
+            variant="outlined"
+          />
+        );
+      case 4: // Approved/Sent
+        return (
+          <Chip
+            icon={<CheckCircleIcon />}
+            label="Sent"
+            color="success"
+            variant="outlined"
+          />
+        );
+      case 5: // Received
+        return (
+          <Chip
+            icon={<ForwardToInboxIcon />}
+            label="Received"
+            color="primary"
+            variant="outlined"
+          />
+        );
+      default:
+        return <Chip label="Unknown" variant="outlined" />;
+    }
+  };
+
+  const handleLetterClick = (letter: LetterItemDto) => {
+    // Simulate navigation to a letter details page
+    console.log(`Viewing details for letter ID: ${letter.id}`);
+    // navigate(`/letters/${letter.id}`); // Example path
+  };
+
+  return (
+    <Box sx={{ p: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 'bold' }}>
+          Letter Management Dashboard
+        </Typography>
+      </Box>
+
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        {/* Total Incoming Letters Card */}
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Box>
+                  <Typography sx={{ color: '#3F51B9' }}>Total Incoming Letters</Typography>
+                  <Typography variant="h4" fontWeight="bold">
+                    {isLetterStatusSummaryLoading
+                      ? "Loading..."
+                      : letterStatusSummaryData?.find((item) => item.type === 'incoming')?.totalCount ?? 0}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    This month
+                  </Typography>
+                </Box>
+                <Badge
+                  badgeContent={
+                    isLetterStatusSummaryLoading
+                      ? 0
+                      : letterStatusSummaryData?.find((item) => item.type === 'incoming')?.totalCount ?? 0
+                  }
+                  color="primary"
+                  max={999}
+                >
+                  <ForwardToInboxIcon sx={{ fontSize: 40, color: "#3F51B9" }} />
+                </Badge>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Total Outgoing Letters Card */}
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Box>
+                  <Typography sx={{ color: '#3F51B9' }}>Total Outgoing Letters</Typography>
+                  <Typography variant="h4" fontWeight="bold">
+                    {isLetterStatusSummaryLoading
+                      ? "Loading..."
+                      : letterStatusSummaryData?.find((item) => item.type === 'outgoing')?.totalCount ?? 0}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    This month
+                  </Typography>
+                </Box>
+                <Badge
+                  badgeContent={
+                    isLetterStatusSummaryLoading
+                      ? 0
+                      : letterStatusSummaryData?.find((item) => item.type === 'outgoing')?.totalCount ?? 0
+                  }
+                  color="secondary"
+                  max={999}
+                >
+                  <OutboxIcon sx={{ fontSize: 40, color: "#9C27B0" }} />
+                </Badge>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Letters Pending Action Card */}
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Box>
+                  <Typography sx={{ color: '#3F51B9' }}>Letters Pending Action</Typography>
+                  <Typography variant="h4" fontWeight="bold">
+                    {isLetterStatusSummaryLoading
+                      ? "Loading..."
+                      : letterStatusSummaryData?.find((item) => item.type === 'pending')?.totalCount ?? 0}
+                  </Typography>
+                  <Typography variant="body2" color="warning.main">
+                    Requires your attention
+                  </Typography>
+                </Box>
+                <Badge
+                  badgeContent={
+                    isLetterStatusSummaryLoading
+                      ? 0
+                      : letterStatusSummaryData?.find((item) => item.type === 'pending')?.totalCount ?? 0
+                  }
+                  color="warning"
+                  max={99}
+                >
+                  <MarkAsUnreadIcon sx={{ fontSize: 40, color: "#FFA726" }} />
+                </Badge>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Recent Letters Table */}
+      <Grid>
+        <Card>
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6" fontWeight="bold" color={"primary.dark"}>
+                Recent Letters
+              </Typography>
+            </Box>
+
+            <TableContainer component={Paper} elevation={0}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Letter ID</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Subject</TableCell>
+                    <TableCell>From/To</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Details / Action</TableCell>
+                    <TableCell>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {lettersListData?.items?.map((item) => (
+                    <TableRow
+                      key={item.id}
+                      hover
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell>{item.id}</TableCell>
+                      <TableCell>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <DescriptionIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
+                            {item.letterType}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight="bold">{item.subject}</Typography>
+                      </TableCell>
+                      <TableCell>{item.senderRecipient}</TableCell>
+                      <TableCell>
+                        {new Date(item.date).toLocaleDateString("en-GB")}
+                      </TableCell>
+                      <TableCell>{getStatusChip(item.status)}</TableCell>
+                      <TableCell>
+                        <Typography variant="body2">{item.details}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip
+                          title="View Letter Details"
+                          arrow
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                bgcolor: 'info.main',
+                                color: 'white',
+                                fontSize: 13,
+                              },
+                            },
+                          }}
+                        >
+                          <IconButton
+                            onClick={() => handleLetterClick(item)}
+                            aria-label="view details"
+                          >
+                            <SendIcon sx={{ color: '#3F51B9' }} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {lettersListData?.items?.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} align="center">
+                        No recent letters to display.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+
+        <Pagination
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onChange={setPagination}
+          totalRowsCount={lettersListData?.totalCount || 0}
+          rowsPerPageOptions={[10, 20, 50]}
+        />
+      </Grid>
+    </Box>
+  );
+};
+
+export default LetterDashboardDemo;

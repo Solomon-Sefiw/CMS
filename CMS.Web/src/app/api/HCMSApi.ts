@@ -5,7 +5,6 @@ export const addTagTypes = [
   "EmployeeProfile",
   "BusinessUnit",
   "Admin",
-  "Dashboard",
   "Contact",
   "Documents",
   "Letter",
@@ -266,7 +265,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.activateBusinessUnitCommand,
         }),
-        invalidatesTags: ["BusinessUnit", "Dashboard"],
+        invalidatesTags: ["BusinessUnit"],
       }),
       getAllBusinessUnits: build.query<
         GetAllBusinessUnitsApiResponse,
@@ -298,7 +297,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.approveBusinessUnitCommand,
         }),
-        invalidatesTags: ["BusinessUnit", "Dashboard"],
+        invalidatesTags: ["BusinessUnit"],
       }),
       getBusinessUnitCountPerApprovalStatus: build.query<
         GetBusinessUnitCountPerApprovalStatusApiResponse,
@@ -316,7 +315,7 @@ const injectedRtkApi = api
           method: "POST",
           body: queryArg.createBusinessUnitCommand,
         }),
-        invalidatesTags: ["BusinessUnit", "Dashboard"],
+        invalidatesTags: ["BusinessUnit"],
       }),
       deactivateBusinessUnit: build.mutation<
         DeactivateBusinessUnitApiResponse,
@@ -327,7 +326,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.deActiveBusinessUnitCommand,
         }),
-        invalidatesTags: ["BusinessUnit", "Dashboard"],
+        invalidatesTags: ["BusinessUnit"],
       }),
       rejectBusinessUnit: build.mutation<
         RejectBusinessUnitApiResponse,
@@ -338,7 +337,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.rejectBusinessUnitCommand,
         }),
-        invalidatesTags: ["BusinessUnit", "Dashboard"],
+        invalidatesTags: ["BusinessUnit"],
       }),
       searchAllBusinessUnits: build.query<
         SearchAllBusinessUnitsApiResponse,
@@ -366,7 +365,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.submitBusinessUnitCommand,
         }),
-        invalidatesTags: ["BusinessUnit", "Dashboard"],
+        invalidatesTags: ["BusinessUnit"],
       }),
       updateBusinessUnit: build.mutation<
         UpdateBusinessUnitApiResponse,
@@ -499,7 +498,7 @@ const injectedRtkApi = api
           query: (queryArg) => ({
             url: `/api/Letter`,
             method: "POST",
-            body: queryArg.body,
+            body: queryArg.createLetterCommand,
           }),
           invalidatesTags: ["Letter"],
         }
@@ -519,7 +518,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.approveRegionCommand,
         }),
-        invalidatesTags: ["Region", "Dashboard"],
+        invalidatesTags: ["Region"],
       }),
       getRegionCountPerStatus: build.query<
         GetRegionCountPerStatusApiResponse,
@@ -535,7 +534,7 @@ const injectedRtkApi = api
             method: "POST",
             body: queryArg.createRegionCommand,
           }),
-          invalidatesTags: ["Region", "Dashboard"],
+          invalidatesTags: ["Region"],
         }
       ),
       getAllRegion: build.query<GetAllRegionApiResponse, GetAllRegionApiArg>({
@@ -563,7 +562,7 @@ const injectedRtkApi = api
             method: "PATCH",
             body: queryArg.rejectRegionCommand,
           }),
-          invalidatesTags: ["Region", "Dashboard"],
+          invalidatesTags: ["Region"],
         }
       ),
       searchAllRegions: build.query<
@@ -580,7 +579,7 @@ const injectedRtkApi = api
             method: "PATCH",
             body: queryArg.submitRegionCommand,
           }),
-          invalidatesTags: ["Region", "Dashboard"],
+          invalidatesTags: ["Region"],
         }
       ),
       updateRegion: build.mutation<UpdateRegionApiResponse, UpdateRegionApiArg>(
@@ -602,7 +601,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.approveSubCityCommand,
         }),
-        invalidatesTags: ["SubCity", "Dashboard"],
+        invalidatesTags: ["SubCity"],
       }),
       getSubCityCountPerStatus: build.query<
         GetSubCityCountPerStatusApiResponse,
@@ -620,7 +619,7 @@ const injectedRtkApi = api
           method: "POST",
           body: queryArg.createSubCityCommand,
         }),
-        invalidatesTags: ["SubCity", "Dashboard"],
+        invalidatesTags: ["SubCity"],
       }),
       getAllSubCity: build.query<GetAllSubCityApiResponse, GetAllSubCityApiArg>(
         {
@@ -651,7 +650,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.rejectSubCityCommand,
         }),
-        invalidatesTags: ["SubCity", "Dashboard"],
+        invalidatesTags: ["SubCity"],
       }),
       searchAllSubCities: build.query<
         SearchAllSubCitiesApiResponse,
@@ -669,7 +668,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.submitSubCityCommand,
         }),
-        invalidatesTags: ["SubCity", "Dashboard"],
+        invalidatesTags: ["SubCity"],
       }),
       updateSubCity: build.mutation<
         UpdateSubCityApiResponse,
@@ -909,17 +908,7 @@ export type DocumentRootPathApiResponse =
 export type DocumentRootPathApiArg = void;
 export type CreateLetterApiResponse = /** status 200 Success */ number;
 export type CreateLetterApiArg = {
-  body: {
-    referenceNumber?: string;
-    subject?: string;
-    content?: string;
-    letterType?: LetterType;
-    status?: LetterStatus;
-    receivedDate?: string;
-    sentDate?: string;
-    senderId?: string;
-    recipientId?: string;
-  };
+  createLetterCommand: CreateLetterCommand;
 };
 export type GetAllLookupsApiResponse = /** status 200 Success */ LookupDto;
 export type GetAllLookupsApiArg = void;
@@ -1088,7 +1077,7 @@ export type CreateRoleDto = {
   role?: HrRole;
   permissionNames?: string[] | null;
 };
-export type ClaimCategory = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type ClaimCategory = 1 | 2 | 3 | 4;
 export type PermissionClaim = {
   id?: string;
   claimValue?: string | null;
@@ -1312,6 +1301,36 @@ export type ActivateBusinessUnitCommand = {
 };
 export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export type Status = 1 | 2;
+export type SubCity = {
+  id?: number;
+  name?: string | null;
+  description?: string | null;
+  regionId?: number;
+  region?: Region;
+  approvalStatus?: ApprovalStatus;
+};
+export type Region = {
+  id?: number;
+  name?: string | null;
+  description?: string | null;
+  subCities?: SubCity[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type Address = {
+  id?: number;
+  addressType?: AddressTypeEnum;
+  country?: CountryEnum;
+  regionId?: number | null;
+  region?: Region;
+  subCityId?: number | null;
+  subCity?: SubCity;
+  city?: string | null;
+  woreda?: string | null;
+  kebele?: string | null;
+  houseNumber?: string | null;
+  requestId?: number;
+  registeredOn?: string;
+};
 export type BusinessUnitDto = {
   id?: number;
   businessUnitID?: string | null;
@@ -1324,6 +1343,7 @@ export type BusinessUnitDto = {
   staffStrength?: number | null;
   approvalStatus?: ApprovalStatus;
   status?: Status;
+  address?: Address;
 };
 export type BusinessUnitLists = {
   approved?: BusinessUnitDto[] | null;
@@ -1391,6 +1411,17 @@ export type UpdateContactCommand = {
 };
 export type DocumentEndpointRootPath = {
   path?: string | null;
+};
+export type CreateLetterCommand = {
+  referenceNumber?: string | null;
+  subject?: string | null;
+  content?: string | null;
+  letterType?: LetterType;
+  status?: LetterStatus;
+  receivedDate?: string;
+  sentDate?: string | null;
+  senderId?: string | null;
+  recipientId?: string | null;
 };
 export type BusinessUnitType = {
   value?: BusinessUnitTypeEnum;

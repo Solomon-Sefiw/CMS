@@ -1,8 +1,8 @@
 import {
   Grid,
   Box,
-  Typography,
 } from "@mui/material";
+import LetterDashboardDemo from "./ApprovalDashboard";
 const HomePage = () => {
   return (
 
@@ -11,7 +11,7 @@ const HomePage = () => {
           {/* <DashboardCards />
           <DashboardGraphs />
           <ApprovalDashboard /> */}
-          <Typography variant="h2">Hello World</Typography>
+          <LetterDashboardDemo />
       </Grid>
     </Box>
   );

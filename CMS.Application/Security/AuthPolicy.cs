@@ -3,34 +3,6 @@
 public class AuthPolicy
 {
     //Employee Related Policy
-    public static class Employee
-    {
-        public static class PersonalInfo{
-            public const string canViewEmployeePersonalInfo = "canViewEmployeePersonalInfo";
-            public const string canCreateUpdateEmployeePersonalInfo = "canCreateUpdateEmployeePersonalInfo";
-            public const string canApproveRejectEmployeePersonalInfo = "canApproveRejectEmployeePersonalInfo";
-            public const string canSubmitEmployeePersonalInfo = "canSubmitEmployeePersonalInfo";
-            public const string canActivateEmployeePersonalInfo = "canActivateEmployeePersonalInfo";
-            public const string canDeactivateEmployeePersonalInfo = "canDeactivateEmployeePersonalInfo";
-        }
-        public static class EmployeeId
-        {
-            public const string canViewEmployeeId = "canViewEmployeeId";
-            public const string canCreateUpdateEmployeeId = "canCreateUpdateEmployeeId";
-            public const string canApproveRejectEmployeeId = "canApproveRejectEmployeeId";
-            public const string canSubmitEmployeeId = "canSubmitEmployeeId";
-            public const string canGiveEmployeeId = "canGiveEmployeeId";
-            public const string canReplaceEmployeeId = "canReplaceEmployeeId";
-        }
-        public static class Probation
-        {
-            public const string canViewEmployeeProbation = "canViewEmployeeProbation";
-            public const string canApproveRejectEmployeeProbation = "canApproveRejectEmployeeProbation";
-            public const string canSubmitEmployeeProbation = "canSubmitEmployeeProbation";
-            public const string canTerminateEmployeeProbation = "canTerminateEmployeeProbation";
-            public const string canActivateDeactivateEmployeeProbation = "canActivateDeactivateEmployeeProbation";
-        }
-    }
 
     //user Related Policy
     public static class User
@@ -80,29 +52,5 @@ public class AuthPolicy
         public const string canViewAllApprovalSummaries = "canViewAllApprovalSummaries";
         public const string canViewAllApprovalRequestGrid = "canViewAllApprovalRequestGrid";
     }
-
-
-    //public static class EmployeeMovement
-    //{
-    //    public static class LateralTransfer
-    //    {
-    //        public const string View = "canViewLateralTransfer";
-    //        public const string CreateUpdate = "canCreateUpdateLateralTransfer";
-    //    }
-
-    //    public static class ActingAssignment
-    //    {
-    //        public const string View = "canViewActingAssignment";
-    //        public const string CreateUpdate = "canCreateUpdateActingAssignment";
-    //    }
-
-    //    public static class Delegation
-    //    {
-    //        public const string View = "canViewDelegation";
-    //        public const string CreateUpdate = "canCreateUpdateDelegation";
-    //    }
-    //}
-
-
 
 }

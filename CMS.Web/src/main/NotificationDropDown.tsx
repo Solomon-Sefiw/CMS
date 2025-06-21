@@ -61,7 +61,6 @@ export const NotificationsDropdown = ({
               to="/probation"
               fullWidth
               onClick={handleClose}
-             disabled={!permissions.CanViewEmployeeProbation}
             >
               <Typography variant="h6" component="span">
                 Probation Notifications{" "}
@@ -114,7 +113,6 @@ export const NotificationsDropdown = ({
                     to="/probation"
                     fullWidth
                     onClick={handleClose}
-                    disabled={!permissions.CanViewEmployeeProbation}
 
                   >
                     View All Notifications

@@ -13,18 +13,6 @@ namespace CMS.Persistance.SeedData
 
             var permissions = new List<Permission>();
 
-            // Extract permissions for Employee - PersonalInfo
-            permissions.AddRange(new[]
-            {
-                    new Permission { Id = Guid.NewGuid(), ClaimValue = UserPermissions.Employee.PersonalInfo.View, ClaimCategory = ClaimCategory.EmployeePersonalInfo },
-                    new Permission { Id = Guid.NewGuid(), ClaimValue = UserPermissions.Employee.PersonalInfo.Edit, ClaimCategory = ClaimCategory.EmployeePersonalInfo  },
-                    new Permission { Id = Guid.NewGuid(), ClaimValue = UserPermissions.Employee.PersonalInfo.Approve, ClaimCategory = ClaimCategory.EmployeePersonalInfo  },
-                    new Permission { Id = Guid.NewGuid(), ClaimValue = UserPermissions.Employee.PersonalInfo.Submit, ClaimCategory = ClaimCategory.EmployeePersonalInfo  },
-                    new Permission { Id = Guid.NewGuid(), ClaimValue = UserPermissions.Employee.PersonalInfo.Activate, ClaimCategory = ClaimCategory.EmployeePersonalInfo  },
-                    new Permission { Id = Guid.NewGuid(), ClaimValue = UserPermissions.Employee.PersonalInfo.Deactivate, ClaimCategory = ClaimCategory.EmployeePersonalInfo  },
-
-                });
-
 
 
             // Extract permissions for User Management
@@ -46,14 +34,6 @@ namespace CMS.Persistance.SeedData
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Setup.Deactivate, ClaimCategory = ClaimCategory.Setup },
             });
 
-            // Extract permissions for Probation
-            permissions.AddRange(new[]
-            {
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.View, ClaimCategory = ClaimCategory.EmployeeProbation },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.Approve, ClaimCategory = ClaimCategory.EmployeeProbation},
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.Submit, ClaimCategory = ClaimCategory.EmployeeProbation},
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.Terminate, ClaimCategory = ClaimCategory.EmployeeProbation},
-            });
             // Extract permissions for Address and Contact
             permissions.AddRange(new[]
             {
@@ -62,17 +42,7 @@ namespace CMS.Persistance.SeedData
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.AddressAndContact.Activate, ClaimCategory = ClaimCategory.AddressAndContact},
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.AddressAndContact.Deactivate, ClaimCategory = ClaimCategory.AddressAndContact},
             });
-            // Extract permissions for Employee Id
-            permissions.AddRange(new[]
-            {
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeId.View, ClaimCategory = ClaimCategory.EmployeeId },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeId.Edit, ClaimCategory = ClaimCategory.EmployeeId },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeId.Approve, ClaimCategory = ClaimCategory.EmployeeId },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeId.Submit, ClaimCategory = ClaimCategory.EmployeeId },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeId.Give, ClaimCategory = ClaimCategory.EmployeeId },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeId.Replace, ClaimCategory = ClaimCategory.EmployeeId },
 
-            });
             permissions.AddRange(new[]
 {
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View, ClaimCategory = ClaimCategory.Dashboard },

@@ -18,7 +18,6 @@ namespace CMS.API.Controllers.AddressController.RegionContoller
     public class RegionController : BaseController<RegionController>
     {
         [HttpPost("Create", Name = "CreateRegion")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy =AuthPolicy.Setup.canCreateUpdateSetup)]
         public async Task<ActionResult<int>> CreateRegion([FromBody] CreateRegionCommand command)
@@ -69,7 +68,6 @@ namespace CMS.API.Controllers.AddressController.RegionContoller
             return Ok(await mediator.Send(command));
         }
         [HttpPatch("submit", Name = "SubmitRegion")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canSubmitSetup)]
         public async Task<ActionResult<int>> SubmitRegion([FromBody] SubmitRegionCommand command)
@@ -78,7 +76,6 @@ namespace CMS.API.Controllers.AddressController.RegionContoller
             return Ok(businessUnitId);
         }
         [HttpPatch("approve", Name = "ApproveRegion")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]
         public async Task<ActionResult<int>> ApproveRegion([FromBody] ApproveRegionCommand command)
@@ -87,7 +84,6 @@ namespace CMS.API.Controllers.AddressController.RegionContoller
             return Ok(businessUnitId);
         }
         [HttpPatch("Reject", Name = "RejectRegion")]
-        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]
         public async Task<ActionResult<int>> RejectRegion([FromBody] RejectRegionCommand command)

@@ -20,7 +20,7 @@ import {
 import { YupShape } from "../../../utils";
 import { RegisterDto } from "../../../app/store";
 import { FormCheckboxList } from "../../../components/form-controls/form-checkbox-list";
-
+import { useBusinessUnit } from "../../BusinessUnit";
 
 const initialValues = {
   email: "",
@@ -62,7 +62,7 @@ export const UserRegistrationForm = ({
     [onSubmit]
   );
 
-
+  const { businessUnitLookups } = useBusinessUnit();
   const theme = useTheme(); 
 
   return (
@@ -137,7 +137,7 @@ export const UserRegistrationForm = ({
                     type="number"
                     placeholder="Branch"
                     label="Branch"
-                    options={[{ label: "Branch 1", value: 1 }]}
+                    options={businessUnitLookups}
                   />
                 </Grid>
 
