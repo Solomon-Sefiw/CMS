@@ -1,8 +1,15 @@
 ﻿using CMS.API.Controllers;
+using CMS.Application.Features.Addresses.Setups.SubCity.Queiries;
+using CMS.Application.Features.BusinessUnits.Commands.ApproveBusinessUnit;
+using CMS.Application.Features.BusinessUnits.Commands.RejectBusinessUnit;
+using CMS.Application.Features.BusinessUnits.Commands.SubmitBusinessUnit;
 using CMS.Application.Features.Commands.CreateLetter;
+using CMS.Application.Features.Letter.Commands.ApproveLetter;
+using CMS.Application.Features.Letter.Commands.SubmitLetter;
 using CMS.Application.Features.Letter.Commands.UpdateLetter;
 using CMS.Application.Features.Letter.Models;
 using CMS.Application.Features.Letter.Queries;
+using CMS.Application.Security;
 using CMS.Domain.Enum;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,26 +25,27 @@ namespace CMS.Api.Controllers.LetterController
             var letterId = await mediator.Send(command);
             return letterId;
         }
-        [HttpPut("{id}")] // Use {id} in the route for PUT
-        public async Task<IActionResult> UpdateLetter(int id, [FromBody] UpdateLetterCommand command)
+        [HttpPut] // Use {id} in the route for PUT
+        public async Task<IActionResult> UpdateLetter(UpdateLetterCommand command)
         {
-            if (id != command.Id)
-            {
-                return BadRequest("ID in URL does not match ID in request body.");
-            }
 
             await mediator.Send(command);
             return NoContent(); // 204 No Content is typical for successful updates that don't return data
         }
-
-        // Additional endpoints for updating, forwarding, archiving letters, etc.
-        [HttpGet]
-        public async Task<ActionResult<PaginatedList<LetterDto>>> GetAllLetters( LetterStatus status, int pageNumber = 1, int pageSize = 10,
-                                                                                 string? searchTerm = null, string? sortBy = null, bool sortAscending = true)
+        [HttpGet("count", Name = "GetLetterCountPerStatus")]
+        [ProducesResponseType(200)]
+        public async Task<LetterCountsByStatus> GetLetterCountPerStatus()
         {
-            var query = new GetLetterListForPaginationQuery(status, pageNumber, pageSize, searchTerm, sortBy, sortAscending);
-            var result = await mediator.Send(query);
-            return Ok(result);
+            return await mediator.Send(new GetLetterCountPerStatusQuery());
+        }
+
+        [HttpGet("GetLettersForPagination", Name = "GetLettersForPagination")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<PaginatedLetterList>> GetLettersForPagination(LetterStatus status, int pageNumber, int pageSize)
+        {
+            var searchResult = await mediator.Send(new GetPaginatedLettersQuery(status, pageNumber, pageSize));
+
+            return searchResult;
         }
         [HttpGet("search-all")]
         public async Task<ActionResult<List<LetterDto>>> SearchAllLetters()
@@ -45,6 +53,32 @@ namespace CMS.Api.Controllers.LetterController
             var query = new SearchLettersQuery();
             var result = await mediator.Send(query);
             return Ok(result);
+        }
+
+        [HttpPatch("submit", Name = "SubmitLetter")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<int>> SubmitLetter([FromBody] SubmitLetterCommand command)
+        {
+            var letterId = await mediator.Send(command);
+            return Ok(letterId);
+        }
+
+
+        [HttpPatch("approve", Name = "ApproveLetter")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<int>> ApproveLetter([FromBody] ApproveLetterCommand command)
+        {
+            var letterId = await mediator.Send(command);
+            return Ok(letterId);
+        }
+
+
+        [HttpPatch("Reject", Name = "RejectLetter")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<int>> RejectLetter([FromBody] RejectBusinessUnitCommand command)
+        {
+            var letterId = await mediator.Send(command);
+            return Ok(letterId);
         }
     }
 }

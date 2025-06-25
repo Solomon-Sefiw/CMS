@@ -19,9 +19,9 @@ namespace CMS.Application.Features.Commands.CreateLetter
         public string Subject { get; set; }
         public string Content { get; set; }
         public LetterType LetterType { get; set; }
-        public LetterStatus Status { get; set; }
-        public DateTime ReceivedDate { get; set; }
-        public DateTime? SentDate { get; set; }
+       // public LetterStatus Status { get; set; }
+        //public DateOnly? ReceivedDate { get; set; }
+        //public DateOnly? SentDate { get; set; }
         public string? SenderId { get; set; }
         public string? RecipientId { get; set; }
         public int BusinessUnitId { get; set; }
@@ -42,6 +42,9 @@ namespace CMS.Application.Features.Commands.CreateLetter
         public async Task<int> Handle(CreateLetterCommand request, CancellationToken cancellationToken)
         {
             var letter = _mapper.Map<Domain.letters.Letter>(request);
+            // Set current date
+            letter.ReceivedDate = DateTime.Now;
+            letter.SentDate = DateTime.Now;
             _context.Letters.Add(letter);
 
             await _context.SaveAsync(cancellationToken);

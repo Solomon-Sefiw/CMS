@@ -52,6 +52,7 @@ namespace CMS.API.Controllers.AddressController.SubCityController
 
             return searchResult;
         }
+
         [HttpGet("count", Name = "GetSubCityCountPerStatus")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canViewSetup)]
@@ -60,8 +61,6 @@ namespace CMS.API.Controllers.AddressController.SubCityController
             return await mediator.Send(new GetSubCityCountPerStatusQuery());
         }
 
-
-
         [HttpPut("Update", Name = "UpdateSubCity")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canCreateUpdateSetup)]
@@ -69,6 +68,7 @@ namespace CMS.API.Controllers.AddressController.SubCityController
         {
             return Ok(await mediator.Send(command));
         }
+
         [HttpPatch("submit", Name = "SubmitSubCity")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canSubmitSetup)]
@@ -77,6 +77,7 @@ namespace CMS.API.Controllers.AddressController.SubCityController
             var businessUnitId = await mediator.Send(command);
             return Ok(businessUnitId);
         }
+
         [HttpPatch("approve", Name = "ApproveSubCity")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]
@@ -85,6 +86,7 @@ namespace CMS.API.Controllers.AddressController.SubCityController
             var businessUnitId = await mediator.Send(command);
             return Ok(businessUnitId);
         }
+
         [HttpPatch("Reject", Name = "RejectSubCity")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canApproveRejectSetup)]

@@ -22,6 +22,13 @@ export enum ApprovalStatus {
   Rejected = 3,
   Approved = 4,
 }
+    export enum LetterStatus
+    {
+         pending = 1 ,
+        received,
+        responded,
+        archived
+    }
 export enum EmployeeStatusEnum {
   Active = 1,
   Inactive = 2,
@@ -286,25 +293,9 @@ export enum Permission {
   canDeactivateSetup = "canDeactivateSetup",
   canActivateSetup = "canActivateSetup",
   // Dashboard
-          // Cards
-  canViewAllActiveEmployees = "canViewAllActiveEmployees",
-  canViewAllVacantJobs = "canViewAllVacantJobs",
-  canViewAllResignedEmployees = "canViewAllResignedEmployees",
-  canViewAllBusinessUnits = "canViewAllBusinessUnits",
-  canViewAllNewEmployees = "canViewAllNewEmployees",
-  canViewAllPositions = "canViewAllPositions",
-  canViewTurnoverRates = "canViewTurnoverRates",
-  canViewRetentionRates = "canViewRetentionRates",
-           //Chart And Graph
-  canViewEmployeeDistributionByStatusDoughnutChart = "canViewEmployeeDistributionByStatusDoughnutChart",
-  canViewMonthlyNewEmployeesOfFiscalYearBarChart = "canViewMonthlyNewEmployeesOfFiscalYearBarChart",
-  canViewEmployeeDistributionByChiefOfficeBarChart = "canViewEmployeeDistributionByChiefOfficeBarChart",
-  canViewEmployeeDistributionByJobCategoryPieChart = "canViewEmployeeDistributionByJobCategoryPieChart",
-  canViewMonthlyHRMetricsLineGraph = "canViewMonthlyHRMetricsLineGraph",
+  canViewLetterCountBoard = "canViewLetterCountBoard",
+  canViewRecentLettersBoard = "canViewRecentLettersBoard",
 
-         //Approval
-  canViewAllApprovalSummaries = "canViewAllApprovalSummaries",
-  canViewAllApprovalRequestGrid = "canViewAllApprovalRequestGrid",
 }
 export enum Guarantee {
   InWard = 1,

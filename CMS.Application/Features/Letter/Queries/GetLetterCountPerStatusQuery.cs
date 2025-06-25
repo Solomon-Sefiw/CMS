@@ -14,7 +14,7 @@ namespace CMS.Application.Features.Letter.Queries
 
 
     public record GetLetterCountPerStatusQuery() : IRequest<LetterCountsByStatus>;
-    public record LetterCountsByStatus(int pending, int received, int responded, int archivedd);
+    public record LetterCountsByStatus(int pending, int received, int responded, int archived);
 
     public class GetBusinessUnitCountPerApprovalStatusQueryHandler : IRequestHandler<GetLetterCountPerStatusQuery, LetterCountsByStatus>
     {
@@ -29,9 +29,9 @@ namespace CMS.Application.Features.Letter.Queries
             var pending = await dataService.Letters.Where(bu => bu.Status == LetterStatus.pending).CountAsync();
             var received = await dataService.Letters.Where(bu => bu.Status == LetterStatus.received).CountAsync();
             var responded = await dataService.Letters.Where(bu => bu.Status == LetterStatus.responded).CountAsync();
-            var archivedd = await dataService.Letters.Where(bu => bu.Status == LetterStatus.archivedd).CountAsync();
+            var archived = await dataService.Letters.Where(bu => bu.Status == LetterStatus.archived).CountAsync();
 
-            return new(pending, received, responded, archivedd);
+            return new(pending, received, responded, archived);
         }
     }
 }

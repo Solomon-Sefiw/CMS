@@ -31,46 +31,11 @@ public class UserPermissions
     public static class Dashboard
     {
         // Cards
-        public const string View = "canViewAllActiveEmployees";
-        public const string View1 = "canViewAllVacantJobs";
-        public const string View2 = "canViewAllResignedEmployees";
-        public const string View3 = "canViewAllBusinessUnits";
-        public const string View4 = "canViewAllNewEmployees";
-        public const string View5 = "canViewAllPositions";
-        public const string View6 = "canViewTurnoverRates";
-        public const string View7 = "canViewRetentionRates";
-        //Chart And Graph
-        public const string View8 = "canViewEmployeeDistributionByStatusDoughnutChart";
-        public const string View9 = "canViewMonthlyNewEmployeesOfFiscalYearBarChart";
-        public const string View10 = "canViewEmployeeDistributionByChiefOfficeBarChart";
-        public const string View11 = "canViewEmployeeDistributionByJobCategoryPieChart";
-        public const string View12 = "canViewMonthlyHRMetricsLineGraph";
-
-        //Approval
-        public const string View13 = "canViewAllApprovalSummaries";
-        public const string View14 = "canViewAllApprovalRequestGrid";
+        public const string View = "canViewLetterCountBoard";
+        public const string View1 = "canViewRecentLettersBoard";
     }
 
-    //public static class EmployeeMovement
-    //{
-    //    public static class LateralTransfer
-    //    {
-    //        public const string View = "canViewLateralTransfer";
-    //        public const string CreateUpdate = "canCreateUpdateLateralTransfer";
-    //    }
 
-    //    public static class ActingAssignment
-    //    {
-    //        public const string View = "canViewActingAssignment";
-    //        public const string CreateUpdate = "canCreateUpdateActingAssignment";
-    //    }
-
-    //    public static class Delegation
-    //    {
-    //        public const string View = "canViewDelegation";
-    //        public const string CreateUpdate = "canCreateUpdateDelegation";
-    //    }
-    //}
 
 
 

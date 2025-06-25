@@ -32,22 +32,9 @@ export const usePermission = () => {
    const CanActivateAddressAndContact = hasPermission(Permission.canActivateAddressAndContact);
    const CanDeactivateAddressAndContact = hasPermission(Permission.canDeactivateAddressAndContact);
          //Dashboard
-   const CanViewAllActiveEmployees = hasPermission(Permission.canViewAllActiveEmployees);
-   const CanViewAllVacantJobs = hasPermission(Permission.canViewAllVacantJobs);
-   const CanViewAllResignedEmployees = hasPermission(Permission.canViewAllResignedEmployees);
-   const CanViewAllBusinessUnits = hasPermission(Permission.canViewAllBusinessUnits);
-   const CanViewAllNewEmployees = hasPermission(Permission.canViewAllNewEmployees);
-   const CanViewAllPositions = hasPermission(Permission.canViewAllPositions);
-   const CanViewTurnoverRates = hasPermission(Permission.canViewTurnoverRates);
-   const CanViewRetentionRates = hasPermission(Permission.canViewRetentionRates);
-   //Chart And Graph
-   const CanViewEmployeeDistributionByStatusDoughnutChart = hasPermission(Permission.canViewEmployeeDistributionByStatusDoughnutChart);
-   const CanViewMonthlyNewEmployeesOfFiscalYearBarChart = hasPermission(Permission.canViewMonthlyNewEmployeesOfFiscalYearBarChart);
-   const CanViewEmployeeDistributionByChiefOfficeBarChart = hasPermission(Permission.canViewEmployeeDistributionByChiefOfficeBarChart);
-   const CanViewEmployeeDistributionByJobCategoryPieChart = hasPermission(Permission.canViewEmployeeDistributionByJobCategoryPieChart);
-   const CanViewMonthlyHRMetricsLineGraph = hasPermission(Permission.canViewMonthlyHRMetricsLineGraph);
-    const CanViewAllApprovalSummaries = hasPermission(Permission.canViewAllApprovalSummaries);
-    const CanViewAllApprovalRequestGrid = hasPermission(Permission.canViewAllApprovalRequestGrid);
+   const CanViewLetterCountBoard = hasPermission(Permission.canViewLetterCountBoard);
+   const CanViewRecentLettersBoard = hasPermission(Permission.canViewRecentLettersBoard);
+
 
     return {
       
@@ -68,24 +55,8 @@ export const usePermission = () => {
       canActivateSetup,
       canDeactivateSetup,
       //Dashboard
-      // Cards
-      CanViewAllActiveEmployees,
-      CanViewAllVacantJobs,
-      CanViewAllResignedEmployees,
-      CanViewAllBusinessUnits,
-      CanViewAllNewEmployees,
-      CanViewAllPositions,
-      CanViewTurnoverRates,
-      CanViewRetentionRates,
-      //Chart And Graph
-      CanViewEmployeeDistributionByStatusDoughnutChart,
-      CanViewMonthlyNewEmployeesOfFiscalYearBarChart,
-      CanViewEmployeeDistributionByChiefOfficeBarChart,
-      CanViewEmployeeDistributionByJobCategoryPieChart,
-      CanViewMonthlyHRMetricsLineGraph,
-      //Approval
-      CanViewAllApprovalSummaries,
-      CanViewAllApprovalRequestGrid,
+      CanViewLetterCountBoard,
+      CanViewRecentLettersBoard
     };
   }, [hasPermission]);
 

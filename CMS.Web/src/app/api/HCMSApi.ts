@@ -6,6 +6,7 @@ export const addTagTypes = [
   "BusinessUnit",
   "Admin",
   "Contact",
+  "Dashboard",
   "Documents",
   "Letter",
   "Lookup",
@@ -470,6 +471,20 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Contact", "EmployeeProfile", "BusinessUnit"],
       }),
+      getLetterCountPerStatusForDashboard: build.query<
+        GetLetterCountPerStatusForDashboardApiResponse,
+        GetLetterCountPerStatusForDashboardApiArg
+      >({
+        query: () => ({ url: `/api/Dashboard/count` }),
+        providesTags: ["Dashboard"],
+      }),
+      searchAllLettersForDashboard: build.query<
+        SearchAllLettersForDashboardApiResponse,
+        SearchAllLettersForDashboardApiArg
+      >({
+        query: () => ({ url: `/api/Dashboard/search-all` }),
+        providesTags: ["Dashboard"],
+      }),
       getApiDocumentsById: build.query<
         GetApiDocumentsByIdApiResponse,
         GetApiDocumentsByIdApiArg
@@ -499,6 +514,75 @@ const injectedRtkApi = api
             url: `/api/Letter`,
             method: "POST",
             body: queryArg.createLetterCommand,
+          }),
+          invalidatesTags: ["Letter"],
+        }
+      ),
+      updateLetter: build.mutation<UpdateLetterApiResponse, UpdateLetterApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Letter`,
+            method: "PUT",
+            body: queryArg.updateLetterCommand,
+          }),
+          invalidatesTags: ["Letter"],
+        }
+      ),
+      approveLetter: build.mutation<
+        ApproveLetterApiResponse,
+        ApproveLetterApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/approve`,
+          method: "PATCH",
+          body: queryArg.approveLetterCommand,
+        }),
+        invalidatesTags: ["Letter"],
+      }),
+      getLetterCountPerStatus: build.query<
+        GetLetterCountPerStatusApiResponse,
+        GetLetterCountPerStatusApiArg
+      >({
+        query: () => ({ url: `/api/Letter/count` }),
+        providesTags: ["Letter"],
+      }),
+      getLettersForPagination: build.query<
+        GetLettersForPaginationApiResponse,
+        GetLettersForPaginationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/GetLettersForPagination`,
+          params: {
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["Letter"],
+      }),
+      rejectLetter: build.mutation<RejectLetterApiResponse, RejectLetterApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Letter/Reject`,
+            method: "PATCH",
+            body: queryArg.rejectBusinessUnitCommand,
+          }),
+          invalidatesTags: ["Letter"],
+        }
+      ),
+      searchAllLetters: build.query<
+        SearchAllLettersApiResponse,
+        SearchAllLettersApiArg
+      >({
+        query: () => ({ url: `/api/Letter/search-all` }),
+        providesTags: ["Letter"],
+      }),
+      submitLetter: build.mutation<SubmitLetterApiResponse, SubmitLetterApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Letter/submit`,
+            method: "PATCH",
+            body: queryArg.submitLetterCommand,
           }),
           invalidatesTags: ["Letter"],
         }
@@ -895,6 +979,12 @@ export type UpdateContactByRequestIdApiResponse =
 export type UpdateContactByRequestIdApiArg = {
   updateContactCommand: UpdateContactCommand;
 };
+export type GetLetterCountPerStatusForDashboardApiResponse =
+  /** status 200 Success */ LetterCountsByStatus;
+export type GetLetterCountPerStatusForDashboardApiArg = void;
+export type SearchAllLettersForDashboardApiResponse =
+  /** status 200 Success */ LetterDtoRead[];
+export type SearchAllLettersForDashboardApiArg = void;
 export type GetApiDocumentsByIdApiResponse = /** status 200 Success */ Blob;
 export type GetApiDocumentsByIdApiArg = {
   id: string;
@@ -909,6 +999,35 @@ export type DocumentRootPathApiArg = void;
 export type CreateLetterApiResponse = /** status 200 Success */ number;
 export type CreateLetterApiArg = {
   createLetterCommand: CreateLetterCommand;
+};
+export type UpdateLetterApiResponse = unknown;
+export type UpdateLetterApiArg = {
+  updateLetterCommand: UpdateLetterCommand;
+};
+export type ApproveLetterApiResponse = /** status 200 Success */ number;
+export type ApproveLetterApiArg = {
+  approveLetterCommand: ApproveLetterCommand;
+};
+export type GetLetterCountPerStatusApiResponse =
+  /** status 200 Success */ LetterCountsByStatus;
+export type GetLetterCountPerStatusApiArg = void;
+export type GetLettersForPaginationApiResponse =
+  /** status 200 Success */ PaginatedLetterListRead;
+export type GetLettersForPaginationApiArg = {
+  status?: LetterStatus;
+  pageNumber?: number;
+  pageSize?: number;
+};
+export type RejectLetterApiResponse = /** status 200 Success */ number;
+export type RejectLetterApiArg = {
+  rejectBusinessUnitCommand: RejectBusinessUnitCommand;
+};
+export type SearchAllLettersApiResponse =
+  /** status 200 Success */ LetterDtoRead[];
+export type SearchAllLettersApiArg = void;
+export type SubmitLetterApiResponse = /** status 200 Success */ number;
+export type SubmitLetterApiArg = {
+  submitLetterCommand: SubmitLetterCommand;
 };
 export type GetAllLookupsApiResponse = /** status 200 Success */ LookupDto;
 export type GetAllLookupsApiArg = void;
@@ -1098,6 +1217,28 @@ export type UserRoleRead = {
 export type ApprovalStatus = 1 | 2 | 3 | 4;
 export type LetterType = 1 | 2 | 3;
 export type LetterStatus = 1 | 2 | 3 | 4;
+export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type Status = 1 | 2;
+export type BusinessUnitType = {
+  value?: BusinessUnitTypeEnum;
+  name?: string | null;
+  description?: string | null;
+  numberOfDigits?: number;
+  order?: number;
+  isActive?: boolean;
+};
+export type BusinessUnit = {
+  id?: number;
+  businessUnitID?: string | null;
+  name?: string | null;
+  parentId?: number;
+  type?: BusinessUnitTypeEnum;
+  businessUnitCode?: string | null;
+  staffStrength?: number | null;
+  approvalStatus?: ApprovalStatus;
+  status?: Status;
+  businessUnitType?: BusinessUnitType;
+};
 export type DocumentType = 1 | 2 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 export type EmployeeDocument = {
   isDeleted?: boolean | null;
@@ -1131,12 +1272,14 @@ export type Letter = {
   content?: string | null;
   letterType?: LetterType;
   status?: LetterStatus;
-  receivedDate?: string;
+  receivedDate?: string | null;
   sentDate?: string | null;
   senderId?: string | null;
   sender?: HrUser;
   recipientId?: string | null;
   recipient?: HrUser;
+  businessUnitId?: number;
+  businessUnits?: BusinessUnit;
   employeeDocuments?: EmployeeDocument[] | null;
 };
 export type IDomainEvent = object;
@@ -1162,12 +1305,14 @@ export type LetterRead = {
   content?: string | null;
   letterType?: LetterType;
   status?: LetterStatus;
-  receivedDate?: string;
+  receivedDate?: string | null;
   sentDate?: string | null;
   senderId?: string | null;
   sender?: HrUser;
   recipientId?: string | null;
   recipient?: HrUser;
+  businessUnitId?: number;
+  businessUnits?: BusinessUnit;
   employeeDocuments?: EmployeeDocument[] | null;
 };
 export type HrUser = {
@@ -1299,8 +1444,6 @@ export type UserDetail = {
 export type ActivateBusinessUnitCommand = {
   id?: number;
 };
-export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-export type Status = 1 | 2;
 export type SubCity = {
   id?: number;
   name?: string | null;
@@ -1409,6 +1552,44 @@ export type UpdateContactCommand = {
   contactCategory?: ContactCategoryEnum;
   requestId?: number;
 };
+export type LetterCountsByStatus = {
+  pending?: number;
+  received?: number;
+  responded?: number;
+  archived?: number;
+};
+export type LetterDto = {
+  id?: number;
+  referenceNumber?: string | null;
+  subject?: string | null;
+  content?: string | null;
+  letterType?: LetterType;
+  status?: LetterStatus;
+  receivedDate?: string | null;
+  sentDate?: string | null;
+  senderId?: string | null;
+  sender?: HrUser;
+  recipientId?: string | null;
+  recipient?: HrUser;
+  businessUnitId?: number;
+  businessUnits?: BusinessUnit;
+};
+export type LetterDtoRead = {
+  id?: number;
+  referenceNumber?: string | null;
+  subject?: string | null;
+  content?: string | null;
+  letterType?: LetterType;
+  status?: LetterStatus;
+  receivedDate?: string | null;
+  sentDate?: string | null;
+  senderId?: string | null;
+  sender?: HrUserRead;
+  recipientId?: string | null;
+  recipient?: HrUserRead;
+  businessUnitId?: number;
+  businessUnits?: BusinessUnit;
+};
 export type DocumentEndpointRootPath = {
   path?: string | null;
 };
@@ -1417,19 +1598,36 @@ export type CreateLetterCommand = {
   subject?: string | null;
   content?: string | null;
   letterType?: LetterType;
+  senderId?: string | null;
+  recipientId?: string | null;
+  businessUnitId?: number;
+};
+export type UpdateLetterCommand = {
+  id?: number;
+  referenceNumber?: string | null;
+  subject?: string | null;
+  content?: string | null;
+  letterType?: LetterType;
   status?: LetterStatus;
-  receivedDate?: string;
+  receivedDate?: string | null;
   sentDate?: string | null;
   senderId?: string | null;
   recipientId?: string | null;
+  businessUnitId?: number;
 };
-export type BusinessUnitType = {
-  value?: BusinessUnitTypeEnum;
-  name?: string | null;
-  description?: string | null;
-  numberOfDigits?: number;
-  order?: number;
-  isActive?: boolean;
+export type ApproveLetterCommand = {
+  id?: number;
+};
+export type PaginatedLetterList = {
+  items?: LetterDto[] | null;
+  totalCount?: number;
+};
+export type PaginatedLetterListRead = {
+  items?: LetterDtoRead[] | null;
+  totalCount?: number;
+};
+export type SubmitLetterCommand = {
+  id?: number;
 };
 export type LookupDto = {
   businessUnits?: BusinessUnitLists;
@@ -1587,6 +1785,10 @@ export const {
   useGetEmployeeFamilyContactByIdQuery,
   useLazyGetEmployeeFamilyContactByIdQuery,
   useUpdateContactByRequestIdMutation,
+  useGetLetterCountPerStatusForDashboardQuery,
+  useLazyGetLetterCountPerStatusForDashboardQuery,
+  useSearchAllLettersForDashboardQuery,
+  useLazySearchAllLettersForDashboardQuery,
   useGetApiDocumentsByIdQuery,
   useLazyGetApiDocumentsByIdQuery,
   useDownloadDocumentQuery,
@@ -1594,6 +1796,16 @@ export const {
   useDocumentRootPathQuery,
   useLazyDocumentRootPathQuery,
   useCreateLetterMutation,
+  useUpdateLetterMutation,
+  useApproveLetterMutation,
+  useGetLetterCountPerStatusQuery,
+  useLazyGetLetterCountPerStatusQuery,
+  useGetLettersForPaginationQuery,
+  useLazyGetLettersForPaginationQuery,
+  useRejectLetterMutation,
+  useSearchAllLettersQuery,
+  useLazySearchAllLettersQuery,
+  useSubmitLetterMutation,
   useGetAllLookupsQuery,
   useLazyGetAllLookupsQuery,
   useApproveRegionMutation,

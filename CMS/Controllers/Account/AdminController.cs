@@ -225,7 +225,7 @@ public class AdminController : BaseController<AdminController>
         return Ok();
     }
 
-    [HttpGet("users")]
+    [HttpGet("users", Name = "Users")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [Authorize(Policy = AuthPolicy.User.canViewUser)]
     public async Task<ActionResult<List<UserDetail>>> Users()

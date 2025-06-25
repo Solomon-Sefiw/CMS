@@ -33,6 +33,8 @@ import { RegionHome } from "../features/Address/Region/RegionHome";
 import { ApprovedRegions, DraftRegions, RegionApprovalRequests, RegionRejectedApprovalRequest } from "../features/Address/Region/RegionGrids";
 import { SubCityHome } from "../features/Address/SubCity/SubCityHome";
 import { ApprovedSubCities, DraftSubCities, SubCityApprovalRequests, SubCityRejectedApprovalRequest } from "../features/Address/SubCity/SubCityGrids";
+import { LetterHome } from "../features/Letter/LetterHome";
+import { ArchivedLetters, PendingLetters, ReceivedLetters, RespondedLetters } from "../features/Letter/LetterGrid";
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -97,17 +99,18 @@ const AppRoutes = () => {
         {/* Subcity */}
         <Route path="sub-city" element={<SubCityHome />}>
           <Route index element={<ApprovedSubCities />} />
-          <Route
-            path="approval-requests"
-            element={<SubCityApprovalRequests />}
-          />
-          <Route
-            path="rejected-approval-requests"
-            element={<SubCityRejectedApprovalRequest />}
-          />
+          <Route path="approval-requests" element={<SubCityApprovalRequests />}/>
+          <Route path="rejected-approval-requests" element={<SubCityRejectedApprovalRequest />}/>
           <Route path="draft" element={<DraftSubCities />} />
         </Route>
 
+                {/* Subcity */}
+        <Route path="letters" element={<LetterHome />}>
+          <Route index element={<RespondedLetters />} />
+          <Route path="received" element={<ReceivedLetters />}/>
+          <Route path="archived" element={<ArchivedLetters />}/>
+          <Route path="pending" element={<PendingLetters />} />
+        </Route>
       </Route>
     </Routes>
   );

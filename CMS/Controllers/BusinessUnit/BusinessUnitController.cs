@@ -1,6 +1,4 @@
-﻿using CMS.API.Attributes;
-using CMS.API.Controllers;
-using CMS.Application.Features.BusinessUnits;
+﻿using CMS.Application.Features.BusinessUnits;
 using CMS.Application.Features.BusinessUnits.Commands.ActivateBusinessUnit;
 using CMS.Application.Features.BusinessUnits.Commands.ApproveBusinessUnit;
 using CMS.Application.Features.BusinessUnits.Commands.CloseBusinessUnit;

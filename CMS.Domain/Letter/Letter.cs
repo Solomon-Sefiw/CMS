@@ -15,9 +15,9 @@ namespace CMS.Domain.letters
         public string Subject { get; set; }
         public string Content { get; set; }
         public LetterType LetterType { get; set; }
-        public LetterStatus Status { get; set; }
-        public DateTime ReceivedDate { get; set; }
-        public DateTime? SentDate { get; set; }
+        public LetterStatus Status { get; set; } = LetterStatus.pending;
+        public DateTime? ReceivedDate { get; set; } 
+        public DateTime? SentDate { get; set; } 
         public string? SenderId { get; set; }
         public HRUser Sender { get; set; }
         public string? RecipientId { get; set; }

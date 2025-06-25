@@ -19,7 +19,7 @@ namespace CMS.Application.Features.Letter.Commands.UpdateLetter
         public string Content { get; set; }
         public LetterType LetterType { get; set; }
         public LetterStatus Status { get; set; }
-        public DateTime ReceivedDate { get; set; }
+        public DateTime? ReceivedDate { get; set; }
         public DateTime? SentDate { get; set; }
         public string? SenderId { get; set; }
         public string? RecipientId { get; set; }

@@ -47,19 +47,6 @@ namespace CMS.Persistance.SeedData
 {
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View, ClaimCategory = ClaimCategory.Dashboard },
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View1, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View2, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View3, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View4, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View5, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View6, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View7, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View8, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View9, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View10, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View11, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View12, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View13, ClaimCategory = ClaimCategory.Dashboard },
-                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View14, ClaimCategory = ClaimCategory.Dashboard },
 
             });
 

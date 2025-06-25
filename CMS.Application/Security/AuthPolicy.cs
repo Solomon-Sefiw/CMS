@@ -32,25 +32,8 @@ public class AuthPolicy
     }
     public static class Dashboard
     {
-        // Cards
-        public const string canViewAllActiveEmployees = "canViewAllActiveEmployees";
-        public const string canViewAllVacantJobs = "canViewAllVacantJobs";
-        public const string canViewAllResignedEmployees = "canViewAllResignedEmployees";
-        public const string canViewAllBusinessUnits = "canViewAllBusinessUnits";
-        public const string canViewAllNewEmployees = "canViewAllNewEmployees";
-        public const string canViewAllPositions = "canViewAllPositions";
-        public const string canViewTurnoverRates = "canViewTurnoverRates";
-        public const string canViewRetentionRates = "canViewRetentionRates";
-        //Chart And Graph
-        public const string canViewEmployeeDistributionByStatusDoughnutChart = "canViewEmployeeDistributionByStatusDoughnutChart";
-        public const string canViewMonthlyNewEmployeesOfFiscalYearBarChart = "canViewMonthlyNewEmployeesOfFiscalYearBarChart";
-        public const string canViewEmployeeDistributionByChiefOfficeBarChart = "canViewEmployeeDistributionByChiefOfficeBarChart";
-        public const string canViewEmployeeDistributionByJobCategoryPieChart = "canViewEmployeeDistributionByJobCategoryPieChart";
-        public const string canViewMonthlyHRMetricsLineGraph = "canViewMonthlyHRMetricsLineGraph";
-
-        //Approval
-        public const string canViewAllApprovalSummaries = "canViewAllApprovalSummaries";
-        public const string canViewAllApprovalRequestGrid = "canViewAllApprovalRequestGrid";
+        public const string canViewLetterCountBoard = "canViewLetterCountBoard";
+        public const string canViewRecentLettersBoard = "canViewRecentLettersBoard";
     }
 
 }

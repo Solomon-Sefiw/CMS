@@ -134,7 +134,7 @@ export const Header = ({
             to="/home"
             sx={{ textDecoration: "none", color: "#002a73", fontWeight: "bold" }}
           >
-            HCMS
+            CMS
           </Link>
         </Box>
 

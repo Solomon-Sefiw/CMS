@@ -1,4 +1,9 @@
 import {
+  EmailRounded,
+  InboxOutlined,
+  MarkUnreadChatAltRounded,
+  Message,
+  MessageTwoTone,
   PodcastsSharp,
 } from "@mui/icons-material";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -55,7 +60,7 @@ const navMenuItems: NavMenuItem[] = [
   },
   {
     label: "Letters",
-    icon: <PodcastsSharp color="primary" />,
+    icon: <EmailRounded color="primary" />,
     url: "/letters",
   },
 ];

@@ -16,10 +16,10 @@ namespace CMS.Domain.Enum
     // Domain/Enums/LetterStatus.cs
     public enum LetterStatus
     {
-        received = 1 ,
-        pending,
+        pending = 1,
+        received,
         responded,
-        archivedd
+        archived
     }
     public enum CourtType
     {
