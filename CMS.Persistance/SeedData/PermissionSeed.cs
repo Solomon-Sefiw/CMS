@@ -44,12 +44,11 @@ namespace CMS.Persistance.SeedData
             });
 
             permissions.AddRange(new[]
-{
+            {
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View, ClaimCategory = ClaimCategory.Dashboard },
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View1, ClaimCategory = ClaimCategory.Dashboard },
 
             });
-
             // Add the permissions to the context and save them to the database
             await context.Permissions.AddRangeAsync(permissions);
 

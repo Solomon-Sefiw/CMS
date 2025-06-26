@@ -14,8 +14,10 @@ namespace CMS.Application.Features.Letter.Queries
 {
     public record GetPaginatedLettersQuery(
         LetterStatus Status,
+        string UserId,
         int PageNumber = 1,
         int PageSize = 10
+        
     ) : IRequest<PaginatedLetterList>;
 
     public record PaginatedLetterList(
@@ -43,7 +45,7 @@ namespace CMS.Application.Features.Letter.Queries
                 .AsQueryable();
 
             // Fix: Removed HasValue check since LetterStatus is an enum and cannot be null
-            query = query.Where(l => l.Status == request.Status);
+            query = query.Where(l => l.Status == request.Status && (l.SenderId == request.UserId || l.RecipientId == request.UserId));
 
             var totalCount = await query.CountAsync(cancellationToken);
 

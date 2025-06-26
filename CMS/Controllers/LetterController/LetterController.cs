@@ -34,23 +34,23 @@ namespace CMS.Api.Controllers.LetterController
         }
         [HttpGet("count", Name = "GetLetterCountPerStatus")]
         [ProducesResponseType(200)]
-        public async Task<LetterCountsByStatus> GetLetterCountPerStatus()
+        public async Task<LetterCountsByStatus> GetLetterCountPerStatus(string userId)
         {
-            return await mediator.Send(new GetLetterCountPerStatusQuery());
+            return await mediator.Send(new GetLetterCountPerStatusQuery(userId));
         }
 
         [HttpGet("GetLettersForPagination", Name = "GetLettersForPagination")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<PaginatedLetterList>> GetLettersForPagination(LetterStatus status, int pageNumber, int pageSize)
+        public async Task<ActionResult<PaginatedLetterList>> GetLettersForPagination(LetterStatus status, int pageNumber, int pageSize,string userId)
         {
-            var searchResult = await mediator.Send(new GetPaginatedLettersQuery(status, pageNumber, pageSize));
+            var searchResult = await mediator.Send(new GetPaginatedLettersQuery(status, userId, pageNumber, pageSize));
 
             return searchResult;
         }
         [HttpGet("search-all")]
-        public async Task<ActionResult<List<LetterDto>>> SearchAllLetters()
+        public async Task<ActionResult<List<LetterDto>>> SearchAllLetters(string userId)
         {
-            var query = new SearchLettersQuery();
+            var query = new SearchLettersQuery(userId);
             var result = await mediator.Send(query);
             return Ok(result);
         }

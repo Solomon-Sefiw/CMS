@@ -9,7 +9,7 @@ import {
   Typography, // Added for potential titles/headings
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { usePermission } from "../../hooks"; // Assuming this hook is correct
+import { useAuth, usePermission } from "../../hooks"; // Assuming this hook is correct
 import { Outlet, useNavigate } from "react-router-dom";
 import {
   useGetLetterCountPerStatusQuery, // Renamed hook
@@ -28,12 +28,12 @@ export const LetterHome: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Actual query sent to child components (Outlet)
   const [autoCompleteOpen, setAutoCompleteOpen] = useState(false);
   const navigate = useNavigate();
-
+ const { user } = useAuth();
   // Data fetching
   const { data: letterStatusCounts, isLoading: areCountsLoading } =
-    useGetLetterCountPerStatusQuery(); // Renamed for clarity
+    useGetLetterCountPerStatusQuery({userId : user?.id || ''}); // Renamed for clarity
   const { data: allLetters = [], isLoading: areLettersLoading } =
-    useSearchAllLettersQuery(); // Renamed for clarity
+    useSearchAllLettersQuery({userId: user?.id || ''}); // Renamed for clarity
 
   // Unified loading state for the main view
   const isLoading = areCountsLoading || areLettersLoading;

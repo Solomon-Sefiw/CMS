@@ -39,7 +39,7 @@ import {
 } from "../../app/store";
 
 import { LetterStatus } from "../../app/api/enums";
-import { usePermission } from "../../hooks";
+import { useAuth, usePermission } from "../../hooks";
 
 // Define a type for the card configuration to ensure type safety
 interface DashboardCard {
@@ -52,16 +52,17 @@ interface DashboardCard {
 }
 
 const LetterDashboardDemo = () => {
+   const { user } = useAuth();
   const navigate = useNavigate();
   const permissions = usePermission();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { data: letterCounts, isLoading: areCountsLoading, error: countsError } =
-    useGetLetterCountPerStatusForDashboardQuery();
+    useGetLetterCountPerStatusForDashboardQuery({userId: user?.id || ''});
 
   const { data: allLetters = [], isLoading: areLettersLoading, error: lettersError } =
-    useSearchAllLettersForDashboardQuery();
+    useSearchAllLettersForDashboardQuery({userId: user?.id || ''});
 
   const getCountByType = (type: keyof LetterCountsByStatus): number => {
     if (areCountsLoading || countsError || !letterCounts) return 0;
@@ -164,7 +165,7 @@ const LetterDashboardDemo = () => {
   const dashboardCards: DashboardCard[] = [
     { type: 'pending', label: 'Pending Letters', icon: MarkAsUnreadIcon, color: 'warning', subText: 'Requires action', route: 'pending' },
     { type: 'received', label: 'Received Letters', icon: ForwardToInboxIcon, color: 'primary', subText: 'This month', route: 'received' },
-    { type: 'responded', label: 'Responded Letters', icon: SendIcon, color: 'success', subText: 'Successfully handled', route: 'responded' }, // Changed route for responded
+    { type: 'responded', label: 'Responded Letters', icon: SendIcon, color: 'success', subText: 'Successfully handled', route: '' }, 
     { type: 'archived', label: 'Archived Letters', icon: ArchiveIcon, color: 'default', subText: 'For historical reference', route: 'archived' },
   ];
 

@@ -13,7 +13,7 @@ namespace CMS.Application.Features.Letter.Queries
 
 
 
-    public record GetLetterCountPerStatusQuery() : IRequest<LetterCountsByStatus>;
+    public record GetLetterCountPerStatusQuery(string userId) : IRequest<LetterCountsByStatus>;
     public record LetterCountsByStatus(int pending, int received, int responded, int archived);
 
     public class GetBusinessUnitCountPerApprovalStatusQueryHandler : IRequestHandler<GetLetterCountPerStatusQuery, LetterCountsByStatus>
@@ -26,10 +26,10 @@ namespace CMS.Application.Features.Letter.Queries
         }
         public async Task<LetterCountsByStatus> Handle(GetLetterCountPerStatusQuery request, CancellationToken cancellationToken)
         {
-            var pending = await dataService.Letters.Where(bu => bu.Status == LetterStatus.pending).CountAsync();
-            var received = await dataService.Letters.Where(bu => bu.Status == LetterStatus.received).CountAsync();
-            var responded = await dataService.Letters.Where(bu => bu.Status == LetterStatus.responded).CountAsync();
-            var archived = await dataService.Letters.Where(bu => bu.Status == LetterStatus.archived).CountAsync();
+            var pending = await dataService.Letters.Where(bu => bu.Status == LetterStatus.pending && (bu.SenderId == request.userId || bu.RecipientId == request.userId)).CountAsync();
+            var received = await dataService.Letters.Where(bu => bu.Status == LetterStatus.received && (bu.SenderId == request.userId || bu.RecipientId == request.userId)).CountAsync();
+            var responded = await dataService.Letters.Where(bu => bu.Status == LetterStatus.responded && (bu.SenderId == request.userId || bu.RecipientId == request.userId)).CountAsync();
+            var archived = await dataService.Letters.Where(bu => bu.Status == LetterStatus.archived && (bu.SenderId == request.userId || bu.RecipientId == request.userId)).CountAsync();
 
             return new(pending, received, responded, archived);
         }

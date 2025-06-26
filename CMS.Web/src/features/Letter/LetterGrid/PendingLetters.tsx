@@ -17,7 +17,7 @@ import { LetterStatus } from "../../../app/api/enums";
 import { ApproveOrRejectRequestButton } from "../ApproveOrRejectRequestButton";
 import { Pagination } from "../../../components/Pagination";
 import { LetterDialog } from "../LetterDialog";
-import { usePermission } from "../../../hooks";
+import { useAuth, usePermission } from "../../../hooks";
 import {
   LetterDto,
   useGetLetterCountPerStatusQuery,
@@ -31,7 +31,9 @@ interface PaginationState {
 }
 
 export const PendingLetters = () => {
+  
   const permissions = usePermission();
+   const { user } = useAuth();
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageNumber: 0,
     pageSize: 10,
@@ -40,7 +42,7 @@ export const PendingLetters = () => {
   const { searchQuery } = useOutletContext<{ searchQuery: string }>();
 
   const { data: statusCounts, isLoading: isCountsLoading } =
-    useGetLetterCountPerStatusQuery();
+    useGetLetterCountPerStatusQuery({userId: user?.id || ''});
 
   const {
     data: lettersData,
@@ -50,6 +52,7 @@ export const PendingLetters = () => {
     pageNumber: paginationState.pageNumber + 1,
     pageSize: paginationState.pageSize,
     status: LetterStatus.pending,
+    userId: user?.id || ''
   });
 
   const isDataLoading = isCountsLoading || isListLoading;

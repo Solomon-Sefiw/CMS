@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Application.Features.Letter.Queries
 {
-    public record SearchLettersQuery : IRequest<List<LetterDto>>;
+    public record SearchLettersQuery(string userId) : IRequest<List<LetterDto>>;
 
     public class SearchLettersQueryHandler : IRequestHandler<SearchLettersQuery, List<LetterDto>>
     {
@@ -27,6 +27,7 @@ namespace CMS.Application.Features.Letter.Queries
                 .Include(l => l.Sender)
                 .Include(l => l.Recipient)
                 .Include(l => l.BusinessUnits)
+                .Where(l =>  l.SenderId == request.userId || l.RecipientId == request.userId)
                 .ToListAsync(cancellationToken);
 
             return letters.Select(l => new LetterDto

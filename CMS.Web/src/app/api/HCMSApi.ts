@@ -475,14 +475,20 @@ const injectedRtkApi = api
         GetLetterCountPerStatusForDashboardApiResponse,
         GetLetterCountPerStatusForDashboardApiArg
       >({
-        query: () => ({ url: `/api/Dashboard/count` }),
+        query: (queryArg) => ({
+          url: `/api/Dashboard/count`,
+          params: { userId: queryArg.userId },
+        }),
         providesTags: ["Dashboard"],
       }),
       searchAllLettersForDashboard: build.query<
         SearchAllLettersForDashboardApiResponse,
         SearchAllLettersForDashboardApiArg
       >({
-        query: () => ({ url: `/api/Dashboard/search-all` }),
+        query: (queryArg) => ({
+          url: `/api/Dashboard/search-all`,
+          params: { userId: queryArg.userId },
+        }),
         providesTags: ["Dashboard"],
       }),
       getApiDocumentsById: build.query<
@@ -543,7 +549,10 @@ const injectedRtkApi = api
         GetLetterCountPerStatusApiResponse,
         GetLetterCountPerStatusApiArg
       >({
-        query: () => ({ url: `/api/Letter/count` }),
+        query: (queryArg) => ({
+          url: `/api/Letter/count`,
+          params: { userId: queryArg.userId },
+        }),
         providesTags: ["Letter"],
       }),
       getLettersForPagination: build.query<
@@ -556,6 +565,7 @@ const injectedRtkApi = api
             status: queryArg.status,
             pageNumber: queryArg.pageNumber,
             pageSize: queryArg.pageSize,
+            userId: queryArg.userId,
           },
         }),
         providesTags: ["Letter"],
@@ -574,7 +584,10 @@ const injectedRtkApi = api
         SearchAllLettersApiResponse,
         SearchAllLettersApiArg
       >({
-        query: () => ({ url: `/api/Letter/search-all` }),
+        query: (queryArg) => ({
+          url: `/api/Letter/search-all`,
+          params: { userId: queryArg.userId },
+        }),
         providesTags: ["Letter"],
       }),
       submitLetter: build.mutation<SubmitLetterApiResponse, SubmitLetterApiArg>(
@@ -981,10 +994,14 @@ export type UpdateContactByRequestIdApiArg = {
 };
 export type GetLetterCountPerStatusForDashboardApiResponse =
   /** status 200 Success */ LetterCountsByStatus;
-export type GetLetterCountPerStatusForDashboardApiArg = void;
+export type GetLetterCountPerStatusForDashboardApiArg = {
+  userId?: string;
+};
 export type SearchAllLettersForDashboardApiResponse =
   /** status 200 Success */ LetterDtoRead[];
-export type SearchAllLettersForDashboardApiArg = void;
+export type SearchAllLettersForDashboardApiArg = {
+  userId?: string;
+};
 export type GetApiDocumentsByIdApiResponse = /** status 200 Success */ Blob;
 export type GetApiDocumentsByIdApiArg = {
   id: string;
@@ -1010,13 +1027,16 @@ export type ApproveLetterApiArg = {
 };
 export type GetLetterCountPerStatusApiResponse =
   /** status 200 Success */ LetterCountsByStatus;
-export type GetLetterCountPerStatusApiArg = void;
+export type GetLetterCountPerStatusApiArg = {
+  userId?: string;
+};
 export type GetLettersForPaginationApiResponse =
   /** status 200 Success */ PaginatedLetterListRead;
 export type GetLettersForPaginationApiArg = {
   status?: LetterStatus;
   pageNumber?: number;
   pageSize?: number;
+  userId?: string;
 };
 export type RejectLetterApiResponse = /** status 200 Success */ number;
 export type RejectLetterApiArg = {
@@ -1024,7 +1044,9 @@ export type RejectLetterApiArg = {
 };
 export type SearchAllLettersApiResponse =
   /** status 200 Success */ LetterDtoRead[];
-export type SearchAllLettersApiArg = void;
+export type SearchAllLettersApiArg = {
+  userId?: string;
+};
 export type SubmitLetterApiResponse = /** status 200 Success */ number;
 export type SubmitLetterApiArg = {
   submitLetterCommand: SubmitLetterCommand;

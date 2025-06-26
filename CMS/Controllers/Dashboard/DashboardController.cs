@@ -14,15 +14,15 @@ namespace CMS.Api.Controllers.Dashboard
         [HttpGet("count", Name = "GetLetterCountPerStatusForDashboard")]
         [Authorize(Policy = AuthPolicy.Dashboard.canViewLetterCountBoard)]
         [ProducesResponseType(200)]
-        public async Task<LetterCountsByStatus> GetLetterCountPerStatusForDashboard()
+        public async Task<LetterCountsByStatus> GetLetterCountPerStatusForDashboard(string userId)
         {
-            return await mediator.Send(new GetLetterCountPerStatusQuery());
+            return await mediator.Send(new GetLetterCountPerStatusQuery(userId));
         }
         [HttpGet("search-all")]
         [Authorize(Policy = AuthPolicy.Dashboard.canViewRecentLettersBoard)]
-        public async Task<ActionResult<List<LetterDto>>> SearchAllLettersForDashboard()
+        public async Task<ActionResult<List<LetterDto>>> SearchAllLettersForDashboard(string userId)
         {
-            var query = new SearchLettersQuery();
+            var query = new SearchLettersQuery(userId);
             var result = await mediator.Send(query);
             return Ok(result);
         }
