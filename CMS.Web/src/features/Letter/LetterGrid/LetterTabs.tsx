@@ -16,7 +16,7 @@ const getTabs = ({
   pending,
 }: LetterCountsByStatus = {}): TabProps[] => [
   {
-    label: "Sub Cities",
+    label: "Responsed Letters",
     href: "/letters",
     counts: undefined,
     color: "success",

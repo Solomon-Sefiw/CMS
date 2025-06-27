@@ -165,7 +165,11 @@ const LetterDashboardDemo = () => {
   const dashboardCards: DashboardCard[] = [
     { type: 'pending', label: 'Pending Letters', icon: MarkAsUnreadIcon, color: 'warning', subText: 'Requires action', route: 'pending' },
     { type: 'received', label: 'Received Letters', icon: ForwardToInboxIcon, color: 'primary', subText: 'This month', route: 'received' },
+<<<<<<< Updated upstream
     { type: 'responded', label: 'Responded Letters', icon: SendIcon, color: 'success', subText: 'Successfully handled', route: '' }, 
+=======
+    { type: 'responded', label: 'Responded Letters', icon: SendIcon, color: 'success', subText: 'Successfully handled', route: '' }, // Changed route for responded
+>>>>>>> Stashed changes
     { type: 'archived', label: 'Archived Letters', icon: ArchiveIcon, color: 'default', subText: 'For historical reference', route: 'archived' },
   ];
 
