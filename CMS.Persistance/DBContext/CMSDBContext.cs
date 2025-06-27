@@ -47,6 +47,7 @@ namespace CMS.Persistance.DBContext
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
+        public DbSet<UserDocument> UserDocuments { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<Permission> Permissions { get; set; }

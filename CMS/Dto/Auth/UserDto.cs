@@ -15,7 +15,8 @@ public class UserDto
     public int BranchId { get; set; }
     public IList<string> Roles { get; set; }
     public IList<Permission> Permissions { get; set; }
-
+    public string PhotoId { get; set; }
+    public string PhotoUrl { get; set; }
     public UserDto()
     {
 

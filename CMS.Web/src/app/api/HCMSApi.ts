@@ -575,7 +575,7 @@ const injectedRtkApi = api
           query: (queryArg) => ({
             url: `/api/Letter/Reject`,
             method: "PATCH",
-            body: queryArg.rejectBusinessUnitCommand,
+            body: queryArg.rejectLetterCommand,
           }),
           invalidatesTags: ["Letter"],
         }
@@ -778,6 +778,16 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["SubCity"],
       }),
+      addUserPhoto: build.mutation<AddUserPhotoApiResponse, AddUserPhotoApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Users/${queryArg.id}/add-photo`,
+            method: "POST",
+            body: queryArg.body,
+          }),
+          invalidatesTags: ["Users"],
+        }
+      ),
       currentUserInfo: build.query<
         CurrentUserInfoApiResponse,
         CurrentUserInfoApiArg
@@ -1040,7 +1050,7 @@ export type GetLettersForPaginationApiArg = {
 };
 export type RejectLetterApiResponse = /** status 200 Success */ number;
 export type RejectLetterApiArg = {
-  rejectBusinessUnitCommand: RejectBusinessUnitCommand;
+  rejectLetterCommand: RejectLetterCommand;
 };
 export type SearchAllLettersApiResponse =
   /** status 200 Success */ LetterDtoRead[];
@@ -1121,6 +1131,14 @@ export type SubmitSubCityApiArg = {
 export type UpdateSubCityApiResponse = /** status 200 Success */ number;
 export type UpdateSubCityApiArg = {
   updateSubCityCommand: UpdateSubCityCommand;
+};
+export type AddUserPhotoApiResponse =
+  /** status 200 Success */ DocumentMetadataDto;
+export type AddUserPhotoApiArg = {
+  id: string;
+  body: {
+    file?: Blob;
+  };
 };
 export type CurrentUserInfoApiResponse = /** status 200 Success */ UserDtoRead;
 export type CurrentUserInfoApiArg = void;
@@ -1337,6 +1355,30 @@ export type LetterRead = {
   businessUnits?: BusinessUnit;
   employeeDocuments?: EmployeeDocument[] | null;
 };
+export type UserDocument = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+  userId?: string | null;
+  user?: HrUser;
+};
+export type UserDocumentRead = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+  userId?: string | null;
+  user?: HrUser;
+};
 export type HrUser = {
   id?: string | null;
   userName?: string | null;
@@ -1361,6 +1403,7 @@ export type HrUser = {
   roles?: UserRole[] | null;
   sentLetters?: Letter[] | null;
   receivedLetters?: Letter[] | null;
+  userDocuments?: UserDocument[] | null;
 };
 export type HrUserRead = {
   id?: string | null;
@@ -1386,6 +1429,7 @@ export type HrUserRead = {
   roles?: UserRoleRead[] | null;
   sentLetters?: LetterRead[] | null;
   receivedLetters?: LetterRead[] | null;
+  userDocuments?: UserDocumentRead[] | null;
 };
 export type RegisterDto = {
   email?: string | null;
@@ -1433,6 +1477,8 @@ export type UserDto = {
   branchId?: number;
   roles?: string[] | null;
   permissions?: Permission[] | null;
+  photoId?: string | null;
+  photoUrl?: string | null;
 };
 export type UserDtoRead = {
   id?: string | null;
@@ -1443,6 +1489,8 @@ export type UserDtoRead = {
   branchId?: number;
   roles?: string[] | null;
   permissions?: Permission[] | null;
+  photoId?: string | null;
+  photoUrl?: string | null;
   fullName?: string | null;
 };
 export type Role = {
@@ -1648,6 +1696,9 @@ export type PaginatedLetterListRead = {
   items?: LetterDtoRead[] | null;
   totalCount?: number;
 };
+export type RejectLetterCommand = {
+  id?: number;
+};
 export type SubmitLetterCommand = {
   id?: number;
 };
@@ -1739,6 +1790,9 @@ export type UpdateSubCityCommand = {
   description?: string | null;
   regionId?: number;
   approvalStatus?: ApprovalStatus;
+};
+export type DocumentMetadataDto = {
+  id?: string | null;
 };
 export const {
   useActivateUserMutation,
@@ -1856,6 +1910,7 @@ export const {
   useLazySearchAllSubCitiesQuery,
   useSubmitSubCityMutation,
   useUpdateSubCityMutation,
+  useAddUserPhotoMutation,
   useCurrentUserInfoQuery,
   useLazyCurrentUserInfoQuery,
 } = injectedRtkApi;

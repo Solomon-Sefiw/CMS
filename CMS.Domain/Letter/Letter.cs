@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using CMS.Domain.Enum;
 using CMS.Domain.User;
 using CMS.Domain.Employee;

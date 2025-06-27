@@ -1,6 +1,8 @@
 ﻿using CMS.Api.Dtos;
 using CMS.API.Controllers;
 using CMS.Application;
+using CMS.Application.Features.Employees.Commands.Documents;
+using CMS.Domain.Enum;
 using CMS.Domain.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -27,48 +29,81 @@ namespace CMS.Api.Controllers
          [Authorize]
         [HttpGet("current")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<UserDto> CurrentUserInfo()
+        public async Task<ActionResult<UserDto>> CurrentUserInfo()
         {
-            var currentUserId = CurrentUser.Id;
+            var currentUserId = CurrentUser?.Id;
+
+            if (string.IsNullOrEmpty(currentUserId))
+                return Unauthorized();
 
             var user = await userManager.Users
-                .Include(u => u.Roles)  // Include the user's roles
-                .SingleOrDefaultAsync(u => u.Id == currentUserId);
+                .Include(u => u.Roles)
+                .Include(u => u.UserDocuments.Where(d => d.IsDeleted != true))
+                .FirstOrDefaultAsync(u => u.Id == currentUserId);
 
             if (user == null)
-            {
-                return null; 
-            }
+                return NotFound("User not found");
 
+            // Roles
             var userRoles = await userManager.GetRolesAsync(user);
 
+            // Permissions from role claims
             var permissions = new List<Permission>();
-
             foreach (var roleName in userRoles)
             {
                 var role = await roleManager.FindByNameAsync(roleName);
                 if (role != null)
                 {
-                    // Get the claims attached to this role
                     var roleClaims = await roleManager.GetClaimsAsync(role);
-
-                    // For each claim, check if it is a policy we need to assign
                     foreach (var claim in roleClaims)
                     {
-                        // Check if the claim corresponds to a policy
                         permissions.Add(new Permission
                         {
-                            Name = claim.Value,  
-                            HasPermission = true 
+                            Name = claim.Value,
+                            HasPermission = true
                         });
                     }
                 }
             }
 
-            CurrentUser.Roles = userRoles.ToList();
-            CurrentUser.Permissions = permissions;
+            // Get PhotoId from UserDocuments
+            var photoId = user.UserDocuments
+                .Where(d => d.DocumentType == DocumentType.EmployeePicture)
+                .Select(d => d.DocumentId)
+                .FirstOrDefault();
 
-            return CurrentUser;
+            // Construct full document URL using base controller method
+            var photoUrl = GetDocumentUrl(photoId);
+
+            // Return DTO
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+                BranchId = user.BranchId,
+                Roles = userRoles.ToList(),
+                Permissions = permissions,
+                PhotoId = photoId,
+                PhotoUrl = photoUrl
+            };
+
+            return Ok(userDto);
         }
+
+
+        [HttpPost("{id}/add-photo", Name = "AddUserPhoto")]
+        [ProducesResponseType(200)]
+        public async Task<DocumentMetadataDto> AddUserPhoto(string id, [FromForm] UploadDocumentDto document)
+        {
+            var command = new AddEmployeePhotoCommand(id, document.file);
+            var doc = await mediator.Send(command);
+
+            return new DocumentMetadataDto(GetDocumentUrl(doc.Id));
+        }
+
+
     }
 }

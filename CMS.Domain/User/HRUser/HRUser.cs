@@ -16,4 +16,6 @@ public class HRUser : IdentityUser
     public virtual ICollection<UserRole> Roles { get; set; } = new List<UserRole>();
     public ICollection<Letter> SentLetters { get; set; }
     public ICollection<Letter> ReceivedLetters { get; set; }
+    public ICollection<UserDocument> UserDocuments { get; set; }
+
 }

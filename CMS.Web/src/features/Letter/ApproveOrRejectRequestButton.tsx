@@ -48,7 +48,7 @@ export const ApproveOrRejectRequestButton = ({ id }: { id: number }) => {
             approveLetterCommand: payload,
           })
         : reject({
-            rejectBusinessUnitCommand: payload,
+            rejectLetterCommand: payload,
           })
       )
         .unwrap()

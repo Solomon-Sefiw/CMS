@@ -81,13 +81,13 @@ export const LetterDialog = ({
     });
 
     if (initialLetter?.id) {
-      setIsLocked(true);
+      setIsLocked(false);
       setNotification("This letter is being viewed/edited.");
-      setOpenSnackbar(true);
+      setOpenSnackbar(false);
     } else {
       setIsLocked(false);
       setOpenSnackbar(false);
-      setNotification("");
+      setNotification(""); 
     }
   }, [initialLetter]);
 

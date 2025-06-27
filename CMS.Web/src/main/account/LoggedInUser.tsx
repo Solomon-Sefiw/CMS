@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useLogoutMutation } from "../../app/api";
 import { useAuth } from "../../hooks";
 import { ChangePasswordDialog } from "./ChangePassword";
+import { UserProfileDialog } from "./UserProfile";
 
 export const LoggedInUser = () => {
   const [logout] = useLogoutMutation();
@@ -18,6 +19,7 @@ export const LoggedInUser = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [openChangePwdDialog, setOpenChangePwdDialog] = useState(false);
+  const [openUserProfileDialog, setOpenUserProfileDialog] = useState(false);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -46,6 +48,14 @@ export const LoggedInUser = () => {
             onClose={closeMenu}
             TransitionComponent={Fade}
           >
+          <MenuItem
+              onClick={() => {
+                setOpenUserProfileDialog(true);
+                closeMenu();
+              }}
+            >
+             Manage Profile
+            </MenuItem>
             <MenuItem
               onClick={() => {
                 setOpenChangePwdDialog(true);
@@ -69,6 +79,13 @@ export const LoggedInUser = () => {
         <ChangePasswordDialog
           onClose={() => {
             setOpenChangePwdDialog(false);
+          }}
+        />
+      )}
+      {openUserProfileDialog && (
+        <UserProfileDialog
+          onClose={() => {
+            setOpenUserProfileDialog(false);
           }}
         />
       )}

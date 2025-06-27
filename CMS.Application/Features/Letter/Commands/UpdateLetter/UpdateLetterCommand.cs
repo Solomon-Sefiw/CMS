@@ -41,10 +41,13 @@ namespace CMS.Application.Features.Letter.Commands.UpdateLetter
         {
             var letter = await _context.Letters.FirstOrDefaultAsync(l => l.Id == request.Id, cancellationToken);
 
-            if (letter == null)
+            if (letter.Status == LetterStatus.archived)
             {
-                // Handle not found scenario, e.g., throw a NotFoundException or return a specific error
-                throw new Exception($"Letter with Id {request.Id} not found.");
+                letter.Status = LetterStatus.pending; // Fixed assignment operator
+            }
+            else
+            {
+                letter.Status = request.Status; // Update the status if not archived
             }
 
             _mapper.Map(request, letter); // Map properties from request onto the existing letter entity

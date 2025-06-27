@@ -22,7 +22,7 @@ namespace CMS.Application.Features.BusinessUnits.Commands.RejectBusinessUnit
             var businessUnit= dataService.BusinessUnits.Where(bu=>bu.Id==command.Id).FirstOrDefault();
 
             businessUnit.ApprovalStatus = ApprovalStatus.Rejected;
-
+           
             await dataService.SaveAsync(cancellationtoken);
             return businessUnit.Id;
         }

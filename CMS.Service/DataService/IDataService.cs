@@ -25,6 +25,7 @@ namespace CMS.Services.DataService
 
         public DbSet<Document> Documents { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
+        public DbSet<UserDocument> UserDocuments { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<HRRole> Roles { get; set; }
         public DbSet<Email> Emails { get; set; }
