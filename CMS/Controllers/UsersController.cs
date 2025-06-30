@@ -1,7 +1,7 @@
 ﻿using CMS.Api.Dtos;
 using CMS.API.Controllers;
 using CMS.Application;
-using CMS.Application.Features.Employees.Commands.Documents;
+using CMS.Application.Features.UserAccount.Commands.Documents;
 using CMS.Domain.Enum;
 using CMS.Domain.User;
 using Microsoft.AspNetCore.Authorization;
@@ -98,7 +98,7 @@ namespace CMS.Api.Controllers
         [ProducesResponseType(200)]
         public async Task<DocumentMetadataDto> AddUserPhoto(string id, [FromForm] UploadDocumentDto document)
         {
-            var command = new AddEmployeePhotoCommand(id, document.file);
+            var command = new AddUserPhotoCommand(id, document.File);
             var doc = await mediator.Send(command);
 
             return new DocumentMetadataDto(GetDocumentUrl(doc.Id));

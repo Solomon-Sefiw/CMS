@@ -87,7 +87,7 @@ export const UserProfileDialog = ({ onClose }: { onClose: () => void }) => {
                   <Errors errors={errors as any} />
                 </Grid>
               )}
-            <UserPhoto employee={user} />
+            <UserPhoto user={user} />
             </Grid>
           </DialogContent>
           <DialogActions sx={{ p: 2 }}>

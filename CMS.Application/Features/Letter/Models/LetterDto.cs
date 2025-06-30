@@ -25,6 +25,8 @@ namespace CMS.Application.Features.Letter.Models
         public HRUser Recipient { get; set; }
         public int BusinessUnitId { get; set; }
         public BusinessUnit BusinessUnits { get; set; }
+        public string PhotoId { get; set; }
+        public string PhotoUrl { get; set; }
 
     }
 }

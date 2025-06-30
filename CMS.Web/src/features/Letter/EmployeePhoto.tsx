@@ -1,26 +1,26 @@
 import { Avatar, Box } from "@mui/material";
 import { useCallback } from "react";
-import { useAddUserPhotoMutation, UserDto } from "../../app/store";
-import { useAlert } from "../../features/notification/useAlert";
-import { DocumentUpload } from "../../components";
+import { useAlert } from "../notification";
+import { DocumentUpload } from "../../components/DocumentUpload";
+import { LetterDto, useAddEmployeePhotoMutation } from "../../app/store";
 
 interface EmployeePhotoProps {
-  user?: UserDto;
+  employee?: LetterDto;
 }
 
-export const UserPhoto = ({ user }: EmployeePhotoProps) => {
-  const [savePhoto, { isLoading }] = useAddUserPhotoMutation();
+export const EmployeePhoto = ({ employee }: EmployeePhotoProps) => {
+  const [savePhoto, { isLoading }] = useAddEmployeePhotoMutation();
   const { showErrorAlert, showSuccessAlert } = useAlert();
 
   // Callback to handle profile picture upload
   const onProfilePictureAdd = useCallback(
     (files: any[]) => {
-      if (user?.id && files.length) {
+      if (employee?.id && files.length) {
         const formData = new FormData();
         formData.append("file", files[0]); // Append the first file
-      console.log("Uploading photo for employee:", user.id, files[0]);  
+      console.log("Uploading photo for employee:", employee.id, files[0]);  
         savePhoto({
-          id: user.id, // Use the correct employeeId
+          id: employee.id, // Use the correct employeeId
           body: {
             file: files[0],
           },
@@ -36,7 +36,7 @@ export const UserPhoto = ({ user }: EmployeePhotoProps) => {
     },
     [
       savePhoto,
-      user?.id,
+      employee?.id,
       showErrorAlert,
       showSuccessAlert,
     ]
@@ -47,8 +47,8 @@ export const UserPhoto = ({ user }: EmployeePhotoProps) => {
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Avatar
           sx={{ width: 100, height: 100 }}
-          src={user?.photoUrl || undefined}
-          alt={user?.firstName || "Employee"}
+          src={employee?.photoUrl || undefined}
+          alt={employee?.id ? String(employee.id) : "Employee"}
           variant="rounded"
         />
       </Box>
@@ -62,10 +62,10 @@ export const UserPhoto = ({ user }: EmployeePhotoProps) => {
       >
         <DocumentUpload
           onAdd={onProfilePictureAdd}
-          label={user?.photoUrl ? "Change photo" : "Add photo"}
+          label={employee?.photoUrl ? "Change photo" : "Add photo"}
           showIcon={false}
           size="small"
-          accepts={["Image","PDF"]} // Explicitly accept image files
+          accepts={["Image"]} // Explicitly accept image files
           disabled={isLoading} // Disable if uploading
         />
       </Box>

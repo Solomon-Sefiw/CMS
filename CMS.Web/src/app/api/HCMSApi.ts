@@ -534,6 +534,17 @@ const injectedRtkApi = api
           invalidatesTags: ["Letter"],
         }
       ),
+      addEmployeePhoto: build.mutation<
+        AddEmployeePhotoApiResponse,
+        AddEmployeePhotoApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/${queryArg.id}/add-photo`,
+          method: "POST",
+          body: queryArg.body,
+        }),
+        invalidatesTags: ["Letter"],
+      }),
       approveLetter: build.mutation<
         ApproveLetterApiResponse,
         ApproveLetterApiArg
@@ -1030,6 +1041,14 @@ export type CreateLetterApiArg = {
 export type UpdateLetterApiResponse = unknown;
 export type UpdateLetterApiArg = {
   updateLetterCommand: UpdateLetterCommand;
+};
+export type AddEmployeePhotoApiResponse =
+  /** status 200 Success */ DocumentMetadataDto;
+export type AddEmployeePhotoApiArg = {
+  id: number;
+  body: {
+    file?: Blob;
+  };
 };
 export type ApproveLetterApiResponse = /** status 200 Success */ number;
 export type ApproveLetterApiArg = {
@@ -1643,6 +1662,8 @@ export type LetterDto = {
   recipient?: HrUser;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
+  photoId?: string | null;
+  photoUrl?: string | null;
 };
 export type LetterDtoRead = {
   id?: number;
@@ -1659,6 +1680,8 @@ export type LetterDtoRead = {
   recipient?: HrUserRead;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
+  photoId?: string | null;
+  photoUrl?: string | null;
 };
 export type DocumentEndpointRootPath = {
   path?: string | null;
@@ -1684,6 +1707,9 @@ export type UpdateLetterCommand = {
   senderId?: string | null;
   recipientId?: string | null;
   businessUnitId?: number;
+};
+export type DocumentMetadataDto = {
+  id?: string | null;
 };
 export type ApproveLetterCommand = {
   id?: number;
@@ -1791,9 +1817,6 @@ export type UpdateSubCityCommand = {
   regionId?: number;
   approvalStatus?: ApprovalStatus;
 };
-export type DocumentMetadataDto = {
-  id?: string | null;
-};
 export const {
   useActivateUserMutation,
   useChangePasswordMutation,
@@ -1873,6 +1896,7 @@ export const {
   useLazyDocumentRootPathQuery,
   useCreateLetterMutation,
   useUpdateLetterMutation,
+  useAddEmployeePhotoMutation,
   useApproveLetterMutation,
   useGetLetterCountPerStatusQuery,
   useLazyGetLetterCountPerStatusQuery,

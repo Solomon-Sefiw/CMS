@@ -20,6 +20,7 @@ import * as Yup from "yup";
 import { LetterDto, useCreateLetterMutation, useUpdateLetterMutation, useUsersQuery } from "../../app/api";
 import { useAuth } from "../../hooks";
 import { useBusinessUnit } from "../BusinessUnit";
+import { EmployeePhoto } from "./EmployeePhoto";
 
 const useLetterTypesLookups = () => {
   return {
@@ -304,6 +305,9 @@ export const LetterDialog = ({
                         disabled={isLocked}
                       />
                     </Grid>
+                  </Grid>
+                  <Grid item xs={12} sx={{ mt: 2 }}>
+                  <EmployeePhoto employee={letterData} />
                   </Grid>
                 </DialogContent>
                 <DialogActions sx={{ p: 2, justifyContent: 'flex-end', gap: 1 }}>

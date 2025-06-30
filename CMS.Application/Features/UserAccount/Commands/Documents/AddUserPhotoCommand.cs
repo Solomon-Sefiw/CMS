@@ -1,5 +1,4 @@
-﻿
-using CMS.Application.Features.Documents.Commands;
+﻿using CMS.Application.Features.Documents.Commands;
 using CMS.Domain.Document;
 using CMS.Domain.Employee;
 using CMS.Domain.Enum;
@@ -9,22 +8,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace CMS.Application.Features.Employees.Commands.Documents
+namespace CMS.Application.Features.UserAccount.Commands.Documents
 {
-    public record AddEmployeePhotoCommand(string userId, IFormFile File) : IRequest<Document>;
+    public record AddUserPhotoCommand(string userId, IFormFile File) : IRequest<Document>;
 
-    public class AddEmployeePhotoCommandHandler : IRequestHandler<AddEmployeePhotoCommand, Document>
+    public class AddUserPhotoCommandHandler : IRequestHandler<AddUserPhotoCommand, Document>
     {
         private readonly IDataService dataService;
         private readonly IMediator mediator;
 
-        public AddEmployeePhotoCommandHandler(IDataService dataService, IMediator mediator)
+        public AddUserPhotoCommandHandler(IDataService dataService, IMediator mediator)
         {
             this.dataService = dataService;
             this.mediator = mediator;
         }
 
-        public async Task<Document> Handle(AddEmployeePhotoCommand request, CancellationToken cancellationToken)
+        public async Task<Document> Handle(AddUserPhotoCommand request, CancellationToken cancellationToken)
         {
             var document = await mediator.Send(new AddDocumentCommand()
             {
