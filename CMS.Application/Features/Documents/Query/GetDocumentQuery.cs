@@ -25,7 +25,7 @@ public class GetDocumentQueryHandler : IRequestHandler<GetDocumentQuery, Documen
         var document = await (from ed in dataService.UserDocuments
                               join d in dataService.Documents on ed.DocumentId equals d.Id
                               where ed.DocumentId == request.Id &&
-                                    ed.DocumentType == DocumentType.EmployeePicture &&
+                                    ed.DocumentType == DocumentType.UserSignature &&
                                     (ed.IsDeleted == null || ed.IsDeleted == false)
                               select d)
                      .FirstOrDefaultAsync(cancellationToken);

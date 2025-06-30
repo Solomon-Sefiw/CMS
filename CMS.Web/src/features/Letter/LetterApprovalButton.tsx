@@ -1,7 +1,7 @@
 import { Box, Button } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { usePermission } from "../../hooks";
-import { useSubmitLetterMutation, useSubmitSubCityMutation } from "../../app/store";
+import { useSubmitLetterMutation } from "../../app/store";
 import { WorkflowActionDialog } from "../../components";
 import { removeEmptyFields } from "../../utils";
 

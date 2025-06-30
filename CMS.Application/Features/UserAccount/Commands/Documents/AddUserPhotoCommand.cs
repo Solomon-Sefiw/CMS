@@ -32,7 +32,7 @@ namespace CMS.Application.Features.UserAccount.Commands.Documents
 
             var currentPhoto = await dataService.UserDocuments
                 .Where(sd => sd.UserId == request.userId &&
-                sd.DocumentType == DocumentType.EmployeePicture).ToListAsync();
+                sd.DocumentType == DocumentType.UserSignature).ToListAsync();
 
             dataService.UserDocuments.AttachRange(currentPhoto);
 
@@ -42,7 +42,7 @@ namespace CMS.Application.Features.UserAccount.Commands.Documents
             dataService.UserDocuments.Add(new Domain.User.UserDocument()
             {
                 UserId = request.userId,
-                DocumentType = DocumentType.EmployeePicture,
+                DocumentType = DocumentType.UserSignature,
                 DocumentId = document.Id,
                 FileName = document.FileName
             });
@@ -51,7 +51,7 @@ namespace CMS.Application.Features.UserAccount.Commands.Documents
             var latestPhoto = await (from ed in dataService.UserDocuments
                                      join d in dataService.Documents on ed.DocumentId equals d.Id
                                      where ed.UserId == request.userId &&
-                                           ed.DocumentType == DocumentType.EmployeePicture &&
+                                           ed.DocumentType == DocumentType.UserSignature &&
                                            (ed.IsDeleted == null || ed.IsDeleted == false)
                                      select d)
                           .FirstOrDefaultAsync(cancellationToken);

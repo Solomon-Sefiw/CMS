@@ -68,7 +68,7 @@ namespace CMS.Api.Controllers
 
             // Get PhotoId from UserDocuments
             var photoId = user.UserDocuments
-                .Where(d => d.DocumentType == DocumentType.EmployeePicture)
+                .Where(d => d.DocumentType == DocumentType.UserSignature)
                 .Select(d => d.DocumentId)
                 .FirstOrDefault();
 
@@ -86,7 +86,7 @@ namespace CMS.Api.Controllers
                 BranchId = user.BranchId,
                 Roles = userRoles.ToList(),
                 Permissions = permissions,
-                PhotoId = photoId,
+                PhotoId = photoId, 
                 PhotoUrl = photoUrl
             };
 

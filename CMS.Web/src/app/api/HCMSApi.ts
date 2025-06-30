@@ -534,9 +534,9 @@ const injectedRtkApi = api
           invalidatesTags: ["Letter"],
         }
       ),
-      addEmployeePhoto: build.mutation<
-        AddEmployeePhotoApiResponse,
-        AddEmployeePhotoApiArg
+      addLetterDocument: build.mutation<
+        AddLetterDocumentApiResponse,
+        AddLetterDocumentApiArg
       >({
         query: (queryArg) => ({
           url: `/api/Letter/${queryArg.id}/add-photo`,
@@ -1042,9 +1042,9 @@ export type UpdateLetterApiResponse = unknown;
 export type UpdateLetterApiArg = {
   updateLetterCommand: UpdateLetterCommand;
 };
-export type AddEmployeePhotoApiResponse =
+export type AddLetterDocumentApiResponse =
   /** status 200 Success */ DocumentMetadataDto;
-export type AddEmployeePhotoApiArg = {
+export type AddLetterDocumentApiArg = {
   id: number;
   body: {
     file?: Blob;
@@ -1896,7 +1896,7 @@ export const {
   useLazyDocumentRootPathQuery,
   useCreateLetterMutation,
   useUpdateLetterMutation,
-  useAddEmployeePhotoMutation,
+  useAddLetterDocumentMutation,
   useApproveLetterMutation,
   useGetLetterCountPerStatusQuery,
   useLazyGetLetterCountPerStatusQuery,

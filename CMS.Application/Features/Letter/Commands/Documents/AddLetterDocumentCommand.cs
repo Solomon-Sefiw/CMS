@@ -32,7 +32,7 @@ namespace CMS.Application.Features.Employees.Commands.Documents
 
             var currentPhoto = await dataService.EmployeeDocuments
                 .Where(sd => sd.EmployeeId == request.EmployeeId &&
-                sd.DocumentType == DocumentType.EmployeePicture).ToListAsync();
+                sd.DocumentType == DocumentType.UserSignature).ToListAsync();
 
             dataService.EmployeeDocuments.AttachRange(currentPhoto);
 
@@ -42,7 +42,7 @@ namespace CMS.Application.Features.Employees.Commands.Documents
             dataService.EmployeeDocuments.Add(new EmployeeDocument()
             {
                 EmployeeId = request.EmployeeId,
-                DocumentType = DocumentType.EmployeePicture,
+                DocumentType = DocumentType.UserSignature,
                 DocumentId = document.Id,
                 FileName = document.FileName
             });
@@ -51,7 +51,7 @@ namespace CMS.Application.Features.Employees.Commands.Documents
             var latestPhoto = await (from ed in dataService.EmployeeDocuments
                                      join d in dataService.Documents on ed.DocumentId equals d.Id
                                      where ed.EmployeeId == request.EmployeeId &&
-                                           ed.DocumentType == DocumentType.EmployeePicture &&
+                                           ed.DocumentType == DocumentType.UserSignature &&
                                            (ed.IsDeleted == null || ed.IsDeleted == false)
                                      select d)
                           .FirstOrDefaultAsync(cancellationToken);

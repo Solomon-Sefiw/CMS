@@ -84,9 +84,9 @@ namespace CMS.Api.Controllers.LetterController
             return Ok(letterId);
         }
 
-        [HttpPost("{id}/add-photo", Name = "AddEmployeePhoto")]
+        [HttpPost("{id}/add-Document", Name = "AddLetterDocument")]
         [ProducesResponseType(200)]
-        public async Task<DocumentMetadataDto> AddEmployeePhoto(int id, [FromForm] UploadDocumentDto document)
+        public async Task<DocumentMetadataDto> AddLetterDocument(int id, [FromForm] UploadDocumentDto document)
         {
             var command = new AddLetterDocumentCommand(id, document.File);
             var doc = await mediator.Send(command);

@@ -14,6 +14,7 @@ import { YupShape } from "../../utils";
 import { useAlert } from "../../features/notification";
 import { UserPhoto } from "./UserPhoto";
 import { useAuth } from "../../hooks";
+import { red } from "@mui/material/colors";
 
 interface ChangePasswordFields {
   currentPassword: string;
@@ -41,26 +42,6 @@ export const UserProfileDialog = ({ onClose }: { onClose: () => void }) => {
     const { user } = useAuth();
   const { showSuccessAlert, showErrorAlert } = useAlert();
 
-  const handleSubmit = useCallback(
-    (value: ChangePasswordFields) => {
-      changePassword({
-        changePasswordPayload: {
-          currentPassword: value.currentPassword,
-          newPassword: value.newPassword.trim(),
-        },
-      })
-        .unwrap()
-        .then(() => {
-          onClose();
-          showSuccessAlert("Password Changed.");
-        })
-        .catch(() => {
-          showErrorAlert("Error occurred");
-        });
-    },
-    [changePassword, onClose, showErrorAlert, showSuccessAlert]
-  );
-
   const errors = (changePasswordError as any)?.data;
 
   return (
@@ -74,12 +55,23 @@ export const UserProfileDialog = ({ onClose }: { onClose: () => void }) => {
       <Formik
         initialValues={emptyFormData}
         enableReinitialize={true}
-        onSubmit={handleSubmit}
+        onSubmit={async (values, actions) => {
+          // You can implement password change logic here or call changePassword mutation
+          try {
+            await changePassword({ changePasswordPayload: values }).unwrap();
+            showSuccessAlert("Password changed successfully.");
+            onClose();
+          } catch (e) {
+            showErrorAlert("Failed to change password.");
+          } finally {
+            actions.setSubmitting(false);
+          }
+        }}
         validationSchema={validationSchema}
         validateOnChange={true}
       >
         <Form>
-          <DialogHeader title={"Manage User Profile"} onClose={onClose} />
+          <DialogHeader title={"Upload Signature"} onClose={onClose} />
           <DialogContent dividers={true}>
             <Grid container spacing={2}>
               {errors && (
@@ -91,10 +83,7 @@ export const UserProfileDialog = ({ onClose }: { onClose: () => void }) => {
             </Grid>
           </DialogContent>
           <DialogActions sx={{ p: 2 }}>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button color="primary" variant="outlined" type="submit">
-              Change Password
-            </Button>
+            <Button variant="contained" color="error" onClick={onClose}>Close</Button>
           </DialogActions>
         </Form>
       </Formik>

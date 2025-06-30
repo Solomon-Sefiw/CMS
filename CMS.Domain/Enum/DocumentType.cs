@@ -2,8 +2,8 @@
 {
     public enum DocumentType
     {
-        EmployeePicture = 1,
-        EmployeeSignature = 2,
+        UserSignature = 1,
+        DepartmentSignature = 2,
         OperationalAgreement = 8,
         PhotoIdentification = 9,
         DrivingLicense = 10,

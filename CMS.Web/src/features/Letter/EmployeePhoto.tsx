@@ -2,14 +2,14 @@ import { Avatar, Box } from "@mui/material";
 import { useCallback } from "react";
 import { useAlert } from "../notification";
 import { DocumentUpload } from "../../components/DocumentUpload";
-import { LetterDto, useAddEmployeePhotoMutation } from "../../app/store";
+import { LetterDto, useAddLetterDocumentMutation,  } from "../../app/store";
 
 interface EmployeePhotoProps {
   employee?: LetterDto;
 }
 
 export const EmployeePhoto = ({ employee }: EmployeePhotoProps) => {
-  const [savePhoto, { isLoading }] = useAddEmployeePhotoMutation();
+  const [savePhoto, { isLoading }] = useAddLetterDocumentMutation();
   const { showErrorAlert, showSuccessAlert } = useAlert();
 
   // Callback to handle profile picture upload
