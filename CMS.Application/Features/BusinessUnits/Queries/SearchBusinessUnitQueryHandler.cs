@@ -22,8 +22,6 @@ namespace CMS.Application.Features.BusinessUnits.Queries
             var businessUnits = await _dataService.BusinessUnits.ToListAsync(cancellationToken);
             var businessUnitTypes = await _dataService.BusinessUnitTypes
                 .ToDictionaryAsync(but => but.Value, but => but.Name, cancellationToken);
-            var employees = await _dataService.Employees
-                .ToDictionaryAsync(emp => emp.Id, emp => emp.DisplayName, cancellationToken);
 
             // Map business units to DTOs
             return businessUnits.Select(bu => new BusinessUnitDto

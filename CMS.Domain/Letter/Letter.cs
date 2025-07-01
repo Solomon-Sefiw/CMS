@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CMS.Domain.Enum;
 using CMS.Domain.User;
-using CMS.Domain.Employee;
 
 namespace CMS.Domain.letters
 {
@@ -22,8 +21,7 @@ namespace CMS.Domain.letters
         public HRUser Recipient { get; set; }
         public int BusinessUnitId { get; set; }
         public BusinessUnit BusinessUnits { get; set; }
-
-        public ICollection<EmployeeDocument> EmployeeDocuments { get; set; }
+        public ICollection<Domain.LetterDocument.LetterDocument> LetterDocuments { get; set; }
 
     }
 }

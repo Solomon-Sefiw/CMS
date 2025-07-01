@@ -10,10 +10,10 @@ using CMS.Domain.Document;
 using CMS.Persistence;
 using SMS.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore.Storage;
-using CMS.Domain.Employee;
 using CMS.Domain.letters;
 using CMS.Domain.Adress;
 using CMS.Domain.Contacts;
+using CMS.Domain.LetterDocument;
 
 namespace CMS.Persistance.DBContext
 {
@@ -44,15 +44,14 @@ namespace CMS.Persistance.DBContext
         public DbSet<Region> Regions { get; set; }
         public DbSet<SubCity> SubCities { get; set; }
         public DbSet<Contact> Contacts { get; set; }
-        public DbSet<Employee> Employees { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
-        public DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
         public DbSet<UserDocument> UserDocuments { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<HRRole> Roles { get; set; }
         public DbSet<Letter> Letters { get; set; }
+        public DbSet<LetterDocument> LetterDocuments { get; set; }
         //EmployeeGurantors
         public void Save()
         {

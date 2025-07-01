@@ -1,16 +1,14 @@
 ﻿using CMS.Application.Features.Documents.Commands;
 using CMS.Domain.Document;
-using CMS.Domain.Employee;
 using CMS.Domain.Enum;
 using CMS.Services.DataService;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using static CMS.Application.Security.UserPermissions;
 
-namespace CMS.Application.Features.Employees.Commands.Documents
+namespace CMS.Application.Features.Letter.Commands.Documents
 {
-    public record AddLetterDocumentCommand(int EmployeeId, IFormFile File) : IRequest<Document>;
+    public record AddLetterDocumentCommand(int LetterId, IFormFile File) : IRequest<Document>;
 
     public class AddLetterDocumentCommandHandler : IRequestHandler<AddLetterDocumentCommand, Document>
     {
@@ -30,28 +28,28 @@ namespace CMS.Application.Features.Employees.Commands.Documents
                 File = request.File
             });
 
-            var currentPhoto = await dataService.EmployeeDocuments
-                .Where(sd => sd.EmployeeId == request.EmployeeId &&
-                sd.DocumentType == DocumentType.UserSignature).ToListAsync();
+            var currentPhoto = await dataService.LetterDocuments
+                .Where(sd => sd.LetterId == request.LetterId &&
+                sd.DocumentType == DocumentType.LetterDocument).ToListAsync();
 
-            dataService.EmployeeDocuments.AttachRange(currentPhoto);
+            dataService.LetterDocuments.AttachRange(currentPhoto);
 
-            dataService.EmployeeDocuments.RemoveRange(currentPhoto);
+            dataService.LetterDocuments.RemoveRange(currentPhoto);
             await dataService.SaveAsync(cancellationToken);
 
-            dataService.EmployeeDocuments.Add(new EmployeeDocument()
+            dataService.LetterDocuments.Add(new Domain.LetterDocument.LetterDocument()
             {
-                EmployeeId = request.EmployeeId,
-                DocumentType = DocumentType.UserSignature,
+                LetterId = request.LetterId,
+                DocumentType = DocumentType.LetterDocument,
                 DocumentId = document.Id,
                 FileName = document.FileName
             });
 
             await dataService.SaveAsync(cancellationToken);
-            var latestPhoto = await (from ed in dataService.EmployeeDocuments
+            var latestPhoto = await (from ed in dataService.LetterDocuments
                                      join d in dataService.Documents on ed.DocumentId equals d.Id
-                                     where ed.EmployeeId == request.EmployeeId &&
-                                           ed.DocumentType == DocumentType.UserSignature &&
+                                     where ed.LetterId == request.LetterId &&
+                                           ed.DocumentType == DocumentType.LetterDocument &&
                                            (ed.IsDeleted == null || ed.IsDeleted == false)
                                      select d)
                           .FirstOrDefaultAsync(cancellationToken);

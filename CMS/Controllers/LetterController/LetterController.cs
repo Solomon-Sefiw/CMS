@@ -1,18 +1,13 @@
 ﻿using CMS.Api.Dtos;
 using CMS.API.Controllers;
-using CMS.Application.Features.Addresses.Setups.SubCity.Queiries;
-using CMS.Application.Features.BusinessUnits.Commands.ApproveBusinessUnit;
-using CMS.Application.Features.BusinessUnits.Commands.RejectBusinessUnit;
-using CMS.Application.Features.BusinessUnits.Commands.SubmitBusinessUnit;
 using CMS.Application.Features.Commands.CreateLetter;
-using CMS.Application.Features.Employees.Commands.Documents;
 using CMS.Application.Features.Letter.Commands.ApproveLetter;
+using CMS.Application.Features.Letter.Commands.Documents;
 using CMS.Application.Features.Letter.Commands.RejectLetter;
 using CMS.Application.Features.Letter.Commands.SubmitLetter;
 using CMS.Application.Features.Letter.Commands.UpdateLetter;
 using CMS.Application.Features.Letter.Models;
 using CMS.Application.Features.Letter.Queries;
-using CMS.Application.Security;
 using CMS.Domain.Enum;
 using Microsoft.AspNetCore.Mvc;
 
@@ -90,11 +85,8 @@ namespace CMS.Api.Controllers.LetterController
         {
             var command = new AddLetterDocumentCommand(id, document.File);
             var doc = await mediator.Send(command);
-
             return new DocumentMetadataDto(GetDocumentUrl(doc.Id));
         }
-
-
     }
 }
 

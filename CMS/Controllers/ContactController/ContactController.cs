@@ -6,8 +6,6 @@ using CMS.Application.Features.Commands.UpdateContact;
 using CMS.Application.Features.Models;
 using CMS.Application.Features.Queries;
 using CMS.Application.Security;
-using CMS.Domain;
-using CMS.Domain.Employee;
 using CMS.Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

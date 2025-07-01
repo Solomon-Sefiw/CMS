@@ -4,11 +4,11 @@ using CMS.Domain.Document;
 using CMS.Domain.EmailTemplet;
 using CMS.Domain.letters;
 using CMS.Domain.User;
-using CMS.Domain.Employee;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using CMS.Domain.Adress;
 using CMS.Domain.Contacts;
+using CMS.Domain.LetterDocument;
 
 namespace CMS.Services.DataService
 {
@@ -21,15 +21,14 @@ namespace CMS.Services.DataService
         public DbSet<SubCity> SubCities { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-
         public DbSet<Document> Documents { get; set; }
-        public DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
         public DbSet<UserDocument> UserDocuments { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<HRRole> Roles { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<Letter> Letters { get; set; }
+        public DbSet<LetterDocument> LetterDocuments { get; set; }
+
 
         //EmployeeExperiences
         void Save();

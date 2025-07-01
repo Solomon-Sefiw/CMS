@@ -27,6 +27,7 @@ namespace CMS.Application.Features.Letter.Queries
                 .Include(l => l.Sender)
                 .Include(l => l.Recipient)
                 .Include(l => l.BusinessUnits)
+                .Include(l => l.LetterDocuments)
                 .Where(l =>  l.SenderId == request.userId || l.RecipientId == request.userId)
                 .ToListAsync(cancellationToken);
 

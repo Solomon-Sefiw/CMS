@@ -42,6 +42,7 @@ namespace CMS.Application.Features.Letter.Queries
                 .Include(l => l.Sender)
                 .Include(l => l.Recipient)
                 .Include(l => l.BusinessUnits)
+                .Include(l => l.LetterDocuments)
                 .AsQueryable();
 
             // Fix: Removed HasValue check since LetterStatus is an enum and cannot be null

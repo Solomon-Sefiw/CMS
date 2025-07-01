@@ -30,8 +30,6 @@ public class SearchBusinessUnitQueryHandler : IRequestHandler<SearchBusinessUnit
         // Pre-fetch types and employees into dictionaries for fast lookup
         var businessUnitTypes = await dataService.BusinessUnitTypes
             .ToDictionaryAsync(but => but.Value, but => but.Name, cancellationToken);
-        var employees = await dataService.Employees
-            .ToDictionaryAsync(emp => emp.Id, emp => emp.DisplayName, cancellationToken);
 
         // Map business units to DTOs
         return businessUnits.Select(bu => new BusinessUnitDto
