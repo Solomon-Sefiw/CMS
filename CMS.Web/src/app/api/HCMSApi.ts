@@ -539,9 +539,10 @@ const injectedRtkApi = api
         AddLetterDocumentApiArg
       >({
         query: (queryArg) => ({
-          url: `/api/Letter/${queryArg.id}/add-photo`,
+          url: `/api/Letter/${queryArg.id}/add-Document`,
           method: "POST",
           body: queryArg.body,
+          params: { documentType: queryArg.documentType },
         }),
         invalidatesTags: ["Letter"],
       }),
@@ -565,6 +566,17 @@ const injectedRtkApi = api
           params: { userId: queryArg.userId },
         }),
         providesTags: ["Letter"],
+      }),
+      createEditableLetter: build.mutation<
+        CreateEditableLetterApiResponse,
+        CreateEditableLetterApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/editable`,
+          method: "POST",
+          body: queryArg.createEditableLetterCommand,
+        }),
+        invalidatesTags: ["Letter"],
       }),
       getLettersForPagination: build.query<
         GetLettersForPaginationApiResponse,
@@ -799,6 +811,17 @@ const injectedRtkApi = api
           invalidatesTags: ["Users"],
         }
       ),
+      addUserSignature: build.mutation<
+        AddUserSignatureApiResponse,
+        AddUserSignatureApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Users/${queryArg.id}/add-signature`,
+          method: "POST",
+          body: queryArg.body,
+        }),
+        invalidatesTags: ["Users"],
+      }),
       currentUserInfo: build.query<
         CurrentUserInfoApiResponse,
         CurrentUserInfoApiArg
@@ -1046,6 +1069,7 @@ export type AddLetterDocumentApiResponse =
   /** status 200 Success */ DocumentMetadataDto;
 export type AddLetterDocumentApiArg = {
   id: number;
+  documentType?: DocumentType;
   body: {
     file?: Blob;
   };
@@ -1058,6 +1082,10 @@ export type GetLetterCountPerStatusApiResponse =
   /** status 200 Success */ LetterCountsByStatus;
 export type GetLetterCountPerStatusApiArg = {
   userId?: string;
+};
+export type CreateEditableLetterApiResponse = /** status 200 Success */ number;
+export type CreateEditableLetterApiArg = {
+  createEditableLetterCommand: CreateEditableLetterCommand;
 };
 export type GetLettersForPaginationApiResponse =
   /** status 200 Success */ PaginatedLetterListRead;
@@ -1154,6 +1182,14 @@ export type UpdateSubCityApiArg = {
 export type AddUserPhotoApiResponse =
   /** status 200 Success */ DocumentMetadataDto;
 export type AddUserPhotoApiArg = {
+  id: string;
+  body: {
+    file?: Blob;
+  };
+};
+export type AddUserSignatureApiResponse =
+  /** status 200 Success */ DocumentMetadataDto;
+export type AddUserSignatureApiArg = {
   id: string;
   body: {
     file?: Blob;
@@ -1298,17 +1334,32 @@ export type BusinessUnit = {
   status?: Status;
   businessUnitType?: BusinessUnitType;
 };
-export type DocumentType = 1 | 2 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
-export type EmployeeDocument = {
+export type DocumentType = 0 | 1 | 2 | 3 | 4;
+export type LetterDocument = {
   isDeleted?: boolean | null;
   deletedBy?: string | null;
   deletedAt?: string | null;
   deletionComment?: string | null;
   id?: number;
-  employeeId?: number;
   documentType?: DocumentType;
   documentId?: string | null;
   fileName?: string | null;
+  isImage?: boolean;
+  letterId?: number;
+  letter?: Letter;
+};
+export type LetterDocumentRead = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+  isImage?: boolean;
+  letterId?: number;
+  letter?: Letter;
 };
 export type Letter = {
   createdAt?: string | null;
@@ -1339,7 +1390,9 @@ export type Letter = {
   recipient?: HrUser;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
-  employeeDocuments?: EmployeeDocument[] | null;
+  letterDocuments?: LetterDocument[] | null;
+  isEditableDocument?: boolean;
+  documentJsonContent?: string | null;
 };
 export type IDomainEvent = object;
 export type LetterRead = {
@@ -1372,7 +1425,9 @@ export type LetterRead = {
   recipient?: HrUser;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
-  employeeDocuments?: EmployeeDocument[] | null;
+  letterDocuments?: LetterDocumentRead[] | null;
+  isEditableDocument?: boolean;
+  documentJsonContent?: string | null;
 };
 export type UserDocument = {
   isDeleted?: boolean | null;
@@ -1498,6 +1553,7 @@ export type UserDto = {
   permissions?: Permission[] | null;
   photoId?: string | null;
   photoUrl?: string | null;
+  signatureId?: string | null;
 };
 export type UserDtoRead = {
   id?: string | null;
@@ -1510,6 +1566,7 @@ export type UserDtoRead = {
   permissions?: Permission[] | null;
   photoId?: string | null;
   photoUrl?: string | null;
+  signatureId?: string | null;
   fullName?: string | null;
 };
 export type Role = {
@@ -1662,8 +1719,9 @@ export type LetterDto = {
   recipient?: HrUser;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
-  photoId?: string | null;
-  photoUrl?: string | null;
+  letterDocuments?: LetterDocument[] | null;
+  isEditableDocument?: boolean;
+  documentJsonContent?: string | null;
 };
 export type LetterDtoRead = {
   id?: number;
@@ -1680,8 +1738,9 @@ export type LetterDtoRead = {
   recipient?: HrUserRead;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
-  photoId?: string | null;
-  photoUrl?: string | null;
+  letterDocuments?: LetterDocumentRead[] | null;
+  isEditableDocument?: boolean;
+  documentJsonContent?: string | null;
 };
 export type DocumentEndpointRootPath = {
   path?: string | null;
@@ -1702,17 +1761,27 @@ export type UpdateLetterCommand = {
   content?: string | null;
   letterType?: LetterType;
   status?: LetterStatus;
-  receivedDate?: string | null;
-  sentDate?: string | null;
   senderId?: string | null;
   recipientId?: string | null;
   businessUnitId?: number;
+  isEditableDocument?: boolean;
+  documentJsonContent?: string | null;
 };
 export type DocumentMetadataDto = {
   id?: string | null;
 };
 export type ApproveLetterCommand = {
   id?: number;
+};
+export type CreateEditableLetterCommand = {
+  referenceNumber?: string | null;
+  subject?: string | null;
+  content?: string | null;
+  documentJson?: string | null;
+  letterType?: LetterType;
+  senderId?: string | null;
+  recipientId?: string | null;
+  businessUnitId?: number;
 };
 export type PaginatedLetterList = {
   items?: LetterDto[] | null;
@@ -1900,6 +1969,7 @@ export const {
   useApproveLetterMutation,
   useGetLetterCountPerStatusQuery,
   useLazyGetLetterCountPerStatusQuery,
+  useCreateEditableLetterMutation,
   useGetLettersForPaginationQuery,
   useLazyGetLettersForPaginationQuery,
   useRejectLetterMutation,
@@ -1935,6 +2005,7 @@ export const {
   useSubmitSubCityMutation,
   useUpdateSubCityMutation,
   useAddUserPhotoMutation,
+  useAddUserSignatureMutation,
   useCurrentUserInfoQuery,
   useLazyCurrentUserInfoQuery,
 } = injectedRtkApi;

@@ -3,6 +3,12 @@ export enum Gender {
   Female = 2,
   Unspecified = 0, // Default/empty value
 }
+    export enum LetterType
+    {
+        Incoming = 1,
+        Outgoing,
+        InternalMemo
+    }
 export enum MartialStatus {
   Single = 1,
   Married = 2,
@@ -342,4 +348,10 @@ export enum JobGradeRomanId {
   XXXVIII = 38,
   XXXIX = 39,
   XL = 40,
+}
+export enum DocumentType {
+  Other = 0,
+  UserSignature = 1,
+  DepartmentBluePrint = 2,
+  LetterDocument = 3,
 }

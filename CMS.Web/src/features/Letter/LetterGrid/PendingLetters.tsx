@@ -10,6 +10,7 @@ import {
   TableRow,
   Typography,
   Alert,
+  Tooltip,
 } from "@mui/material";
 import { Fragment, useState, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
@@ -23,7 +24,10 @@ import {
   useGetLetterCountPerStatusQuery,
   useGetLettersForPaginationQuery,
 } from "../../../app/store";
+
 import { LetterApprovalButton } from "../LetterApprovalButton";
+import { DocumentDownload } from "../../../components/DocumentDownload";
+import { DocumentType } from "../../../app/api/enums";
 
 interface PaginationState {
   pageNumber: number;
@@ -31,9 +35,8 @@ interface PaginationState {
 }
 
 export const PendingLetters = () => {
-  
-  const permissions = usePermission();
    const { user } = useAuth();
+  const permissions = usePermission();
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageNumber: 0,
     pageSize: 10,
@@ -106,6 +109,7 @@ export const PendingLetters = () => {
                       <TableCell sx={{ fontWeight: "bold" }}>Sender</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>Recipient</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>Business Unit</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Document</TableCell> 
                       <TableCell sx={{ fontWeight: "bold" }}>Sent Date</TableCell>
                       <TableCell align="center">Actions</TableCell>
                     </TableRow>
@@ -131,6 +135,36 @@ export const PendingLetters = () => {
                           </TableCell>
                           <TableCell sx={{ verticalAlign: "top", width: 200 }}>
                             {item.sentDate ? new Date(item.sentDate).toLocaleDateString() : 'N/A'}
+                          </TableCell>
+                                                    <TableCell sx={{ verticalAlign: "top", width: 150 }}>
+                            {item.letterDocuments &&
+                              item.letterDocuments
+                                .filter(
+                                  (doc) =>
+                                    doc.documentType === DocumentType.LetterDocument &&
+                                    !doc.isDeleted
+                                )
+                                .map((doc) => (
+                                  <Tooltip key={doc.id} title={doc.fileName || ""}>
+                                    <Box
+                                      sx={{
+                                        mb: 0.5,
+                                        maxWidth: '100%', // Ensure it respects the cell width
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      <DocumentDownload
+                                        documentId={doc.documentId!}
+                                        label={doc.fileName || "Download"}
+                                      />
+                                    </Box>
+                                  </Tooltip>
+                                ))}
+                            {(!item.letterDocuments || item.letterDocuments.filter(d => !d.isDeleted).length === 0) && (
+                               <Typography variant="body2" color="textSecondary">No Attachment</Typography>
+                            )}
                           </TableCell>
                           <TableCell>
                             <Box

@@ -21,8 +21,5 @@ namespace CMS.Domain.LetterDocument
         //Relation
         public int LetterId { get; set; }
             public Letter Letter { get; set; }
-
-
-
         }
 }

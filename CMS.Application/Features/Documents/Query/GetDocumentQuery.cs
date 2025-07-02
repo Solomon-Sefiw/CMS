@@ -22,14 +22,9 @@ public class GetDocumentQueryHandler : IRequestHandler<GetDocumentQuery, Documen
     public async Task<Document?> Handle(GetDocumentQuery request, CancellationToken cancellationToken)
     {
 
-        var document = await (from ed in dataService.UserDocuments
-                              join d in dataService.Documents on ed.DocumentId equals d.Id
-                              where ed.DocumentId == request.Id &&
-                                    ed.DocumentType == DocumentType.UserSignature &&
-                                    (ed.IsDeleted == null || ed.IsDeleted == false)
-                              select d)
-                     .FirstOrDefaultAsync(cancellationToken);
+        return await dataService.Documents
+            .Where(doc => doc.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        return document;
     }
 }

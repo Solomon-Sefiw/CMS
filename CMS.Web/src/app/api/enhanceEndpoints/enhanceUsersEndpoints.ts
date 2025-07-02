@@ -26,6 +26,24 @@ const enhancedApi = HCMSApi.enhanceEndpoints({
         Tag.UserDto,
       ],
     },
+        addUserSignature: {
+      query: (queryArg) => {
+        const formData = new FormData();
+        formData.append("file", queryArg?.body.file as any);
+        return {
+          url: `/api/Users/${queryArg.id}/add-signature`,
+          method: "POST",
+          body: formData,
+          headers: { "Content-type": "multipart/form-data" },
+        };
+      },
+
+      invalidatesTags: (_result, _error, args) => [
+        { type: Tag.Users, id: args.id },
+        Tag.Users,
+        Tag.UserDto,
+      ],
+    },
 
   },
 });

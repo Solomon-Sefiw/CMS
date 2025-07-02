@@ -1,26 +1,31 @@
-import { useEffect, useState } from "react";
-import { useCurrentUserInfoQuery, UserDto } from "../app/api";
 
-export const useAuth = () => {
-  const [state, setState] = useState<{
-    loggedIn?: boolean;
-    user?: UserDto;
-    isLoading?: boolean;
-  }>({ loggedIn: false, isLoading: true });
-  const { data, isLoading, isError, isFetching } = useCurrentUserInfoQuery();
+import { useCurrentUserInfoQuery, UserDto } from "../app/api"; // Adjust import path if 'UserDto' or 'useCurrentUserInfoQuery' is in a different file like '../app/store'
 
-  useEffect(() => {
-    if (!(isLoading || isFetching) && !isError) {
-      setState({
-        loggedIn: true,
-        user: data,
-        isLoading: false,
-      });
-    }
-    if (isError) {
-      setState({ loggedIn: false, user: undefined, isLoading: false });
-    }
-  }, [data, isError, isFetching, isLoading]);
+interface AuthHookResult {
+  loggedIn: boolean;
+  user?: UserDto;
+  isLoading: boolean;
+  isError: boolean;
+  refetchUser: () => void;
+}
 
-  return state;
+export const useAuth = (): AuthHookResult => {
+  const {
+    data: user,
+    isLoading, // True on initial load and when re-fetching
+    isError,
+    refetch, // RTK Query's refetch function
+    isFetching, // True during any fetch (initial, refetch, background)
+  } = useCurrentUserInfoQuery();
+
+  const loggedIn = !!user && !isError;
+  const combinedLoading = isLoading || isFetching;
+
+  return {
+    loggedIn,
+    user,
+    isLoading: combinedLoading,
+    isError,
+    refetchUser: refetch,
+  };
 };

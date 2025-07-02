@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/material";
 //import { useNavigate } from "react-router-dom";
-import logo from "../images/logo.png";
+import logo from "../images/image.png";
 import { useNavigate } from "react-router-dom";
 
 export const Logo = ({ height }: { height?: number }) => {
@@ -20,6 +20,7 @@ export const Logo = ({ height }: { height?: number }) => {
 };
 
 const LogoContainer = styled(Box<"img">)({
-  maxWidth: "90%",
+  maxWidth: "60%",
   cursor: "pointer",
+  padding : 20
 });

@@ -2,9 +2,11 @@
 {
     public enum DocumentType
     {
-        UserSignature = 1,
-        DepartmentBluePrint = 2,
+        Other = 0,
+        UserPhoto = 1,
+        UserSignature = 2,
         LetterDocument = 3,
-        Other = 0
+        DepartmentBluePrint = 4,
+
     }
 }

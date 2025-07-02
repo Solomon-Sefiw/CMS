@@ -4,5 +4,7 @@ export enum Tag {
   EmployeeDto = "EmployeeDto",
   Users = "Users",
   UserDto = "UserDto",
+  Letter = "Letter",
+  LetterDto = "LetterDto"
 
 }

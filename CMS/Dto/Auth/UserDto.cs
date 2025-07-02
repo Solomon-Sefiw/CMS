@@ -17,6 +17,7 @@ public class UserDto
     public IList<Permission> Permissions { get; set; }
     public string PhotoId { get; set; }
     public string PhotoUrl { get; set; }
+    public string SignatureId { get; set; }
     public UserDto()
     {
 

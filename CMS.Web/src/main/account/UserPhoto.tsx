@@ -1,41 +1,47 @@
-import { Avatar, Box, Typography, CircularProgress, IconButton, Tooltip } from "@mui/material";
+import { Avatar, Box, Typography, CircularProgress } from "@mui/material";
 import { useCallback } from "react";
 import { useAddUserPhotoMutation, UserDto } from "../../app/store";
 import { useAlert } from "../../features/notification/useAlert";
 import { DocumentUpload } from "../../components";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
-interface EmployeePhotoProps {
+interface UserPhotoProps {
   user?: UserDto;
+  onPhotoUploaded?: () => void;
 }
 
-export const UserPhoto = ({ user }: EmployeePhotoProps) => {
+export const UserPhoto = ({ user, onPhotoUploaded }: UserPhotoProps) => {
   const [savePhoto, { isLoading }] = useAddUserPhotoMutation();
   const { showErrorAlert, showSuccessAlert } = useAlert();
 
-  // Callback to handle profile picture upload
   const onProfilePictureAdd = useCallback(
     (files: File[]) => {
-      if (user?.id && files.length) {
-        const file = files[0];
-
-        // Validate file type (only images)
-        if (!file.type.startsWith("image/")) {
-          showErrorAlert("Please upload a valid image file.");
-          return;
-        }
-
-        // Trigger photo upload mutation
-        savePhoto({
-          id: user.id,
-          body: { file },
-        })
-          .unwrap()
-          .then(() => showSuccessAlert("Photo uploaded successfully."))
-          .catch(() => showErrorAlert("An error occurred while uploading the photo."));
+      if (!user?.id || files.length === 0) {
+        showErrorAlert("User ID or file missing.");
+        return;
       }
+      const file = files[0];
+
+      if (!file.type.startsWith("image/")) {
+        showErrorAlert("Please upload a valid image file.");
+        return;
+      }
+
+      savePhoto({
+        id: user.id,
+        body: { file },
+      })
+        .unwrap()
+        .then(() => {
+          showSuccessAlert("Photo uploaded successfully.");
+          onPhotoUploaded?.();
+        })
+        .catch((error) => {
+          console.error("Photo upload error:", error);
+          showErrorAlert((error as any)?.data?.detail || "An error occurred while uploading the photo.");
+        });
     },
-    [savePhoto, user?.id, showErrorAlert, showSuccessAlert]
+    [savePhoto, user?.id, showErrorAlert, showSuccessAlert, onPhotoUploaded]
   );
 
   return (
@@ -48,7 +54,6 @@ export const UserPhoto = ({ user }: EmployeePhotoProps) => {
         mt: 2,
       }}
     >
-      {/* Avatar */}
       <Box
         sx={{
           position: "relative",
@@ -71,7 +76,6 @@ export const UserPhoto = ({ user }: EmployeePhotoProps) => {
             },
           }}
         />
-        {/* Show loading indicator while uploading */}
         {isLoading && (
           <CircularProgress
             size={24}
@@ -86,15 +90,14 @@ export const UserPhoto = ({ user }: EmployeePhotoProps) => {
         )}
       </Box>
 
-      {/* Document Upload with Icon */}
       <DocumentUpload
         onAdd={onProfilePictureAdd}
         label={user?.photoUrl ? "Change Photo" : "Upload Photo"}
         startIcon={<PhotoCameraIcon fontSize="small" />}
         showIcon={false}
         size="small"
-        accepts={["Image", "PDF"]} // Accept image and PDF
-        disabled={isLoading} // Disable when uploading
+        accepts={["Image"]}
+        disabled={isLoading}
       />
     </Box>
   );

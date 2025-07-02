@@ -2,6 +2,7 @@
 using CMS.API.Controllers;
 using CMS.Application.Features.Commands.CreateLetter;
 using CMS.Application.Features.Letter.Commands.ApproveLetter;
+using CMS.Application.Features.Letter.Commands.CreateLetter.CMS.Application.Features.Letter.Commands;
 using CMS.Application.Features.Letter.Commands.Documents;
 using CMS.Application.Features.Letter.Commands.RejectLetter;
 using CMS.Application.Features.Letter.Commands.SubmitLetter;
@@ -23,6 +24,7 @@ namespace CMS.Api.Controllers.LetterController
             var letterId = await mediator.Send(command);
             return letterId;
         }
+
         [HttpPut] // Use {id} in the route for PUT
         public async Task<IActionResult> UpdateLetter(UpdateLetterCommand command)
         {
@@ -81,12 +83,20 @@ namespace CMS.Api.Controllers.LetterController
 
         [HttpPost("{id}/add-Document", Name = "AddLetterDocument")]
         [ProducesResponseType(200)]
-        public async Task<DocumentMetadataDto> AddLetterDocument(int id, [FromForm] UploadDocumentDto document)
+        public async Task<DocumentMetadataDto> AddLetterDocument(int id, DocumentType documentType , [FromForm] UploadDocumentDto document)
         {
-            var command = new AddLetterDocumentCommand(id, document.File);
+            var command = new AddLetterDocumentCommand(id, DocumentType.LetterDocument, document.File);
             var doc = await mediator.Send(command);
             return new DocumentMetadataDto(GetDocumentUrl(doc.Id));
         }
+
+        [HttpPost("editable", Name = "CreateEditableLetter")]
+        public async Task<ActionResult<int>> CreateEditableLetter(CreateEditableLetterCommand command)
+        {
+            var letterId = await mediator.Send(command);
+            return letterId;
+        }
+
     }
 }
 

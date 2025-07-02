@@ -35,9 +35,19 @@ export const LoggedInUser = () => {
           {user?.firstName}
         </Typography>
         <Box>
-          <IconButton onClick={handleClick}>
-            <Avatar sx={{ width: 32, height: 32, mr: 0.5, fontSize: 16 }} />
-          </IconButton>
+<IconButton onClick={handleClick}>
+  <Avatar 
+    src={user?.photoUrl || undefined}
+    alt={`${user?.firstName} ${user?.lastName}`}
+    sx={{ 
+      width: 32, 
+      height: 32, 
+      mr: 0.5, 
+      fontSize: 16,
+      // Add any additional styling you want for the avatar
+    }}
+  />
+</IconButton>
           <Menu
             id="fade-menu"
             MenuListProps={{

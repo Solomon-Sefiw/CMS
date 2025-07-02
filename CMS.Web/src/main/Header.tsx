@@ -119,7 +119,7 @@ export const Header = ({
   };
 
   return (
-    <AppBar position="static" color="inherit" elevation={2} sx={{ px: 2 }}>
+    <AppBar position="static" color="inherit" elevation={2} sx={{ px: 2, }}>
       <Toolbar sx={{ justifyContent: "space-between", flexWrap: "wrap" }}>
         {/* Left Section: Logo and Menu Button */}
         <Box sx={{ display: "flex", alignItems: "center" }}>

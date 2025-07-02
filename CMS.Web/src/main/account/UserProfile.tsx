@@ -1,48 +1,72 @@
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  Grid,
+  Tab,
+  Tabs,
+  Typography,
 } from "@mui/material";
-import { Form, Formik } from "formik";
-import { useCallback } from "react";
-import * as yup from "yup";
-import { useChangePasswordMutation } from "../../app/api";
-import { DialogHeader, Errors, FormTextField } from "../../components";
-import { YupShape } from "../../utils";
-import { useAlert } from "../../features/notification";
+import { useCallback, useState, useEffect } from "react";
+import { DialogHeader } from "../../components";
+import { useAuth } from "../../hooks"; // Now useAuth provides refetchUser
 import { UserPhoto } from "./UserPhoto";
-import { useAuth } from "../../hooks";
-import { red } from "@mui/material/colors";
+import { UserSignaturePad } from "./UserSignaturePad";
+import { UserDto } from "../../app/store";
 
-interface ChangePasswordFields {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword?: string;
+interface UserProfileDialogProps {
+  onClose: () => void;
 }
-const validationSchema = yup.object<YupShape<ChangePasswordFields>>({
-  currentPassword: yup.string().required("Current password is required"),
-  newPassword: yup.string().required("New password is required"),
-  confirmPassword: yup
-    .string()
-    .nullable()
-    .oneOf([yup.ref("newPassword"), null], "Password must match"),
-});
 
-const emptyFormData: ChangePasswordFields = {
-  currentPassword: "",
-  newPassword: "",
-  confirmPassword: "",
-};
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
 
-export const UserProfileDialog = ({ onClose }: { onClose: () => void }) => {
-  const [changePassword, { error: changePasswordError }] =
-    useChangePasswordMutation();
-    const { user } = useAuth();
-  const { showSuccessAlert, showErrorAlert } = useAlert();
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
 
-  const errors = (changePasswordError as any)?.data;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value !== index ? null : <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+export const UserProfileDialog = ({ onClose }: UserProfileDialogProps) => {
+  const { user, refetchUser } = useAuth(); // Destructure refetchUser here
+  const [currentTab, setCurrentTab] = useState(0);
+
+  useEffect(() => {
+    if (user && !user.photoUrl && user.signatureId) {
+      setCurrentTab(1);
+    }
+  }, [user]);
+
+  const handleChangeTab = useCallback((_event: React.SyntheticEvent, newValue: number) => {
+    setCurrentTab(newValue);
+  }, []);
+
+  const handleUploadSuccess = useCallback(() => {
+    if (refetchUser) {
+      refetchUser(); // Call refetchUser to update the user data immediately
+    }
+  }, [refetchUser]);
 
   return (
     <Dialog
@@ -51,42 +75,26 @@ export const UserProfileDialog = ({ onClose }: { onClose: () => void }) => {
       fullWidth
       maxWidth={"sm"}
       open={true}
+      onClose={onClose}
     >
-      <Formik
-        initialValues={emptyFormData}
-        enableReinitialize={true}
-        onSubmit={async (values, actions) => {
-          // You can implement password change logic here or call changePassword mutation
-          try {
-            await changePassword({ changePasswordPayload: values }).unwrap();
-            showSuccessAlert("Password changed successfully.");
-            onClose();
-          } catch (e) {
-            showErrorAlert("Failed to change password.");
-          } finally {
-            actions.setSubmitting(false);
-          }
-        }}
-        validationSchema={validationSchema}
-        validateOnChange={true}
-      >
-        <Form>
-          <DialogHeader title={"Upload Signature"} onClose={onClose} />
-          <DialogContent dividers={true}>
-            <Grid container spacing={2}>
-              {errors && (
-                <Grid item xs={12}>
-                  <Errors errors={errors as any} />
-                </Grid>
-              )}
-            <UserPhoto user={user} />
-            </Grid>
-          </DialogContent>
-          <DialogActions sx={{ p: 2 }}>
-            <Button variant="contained" color="error" onClick={onClose}>Close</Button>
-          </DialogActions>
-        </Form>
-      </Formik>
+      <DialogHeader title={"User Profile Media"} onClose={onClose} />
+      <DialogContent dividers={true} sx={{ p: 0 }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={currentTab} onChange={handleChangeTab} aria-label="profile media tabs" centered>
+            <Tab label="Profile Photo" {...a11yProps(0)} />
+            <Tab label="Signature" {...a11yProps(1)} />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={currentTab} index={0}>
+          {user ? <UserPhoto user={user} onPhotoUploaded={handleUploadSuccess} /> : <Typography variant="body2" color="textSecondary">User data not available.</Typography>}
+        </CustomTabPanel>
+        <CustomTabPanel value={currentTab} index={1}>
+          {user ? <UserSignaturePad user={user} onSignatureSaved={handleUploadSuccess} /> : <Typography variant="body2" color="textSecondary">User data not available.</Typography>}
+        </CustomTabPanel>
+      </DialogContent>
+      <DialogActions sx={{ p: 2 }}>
+        <Button variant="contained" color="error" onClick={onClose}>Close</Button>
+      </DialogActions>
     </Dialog>
   );
 };

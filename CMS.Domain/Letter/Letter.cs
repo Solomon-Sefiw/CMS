@@ -23,5 +23,8 @@ namespace CMS.Domain.letters
         public BusinessUnit BusinessUnits { get; set; }
         public ICollection<Domain.LetterDocument.LetterDocument> LetterDocuments { get; set; }
 
+        public bool IsEditableDocument { get; set; }
+        public string? DocumentJsonContent { get; set; }
+
     }
 }
