@@ -11,7 +11,7 @@ export const Logo = ({ height }: { height?: number }) => {
       component="img"
       height={height !== undefined ? height : "unset"}
       src={logo}
-      alt="Berhan Bank logo."
+      alt="CMS logo."
       onClick={() => {
         navigate("/");
       }}

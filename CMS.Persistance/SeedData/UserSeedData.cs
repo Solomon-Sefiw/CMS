@@ -15,11 +15,11 @@ public static class UserSeedData
         {
             user = new HRUser()
             {
-                FirstName = "John",
-                LastName = "Doe",
-                UserName = "john@test.com",
-                MiddleName = "J",
-                Email = "john@test.com",
+                FirstName = "Sola",
+                LastName = "Sefiw",
+                UserName = "solomonsefiw91@gmail.com",
+                MiddleName = "Tadege",
+                Email = "solomonsefiw91@gmail.com",
                // Branch = headOffice,
                 TwoFactorEnabled = true,
                 EmailConfirmed = true

@@ -75,7 +75,6 @@ export const LetterHome: React.FC = () => {
     // useSearchAllLettersQuery().refetch();      // if full list might change
   }, []);
 
-  const handleBackToHome = () => navigate("/setup"); // Navigate back to a general setup page
 
   const handleSearchChange = (value: string) => {
     setSearchInput(value);
@@ -140,7 +139,7 @@ export const LetterHome: React.FC = () => {
           inputValue={searchInput}
           onInputChange={(_, value) => handleSearchChange(value)}
           onChange={(_, value) => handleSearchSelect(value)}
-          sx={{ flexGrow: 1, minWidth: 250 }} // Allows it to grow and sets minimum width
+          sx={{ flexGrow: 1, minWidth: 30 }} // Allows it to grow and sets minimum width
           renderInput={(params) => (
             <TextField
               {...params}

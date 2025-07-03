@@ -344,7 +344,7 @@ export const LetterDialog = ({
             onChange={(_, newValue) => setActiveTab(newValue)}
             sx={{ px: 3 }}
           >
-            <Tab label="Traditional Letter" disabled={initialLetter?.isEditableDocument} />
+            <Tab label="Form Letter" disabled={initialLetter?.isEditableDocument} />
             <Tab label="Editable Document" />
           </Tabs>
           

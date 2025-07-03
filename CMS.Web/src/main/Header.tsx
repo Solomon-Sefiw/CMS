@@ -119,12 +119,12 @@ export const Header = ({
   };
 
   return (
-    <AppBar position="static" color="inherit" elevation={2} sx={{ px: 2, }}>
+    <AppBar position="static" color="inherit" elevation={2} sx={{ backgroundColor: "#0a3d52" }}>
       <Toolbar sx={{ justifyContent: "space-between", flexWrap: "wrap" }}>
         {/* Left Section: Logo and Menu Button */}
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center", color: "#ffffff" }}>
           {loggedIn && (
-            <IconButton edge="start" onClick={onMenuClick} sx={{ mr: 1 }}>
+            <IconButton edge="start" onClick={onMenuClick} sx={{ mr: 1, color: "#ffffff" }}>
               {opened ? <ChevronLeftIcon /> : <MenuIcon />}
             </IconButton>
           )}
@@ -132,7 +132,7 @@ export const Header = ({
             variant="h6"
             component={RouterLink}
             to="/home"
-            sx={{ textDecoration: "none", color: "#002a73", fontWeight: "bold" }}
+            sx={{ textDecoration: "none", color: "#ffffff", fontWeight: "bold" }}
           >
             CMS
           </Link>
@@ -150,7 +150,7 @@ export const Header = ({
         {/* Right Section */}
         {loggedIn && (
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Button sx={{ textTransform: "none" }} onClick={() => logout()}>
+            <Button sx={{ textTransform: "none",color: "#ffffff" }} onClick={() => logout()}>
               Logout
             </Button>
             {/* Uncomment to show notifications */}
