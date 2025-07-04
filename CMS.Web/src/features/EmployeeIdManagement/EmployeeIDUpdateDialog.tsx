@@ -1,0 +1,101 @@
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Grid,
+  TextField,
+} from "@mui/material";
+import { DialogHeader, FormSelectField, FormTextField } from "../../components";
+import { useCallback } from "react";
+import {
+  EmployeeDto,
+  useEmployeeIdCardReplaceMutation,
+  useEmployeeIdCardUpdateMutation,
+} from "../../app/api/HCMSApi";
+import { getEnumOptions } from "../../components/form-controls/get-enum-list";
+import { EmployeeIDCardReplaceReason } from "../../app/api/enums";
+import { Form, Formik } from "formik";
+
+interface WorkflowActionDialogProps {
+  employee: EmployeeDto;
+  onClose: () => void;
+}
+
+interface UpdateIdFormValues {
+  reason: EmployeeIDCardReplaceReason | "";
+  remark: string;
+}
+export const EmployeeIDUpdateDialog = ({
+  employee,
+  onClose,
+}: WorkflowActionDialogProps) => {
+  const [RemoveFromRejection] = useEmployeeIdCardUpdateMutation();
+
+  const initialValues: UpdateIdFormValues = {
+    reason: "",
+    remark: "",
+  };
+
+  const handleSubmit = useCallback(
+    async (values: UpdateIdFormValues) => {
+      try {
+        const command = {
+          employeeIdCardUpdateCommand: {
+            employeeId: employee.employeeId,
+            employeeIdCardStatusRemark: values.remark,
+          },
+        };
+        await RemoveFromRejection(command);
+        onClose();
+      } catch (error) {}
+    },
+    [employee.employeeId, RemoveFromRejection, onClose]
+  );
+
+  return (
+    <Dialog scroll="paper" disableEscapeKeyDown maxWidth="md" open={true}>
+      <DialogHeader title="Replace Employee ID" onClose={onClose} />
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {({ isSubmitting }) => (
+          <Form>
+            <DialogContent dividers sx={{ width: 600 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Employee ID"
+                    value={employee.employeeId}
+                    disabled
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormTextField
+                    name="remark"
+                    label="Remark"
+                    type="text"
+                    multiline
+                    rows={3}
+                  />
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions sx={{ p: 2 }}>
+              <Button onClick={onClose} variant="outlined">
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                variant="contained"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                Submit
+              </Button>
+            </DialogActions>
+          </Form>
+        )}
+      </Formik>
+    </Dialog>
+  );
+};

@@ -1,16 +1,14 @@
 import {
   EmailRounded,
-  InboxOutlined,
-  MarkUnreadChatAltRounded,
-  Message,
-  MessageTwoTone,
-  PodcastsSharp,
+  PermIdentityOutlined,
+  TimelapseOutlined,
 } from "@mui/icons-material";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import GroupsIcon from "@mui/icons-material/Groups";
 import {
   Collapse,
   List,
@@ -48,7 +46,7 @@ const navMenuItems: NavMenuItem[] = [
   },
 
   {
-    label: "CMS Setups",
+    label: "HCMS Setups",
     icon: <AccountBalanceIcon color="primary" />,
     url: "/setup",
   },
@@ -59,9 +57,24 @@ const navMenuItems: NavMenuItem[] = [
     url: "/sys-admin",
   },
   {
+    label: "Employees",
+    icon: <GroupsIcon color="primary" />,
+    url: "/employees",
+  },
+    {
     label: "Letters",
     icon: <EmailRounded color="primary" />,
     url: "/letters",
+  },
+  {
+    label: "Probation",
+    icon: <TimelapseOutlined color="primary" />,
+    url: "/probation",
+  },
+  {
+    label: "ID Management",
+    icon: <PermIdentityOutlined color="primary" />,
+    url: "/employeeid",
   },
 ];
 
@@ -210,6 +223,15 @@ export const LeftNav = ({ opened, onClose }: Props) => {
       }
       if (item.label === "System Admin") {
         return permissions.canCreateUpdateUser;
+      }
+      if (item.label === "Employees") {
+        return  permissions.canViewEmployeePersonalInfo;
+      }
+      if (item.label === "ID Management") {
+        return permissions.CanViewEmployeeId;
+      }
+      if (item.label === "Probation") {
+        return permissions.CanViewEmployeeProbation;
       }
       return true;
     }).filter(

@@ -23,6 +23,14 @@ namespace CMS.Persistance.SeedData
             await BusinessUnitTypeSeedData.SeedAsync(context);
             await BusinessUnitSeedData.SeedAsync(context);
             await context.SaveChangesAsync ();
+            await JobRoleCatagorySeedData.SeedAsync(context);
+            await JobGradeStepsValueSeedData.SeedAsync(context);
+            await AwardSeedData.SeedAsync(context);
+            await EducationLevelSeedData.SeedAsync(context);
+            await FieldOfStudySeedData.SeedAsync(context);
+            await InstitutionNameSeedData.SeedAsync(context);
+            await UnitOfMeasurementSeedData.SeedAsync(context);
+            await context.SaveChangesAsync();
 
         }
     }

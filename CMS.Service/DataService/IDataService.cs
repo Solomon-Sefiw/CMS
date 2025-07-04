@@ -9,6 +9,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 using CMS.Domain.Adress;
 using CMS.Domain.Contacts;
 using CMS.Domain.LetterDocument;
+using CMS.Domain.Benefit;
+using CMS.Domain.BranchGrade;
+using CMS.Domain.Education.awards;
+using CMS.Domain.Education;
+using CMS.Domain.Employee;
+using CMS.Domain.Jobs;
+using CMS.Domain.Language;
 
 namespace CMS.Services.DataService
 {
@@ -28,6 +35,41 @@ namespace CMS.Services.DataService
         public DbSet<Email> Emails { get; set; }
         public DbSet<Letter> Letters { get; set; }
         public DbSet<LetterDocument> LetterDocuments { get; set; }
+
+        /// <summary>
+        /// Second
+        /// </summary>
+
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<JobType> JobTypes { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<JobRole> JobRoles { get; set; }
+        public DbSet<JobRoleCategory> JobRoleCatagories { get; set; }
+        public DbSet<JobCatagory> JobCatagories { get; set; }
+        public DbSet<JobGrade> JobGrades { get; set; }
+        public DbSet<JobGradeStep> JobGradeSteps { get; set; }
+        public DbSet<EmployeeDocument> EmployeeDocuments { get; set; }
+        public DbSet<EmployeeComment> EmployeeComments { get; set; }
+        public DbSet<EmployeeChangeLog> EmployeeChangeLogs { get; set; }
+        public DbSet<Education> Educations { get; set; }
+        public DbSet<Award> Awards { get; set; }
+        public DbSet<EducationLevel> EducationLevels { get; set; }
+        public DbSet<FieldOfStudy> FieldOfStudies { get; set; }
+        public DbSet<InstitutionName> InstitutionNames { get; set; }
+        public DbSet<LanguageSkill> LanguageSkills { get; set; }
+        public DbSet<EmployeeEmergencyContact> EmployeeEmergencyContacts { get; set; }
+        //
+        public DbSet<EmployeeFamily> EmployeeFamilies { get; set; }
+        public DbSet<EmployeeExperience> EmployeeExperiences { get; set; }
+        public DbSet<EmployeeGuranters> EmployeeGuranteries { get; set; }
+        public DbSet<BranchGrade> BranchGrades { get; set; }
+
+        public DbSet<Benefit> Benefits { get; set; }
+        public DbSet<BenefitUnitOfMeasurement> BenefitUnitOfMeasurements { get; set; }
+        public DbSet<JobRoleBenefit> JobRoleBenefits { get; set; }
+        public DbSet<BenefitValue> BenefitValues { get; set; }
+        public DbSet<BenefitUnitPrice> BenefitUnitPrices { get; set; }
+        public DbSet<JobGradeStepsValue> JobGradeStepsValues { get; set; }
 
 
         //EmployeeExperiences

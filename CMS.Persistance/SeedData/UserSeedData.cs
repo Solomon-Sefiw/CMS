@@ -10,7 +10,7 @@ public static class UserSeedData
     public static async Task SeedAsync(UserManager<HRUser> userManager, CMSDBContext ctx)
     {
    
-        var user = await userManager.FindByEmailAsync("john@test.com");
+        var user = await userManager.FindByEmailAsync("solomonsefiw91@gmail.com");
         if (user == null)
         {
             user = new HRUser()
@@ -27,11 +27,11 @@ public static class UserSeedData
 
             var result = await userManager.CreateAsync(user, "Password@123");
             if (result != IdentityResult.Success)
-                throw new Exception("Could not create acct for John Doe");
+                throw new Exception("Could not create acct for Sola");
 
             result = await userManager.AddClaimAsync(user, new Claim("SystemAdmin", "true"));
             if (result != IdentityResult.Success)
-                throw new Exception("Could not add SystemAdmin claim for John Doe");
+                throw new Exception("Could not add SystemAdmin claim for Sola");
 
           
 

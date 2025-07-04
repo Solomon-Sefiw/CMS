@@ -7,6 +7,7 @@
         UserSignature = 2,
         LetterDocument = 3,
         DepartmentBluePrint = 4,
-
+        EmployeePicture,
+        BirthCertificate,
     }
 }

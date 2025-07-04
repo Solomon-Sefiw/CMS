@@ -10,5 +10,12 @@ namespace CMS.Domain.Enum
     {
         BusinessUnitAddress = 1,
         BirthPlaceAddress = 2,
+        CurrentAddress = 3,
+        EmergencyContactAddress = 4,
+        SpouseAddress = 5,
+        EmployeeGuaranterAddress = 6,
+        WorkingFirmAddress = 7,
+        ParentAddress = 8,
+        GuaranterWorkingFirmAddress = 9,
     }
 }

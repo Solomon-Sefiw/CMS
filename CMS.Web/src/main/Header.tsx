@@ -1,21 +1,19 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
-  AppBar,
   Box,
   Button,
   ButtonBase,
   Divider,
-  IconButton,
   Link,
-  Toolbar,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Logo } from "./Logo";
-import { useLogoutMutation } from "../app/api";
+import {
+  useGetAllProbationForNotificationQuery,
+  useLogoutMutation,
+} from "../app/api";
 import { useAuth, useModal, usePermission } from "../hooks";
 import { LoggedInUser } from "./account";
 import { NotificationsDropdown } from "./NotificationDropDown";
@@ -30,19 +28,22 @@ export const Header = ({
   onMenuClick: () => void;
   opened: boolean;
 }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
   const [logout] = useLogoutMutation();
   const { loggedIn } = useAuth();
   const { isOpen, toggle } = useModal();
   const navigate = useNavigate();
-  const permissions = usePermission();
 
   const NavigateToList = () => {
     navigate(`/Probation/underProbation`);
   };
 
+  const {
+    data: probationList = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useGetAllProbationForNotificationQuery();
+const permissions = usePermission();
   const transformProbationListToNotifications = (probationList: any[]) => {
     if (!probationList || probationList.length === 0) return [];
 
@@ -59,7 +60,11 @@ export const Header = ({
           title: "Completed Probation",
           message: (
             <>
-              <Typography component="span" fontWeight="bold" onClick={NavigateToList}>
+              <Typography
+                component="span"
+                fontWeight="bold"
+                onClick={NavigateToList}
+              >
                 {employee.displayName}
               </Typography>
               's probation period ended
@@ -72,7 +77,11 @@ export const Header = ({
           title: "Probation Ending Soon",
           message: (
             <>
-              <Typography component="span" fontWeight="bold" onClick={NavigateToList}>
+              <Typography
+                component="span"
+                fontWeight="bold"
+                onClick={NavigateToList}
+              >
                 {employee.displayName}
               </Typography>
               's probation ending in{" "}
@@ -89,7 +98,11 @@ export const Header = ({
           message: (
             <>
               Review needed for{" "}
-              <Typography component="span" fontWeight="bold" onClick={NavigateToList}>
+              <Typography
+                component="span"
+                fontWeight="bold"
+                onClick={NavigateToList}
+              >
                 {employee.displayName}
               </Typography>
               's probation (
@@ -106,7 +119,11 @@ export const Header = ({
           title: "Probation In Progress",
           message: (
             <>
-              <Typography component="span" fontWeight="bold" onClick={NavigateToList}>
+              <Typography
+                component="span"
+                fontWeight="bold"
+                onClick={NavigateToList}
+              >
                 {employee.displayName}
               </Typography>
               's probation in progress ({daysRemaining} days remaining)
@@ -118,52 +135,83 @@ export const Header = ({
     });
   };
 
+  const probationNotifications =
+    transformProbationListToNotifications(probationList);
+
   return (
-    <AppBar position="static" color="inherit" elevation={2} sx={{ backgroundColor: "#0a3d52" }}>
-      <Toolbar sx={{ justifyContent: "space-between", flexWrap: "wrap" }}>
-        {/* Left Section: Logo and Menu Button */}
-        <Box sx={{ display: "flex", alignItems: "center", color: "#ffffff" }}>
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          flex: 1,
+          position: "relative",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           {loggedIn && (
-            <IconButton edge="start" onClick={onMenuClick} sx={{ mr: 1, color: "#ffffff" }}>
-              {opened ? <ChevronLeftIcon /> : <MenuIcon />}
-            </IconButton>
+            <Button
+              sx={{ px: 2 }}
+              startIcon={opened ? <ChevronLeftIcon /> : <MenuIcon />}
+              onClick={onMenuClick}
+            >
+              Menu
+            </Button>
           )}
           <Link
             variant="h6"
             component={RouterLink}
-            to="/home"
-            sx={{ textDecoration: "none", color: "#ffffff", fontWeight: "bold" }}
+            to="/Home"
+            sx={{ cursor: "pointer", textDecoration: "none", color: "#002a73" }}
           >
-            CMS
+            HCMS
           </Link>
         </Box>
-
-        {/* Center: Logo */}
-        {!isMobile && (
-          <Box sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-            <ButtonBase disableRipple sx={{ width: 260 }} onClick={noop}>
-              <Logo />
-            </ButtonBase>
-          </Box>
-        )}
-
-        {/* Right Section */}
+        <Box sx={{ flex: 1 }}></Box>
+        <Box
+          component="span"
+          sx={{
+            display: "flex",
+            flexGrow: 1,
+            justifyContent: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <ButtonBase disableRipple sx={{ width: "260px" }} onClick={noop}>
+            <Logo />
+          </ButtonBase>
+        </Box>
         {loggedIn && (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Button sx={{ textTransform: "none",color: "#ffffff" }} onClick={() => logout()}>
-              Logout
-            </Button>
-            {/* Uncomment to show notifications */}
-            {/* {permissions.CanViewEmployeeProbation && (
-              <NotificationsDropdown
-                notifications={transformProbationListToNotifications([])}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button sx={{ textTransform: "none" }} onClick={() => logout()}>
+                Logout
+              </Button>
+              <Divider
+                orientation="vertical"
+                sx={{ height: "auto", alignSelf: "stretch", mx: 2 }}
               />
-            )} */}
-            <Divider orientation="vertical" flexItem />
-            <LoggedInUser />
+              <Box sx={{ mr: 2 }}>
+               {permissions.canViewSetup && <NotificationsDropdown notifications={probationNotifications} />}
+              </Box>
+              <Divider
+                orientation="vertical"
+                sx={{ height: "auto", alignSelf: "stretch", mx: 2 }}
+              />
+              <LoggedInUser />
+            </Box>
           </Box>
         )}
-      </Toolbar>
-    </AppBar>
+      </Box>
+    </>
   );
 };

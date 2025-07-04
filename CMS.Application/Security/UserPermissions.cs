@@ -2,6 +2,36 @@
 
 public class UserPermissions
 {
+    public static class Employee
+    {
+        public static class PersonalInfo
+        {
+            public const string View = "canViewEmployeePersonalInfo";
+            public const string Edit = "canCreateUpdateEmployeePersonalInfo";
+            public const string Approve = "canApproveRejectEmployeePersonalInfo";
+            public const string Submit = "canSubmitEmployeePersonalInfo";
+            public const string Activate = "canActivateEmployeePersonalInfo";
+            public const string Deactivate = "canDeactivateEmployeePersonalInfo";
+        }
+        public static class EmployeeId
+        {
+            public const string View = "canViewEmployeeId";
+            public const string Edit = "canCreateUpdateEmployeeId";
+            public const string Approve = "canApproveRejectEmployeeId";
+            public const string Submit = "canSubmitEmployeeId";
+            public const string Give = "canGiveEmployeeId";
+            public const string Replace = "canReplaceEmployeeId";
+        }
+        public static class Probation
+        {
+            public const string View = "canViewEmployeeProbation";
+            public const string Approve = "canApproveRejectEmployeeProbation";
+            public const string Submit = "canSubmitEmployeeProbation";
+            public const string Terminate = "canTerminateEmployeeProbation";
+            public const string Activate = "canActivateDeactivateEmployeeProbation";
+        }
+    }
+
     public static class User
     {
         public const string View = "canViewUser";
@@ -11,7 +41,7 @@ public class UserPermissions
 
     }
 
-    public static class Setup   
+    public static class Setup
     {
         public const string View = "canViewSetup";
         public const string Edit = "canCreateUpdateSetup";
@@ -30,12 +60,30 @@ public class UserPermissions
     }
     public static class Dashboard
     {
+
+            // Cards
+            public const string View = "canViewLetterCountBoard";
+            public const string View1 = "canViewRecentLettersBoard";
         // Cards
-        public const string View = "canViewLetterCountBoard";
-        public const string View1 = "canViewRecentLettersBoard";
+        public const string View2 = "canviewallactiveemployees";
+        public const string View3 = "canviewallvacantjobs";
+        public const string View4 = "canviewallresignedemployees";
+        public const string View5 = "canviewallbusinessunits";
+        public const string View6 = "canviewallnewemployees";
+        public const string View7 = "canviewallpositions";
+        public const string View8 = "canviewturnoverrates";
+        public const string View9 = "canviewretentionrates";
+        //chart and graph
+        public const string View10 = "canviewemployeedistributionbystatusdoughnutchart";
+        public const string View11 = "canviewmonthlynewemployeesoffiscalyearbarchart";
+        public const string View12 = "canviewemployeedistributionbychiefofficebarchart";
+        public const string View13 = "canviewemployeedistributionbyjobcategorypiechart";
+        public const string View14 = "canviewmonthlyhrmetricslinegraph";
+
+        //approval
+        public const string View15 = "canviewallapprovalsummaries";
+        public const string View16 = "canviewallapprovalrequestgrid";
     }
-
-
 
 
 

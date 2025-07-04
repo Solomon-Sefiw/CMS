@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/material";
 //import { useNavigate } from "react-router-dom";
-import logo from "../images/image.png";
+import logo from "../images/logo.png";
 import { useNavigate } from "react-router-dom";
 
 export const Logo = ({ height }: { height?: number }) => {

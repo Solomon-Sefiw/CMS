@@ -1,7 +1,7 @@
 import { SxProps } from "@mui/material";
 import { each, isObject, toLower, uniq, unset, upperFirst } from "lodash-es";
 import * as yup from "yup";
-
+import { EmployeeChangeLogDto } from "../app/store";
 import { ChangeType, EmployeeChangeLogEntityType } from "../app/api/enums";
 
 export type YupSchema<T> = T extends string
@@ -22,8 +22,70 @@ export type YupShape<T extends object> = {
 
 export const AllowedAmharicCharacters = /^[\u1200-\u137C\s]*$/;
 
+export const employeeChangeLogLabel = ({
+  entityType,
+  changeType,
+}: EmployeeChangeLogDto) => {
+  if (EmployeeChangeLogEntityType.BasicInfo === entityType)
+    return `${
+      (changeType === ChangeType.Added && "New ") || ""
+    }Basic Information ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
 
+  if (EmployeeChangeLogEntityType.Family === entityType)
+    return `${(changeType === ChangeType.Added && "New ") || ""}Family ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
 
+  if (EmployeeChangeLogEntityType.Contact === entityType)
+    return `${(changeType === ChangeType.Added && "New ") || ""}Contact ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
+
+  if (EmployeeChangeLogEntityType.Address === entityType)
+    return `${(changeType === ChangeType.Added && "New ") || ""}Address ${
+      (changeType === ChangeType.Added && "Added") ||
+      (changeType === ChangeType.Deleted && "Deleted") ||
+      "Modified"
+    }`;
+
+  if (EmployeeChangeLogEntityType.Block === entityType)
+    return `Employee Blocked`;
+
+  if (EmployeeChangeLogEntityType.Unblock === entityType)
+    return `Employee Unblocked`;
+
+  if (EmployeeChangeLogEntityType.EmergencyContact === entityType)
+    return `${
+      (changeType === ChangeType.Added && "New ") || ""
+    }Emergency Contact ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
+
+  if (EmployeeChangeLogEntityType.Education === entityType)
+    return `${(changeType === ChangeType.Added && "New ") || ""}Education ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
+
+  if (EmployeeChangeLogEntityType.Experiance === entityType)
+    return `${(changeType === ChangeType.Added && "New ") || ""}Experiance ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
+  if (EmployeeChangeLogEntityType.Guarantee === entityType)
+    return `${(changeType === ChangeType.Added && "New ") || ""}Guarantee ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
+  if (EmployeeChangeLogEntityType.Language === entityType)
+    return `${(changeType === ChangeType.Added && "New ") || ""}Language ${
+      (changeType === ChangeType.Added && "Added") || "Modified"
+    }`;
+};
+
+export const employeeChangeLogsLabels = (logs?: EmployeeChangeLogDto[]) =>
+  uniq(
+    (logs || []).map((log) => upperFirst(toLower(employeeChangeLogLabel(log))))
+  );
 
 export const removeEmptyFields = <T extends object>(
   value: T

@@ -16,10 +16,13 @@ export enum MartialStatus {
   Widowed = 4,
 }
 export enum ClaimCategory {
-  User = 1,
-  Setup,
-  AddressAndContact,
-  Dashboard
+        User = 1,
+        Setup = 2,
+        EmployeePersonalInfo = 3,
+        EmployeeProbation = 4,
+        AddressAndContact = 5,
+        EmployeeId = 6,
+        Dashboard = 7,
 }
 
 export enum ApprovalStatus {
@@ -82,8 +85,15 @@ export enum JobCatagoryEnum {
   Managerial = 4,
 }
 export enum AddressType {
-        BusinessUnitAddress = 1,
-        BirthPlaceAddress = 2,
+      BusinessUnitAddress = 1,
+      BirthPlaceAddress = 2,
+      CurrentAddress = 3,
+      EmergencyContactAddress = 4,
+      SpouseAddress = 5,
+      EmployeeGuaranterAddress = 6,
+      WorkingFirmAddress = 7,
+            ParentAddress = 8, 
+      GuaranterWorkingFirmAddress = 9,
 }
 export enum Country {
   Ethiopia = 1,
@@ -281,6 +291,26 @@ export enum LanguageSkillLevel {
 
 export enum Permission {
 
+  canViewEmployeeId = "canViewEmployeeId",
+  canCreateUpdateEmployeeId = "canCreateUpdateEmployeeId",
+  canApproveRejectEmployeeId = "canApproveRejectEmployeeId",
+  canSubmitEmployeeId = "canSubmitEmployeeId",
+  canGiveEmployeeId = "canGiveEmployeeId",
+  canReplaceEmployeeId = "canReplaceEmployeeId",
+  //EmployeeProbation
+  canViewEmployeeProbation = "canViewEmployeeProbation",
+  canApproveRejectEmployeeProbation = "canApproveRejectEmployeeProbation",
+  canSubmitEmployeeProbation = "canSubmitEmployeeProbation",
+  canTerminateEmployeeProbation = "canTerminateEmployeeProbation",
+  canActivateDeactivateEmployeeProbation = "canActivateDeactivateEmployeeProbation",
+  // Employee Personal Info
+  canApproveRejectEmployeePersonalInfo = "canApproveRejectEmployeePersonalInfo",
+  canCreateUpdateEmployeePersonalInfo = "canCreateUpdateEmployeePersonalInfo",
+  canViewEmployeePersonalInfo = "canViewEmployeePersonalInfo",
+  canSubmitEmployeePersonalInfo = "canSubmitEmployeePersonalInfo",
+  canActivateEmployeePersonalInfo = "canActivateEmployeePersonalInfo",
+  canDeactivateEmployeePersonalInfo = "canDeactivateEmployeePersonalInfo",
+
 //AddressContact 
   canViewAddressAndContact = "canViewAddressAndContact",
   canCreateUpdateAddressAndContact = "canCreateUpdateAddressAndContact",
@@ -298,6 +328,25 @@ export enum Permission {
   canSubmitSetup = "canSubmitSetup",
   canDeactivateSetup = "canDeactivateSetup",
   canActivateSetup = "canActivateSetup",
+  // Dashboard
+          // Cards
+  canViewAllActiveEmployees = "canViewAllActiveEmployees",
+  canViewAllVacantJobs = "canViewAllVacantJobs",
+  canViewAllResignedEmployees = "canViewAllResignedEmployees",
+  canViewAllBusinessUnits = "canViewAllBusinessUnits",
+  canViewAllNewEmployees = "canViewAllNewEmployees",
+  canViewAllPositions = "canViewAllPositions",
+  canViewTurnoverRates = "canViewTurnoverRates",
+  canViewRetentionRates = "canViewRetentionRates",
+           //Chart And Graph
+  canViewEmployeeDistributionByStatusDoughnutChart = "canViewEmployeeDistributionByStatusDoughnutChart",
+  canViewMonthlyNewEmployeesOfFiscalYearBarChart = "canViewMonthlyNewEmployeesOfFiscalYearBarChart",
+  canViewEmployeeDistributionByJobCategoryPieChart = "canViewEmployeeDistributionByJobCategoryPieChart",
+  canViewMonthlyHRMetricsLineGraph = "canViewMonthlyHRMetricsLineGraph",
+
+         //Approval
+  canViewAllApprovalSummaries = "canViewAllApprovalSummaries",
+  canViewAllApprovalRequestGrid = "canViewAllApprovalRequestGrid",
   // Dashboard
   canViewLetterCountBoard = "canViewLetterCountBoard",
   canViewRecentLettersBoard = "canViewRecentLettersBoard",
@@ -350,8 +399,11 @@ export enum JobGradeRomanId {
   XL = 40,
 }
 export enum DocumentType {
-  Other = 0,
-  UserSignature = 1,
-  DepartmentBluePrint = 2,
-  LetterDocument = 3,
+        Other = 0,
+        UserPhoto = 1,
+        UserSignature = 2,
+        LetterDocument = 3,
+        DepartmentBluePrint = 4,
+        EmployeePicture,
+        BirthCertificate,
 }

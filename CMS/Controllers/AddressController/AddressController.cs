@@ -15,10 +15,9 @@ namespace CMS.API.Controllers.AddressController
     public class AddressController : BaseController<AddressController>
     {
 
-
         [HttpPost("create", Name = "CreateAddress")]
         [InvalidateQueryTags("EmployeeProfile", "BusinessUnit")]
-        [Authorize(Policy =AuthPolicy.AddressAndContact.canCreateUpdateAddressAndContact)]
+        [Authorize(Policy = AuthPolicy.AddressAndContact.canCreateUpdateAddressAndContact)]
         [ProducesResponseType(200)]
         public async Task<ActionResult<int>> CreateAddress([FromBody] CreateAddressCommand command)
         {
@@ -38,14 +37,29 @@ namespace CMS.API.Controllers.AddressController
         {
             return Ok(await mediator.Send(command));
         }
-        [HttpGet("GetEmployeeFamilyAddressById",Name = "GetEmployeeFamilyAddressById")]
+        //GetAddressQueryByEntityType
+        [HttpGet("GetAddressQueryByEntityType", Name = "GetAddressQueryByEntityType")]
+        [Authorize(Policy = AuthPolicy.AddressAndContact.canViewAddressAndContact)]
+        public async Task<ActionResult<List<AddressDto>>> GetAddressQueryByEntityType(int entityId)
+        {
+            var address = await mediator.Send(new GetAddressQueryByEntityType(entityId));
+            return address;
+        }//
+        [HttpGet("GetEmployeeFamilyAddressById", Name = "GetEmployeeFamilyAddressById")]
         [Authorize(Policy = AuthPolicy.AddressAndContact.canViewAddressAndContact)]
         public async Task<ActionResult<List<AddressDto>>> GetEmployeeFamilyAddressById(int addressId)
         {
             var Address = await mediator.Send(new GetAddressQueryById(addressId));
             return Address;
         }
-
+        //GetGuaranterWorkingFirmAddressQuery
+        [HttpGet("GetGuaranterWorkingFirmAddressQuery", Name = "GetGuaranterWorkingFirmAddressQuery")]
+        [Authorize(Policy = AuthPolicy.AddressAndContact.canViewAddressAndContact)]
+        public async Task<ActionResult<List<AddressDto>>> GetGuaranterWorkingFirmAddress(int employeeId)
+        {
+            var Address = await mediator.Send(new GetGuaranterWorkingFirmAddressQuery(employeeId));
+            return Address;
+        }//GetGuaranterAddressQuery
         [HttpGet("GetGuaranterAddressQuery", Name = "GetGuaranterAddressQuery")]
         [Authorize(Policy = AuthPolicy.AddressAndContact.canViewAddressAndContact)]
         public async Task<ActionResult<List<AddressDto>>> GetGuaranterAddress(int employeeId)

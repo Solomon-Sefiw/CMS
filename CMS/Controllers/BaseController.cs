@@ -1,7 +1,6 @@
 ﻿
 using CMS.Api.Dtos;
 using CMS.Api.Filters;
-using CMS.Application.Security;
 using CMS.Domain.User;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

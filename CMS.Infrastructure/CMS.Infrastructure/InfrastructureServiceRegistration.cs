@@ -105,6 +105,10 @@ namespace CMS.Infrastructure
                     });
                 }
             }
+
+            // Optionally log any additional information about the policies being created
+            //var logger = serviceProvider.GetRequiredService<ILogger<InfrastructureServiceRegistration>>();
+            //logger.LogInformation("Dynamic Authorization Policies have been added successfully.");
         }
 
 
