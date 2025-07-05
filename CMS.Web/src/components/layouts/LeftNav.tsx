@@ -61,11 +61,6 @@ const navMenuItems: NavMenuItem[] = [
     icon: <GroupsIcon color="primary" />,
     url: "/employees",
   },
-    {
-    label: "Letters",
-    icon: <EmailRounded color="primary" />,
-    url: "/letters",
-  },
   {
     label: "Probation",
     icon: <TimelapseOutlined color="primary" />,
@@ -75,6 +70,11 @@ const navMenuItems: NavMenuItem[] = [
     label: "ID Management",
     icon: <PermIdentityOutlined color="primary" />,
     url: "/employeeid",
+  },
+      {
+    label: "Letters",
+    icon: <EmailRounded color="primary" />,
+    url: "/letters",
   },
 ];
 

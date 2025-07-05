@@ -37,7 +37,9 @@ public class GetBusinessUnitsListQueryHandler : IRequestHandler<GetBusinessUnits
         // Preload related data
         var businessUnitTypes = await _dataService.BusinessUnitTypes
             .ToDictionaryAsync(b => b.Value, cancellationToken);
+        // Fix for CS0019: Replace the incorrect usage of '&&' with a proper filtering condition.
         var addreses = await _dataService.Addresses
+            .Where(b => b.AddressType == AddressTypeEnum.BusinessUnitAddress)
             .ToDictionaryAsync(b => b.RequestId, cancellationToken);
 
         var parentBusinessUnits = await _dataService.BusinessUnits

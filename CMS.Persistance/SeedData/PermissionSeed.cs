@@ -62,8 +62,6 @@ namespace CMS.Persistance.SeedData
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View14, ClaimCategory = ClaimCategory.Dashboard },
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View15, ClaimCategory = ClaimCategory.Dashboard },
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Dashboard.View16, ClaimCategory = ClaimCategory.Dashboard },
-
-
             });
 
 

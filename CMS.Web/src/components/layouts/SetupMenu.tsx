@@ -95,46 +95,6 @@ const SetupMenu: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Job Role Category Card */}
-        <Grid item xs={12} sm={6} md={2}>
-          <Paper
-            onClick={() => navigate("/job-role-category")}
-            elevation={3}
-            sx={{
-              padding: 3,
-              borderRadius: "12px",
-              textAlign: "center",
-              cursor: "pointer",
-              backgroundColor: "#fff",
-              border: "2px solid #1976d2",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "scale(1.05)",
-                boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
-                backgroundColor: "#f0f0f0",
-              },
-            }}
-          >
-            <ClassSharp sx={{ fontSize: 30, color: "#ccbb45" }} />
-            <Typography
-              variant="h6"
-              sx={{
-                mt: 2,
-                fontWeight: "bold",
-                color: "rgb(4, 18, 99)",
-                fontSize: { xs: "0.9rem", sm: "1rem" },
-              }}
-            >
-              Job Role Category
-            </Typography>
-          </Paper>
-        </Grid>
-
         {/* Job Category Card */}
         <Grid item xs={12} sm={6} md={2}>
           <Paper
@@ -348,6 +308,45 @@ const SetupMenu: React.FC = () => {
               }}
             >
               Benefit Value
+            </Typography>
+          </Paper>
+        </Grid>
+                {/* Job Role Category Card */}
+        <Grid item xs={12} sm={6} md={2}>
+          <Paper
+            onClick={() => navigate("/job-role-category")}
+            elevation={3}
+            sx={{
+              padding: 3,
+              borderRadius: "12px",
+              textAlign: "center",
+              cursor: "pointer",
+              backgroundColor: "#fff",
+              border: "2px solid #1976d2",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
+                backgroundColor: "#f0f0f0",
+              },
+            }}
+          >
+            <ClassSharp sx={{ fontSize: 30, color: "#ccbb45" }} />
+            <Typography
+              variant="h6"
+              sx={{
+                mt: 2,
+                fontWeight: "bold",
+                color: "rgb(4, 18, 99)",
+                fontSize: { xs: "0.9rem", sm: "1rem" },
+              }}
+            >
+              Job Role Category
             </Typography>
           </Paper>
         </Grid>
@@ -672,7 +671,7 @@ const SetupMenu: React.FC = () => {
         </Grid>
 
         {/* Branch Grade Card */}
-        <Grid item xs={12} sm={6} md={2}>
+        {/* <Grid item xs={12} sm={6} md={2}>
           <Paper
             onClick={() => navigate("/branch-grade")}
             elevation={3}
@@ -709,7 +708,7 @@ const SetupMenu: React.FC = () => {
               Branch Grade
             </Typography>
           </Paper>
-        </Grid>
+        </Grid> */}
 
        
       </Grid>

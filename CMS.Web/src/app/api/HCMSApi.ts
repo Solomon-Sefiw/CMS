@@ -1016,13 +1016,6 @@ const injectedRtkApi = api
         query: () => ({ url: `/api/Dashboard/GetApprovedActiveJobRoleCount` }),
         providesTags: ["Dashboard"],
       }),
-      getEmployeeChiefGroupCount: build.query<
-        GetEmployeeChiefGroupCountApiResponse,
-        GetEmployeeChiefGroupCountApiArg
-      >({
-        query: () => ({ url: `/api/Dashboard/GetEmployeeChiefGroupCount` }),
-        providesTags: ["Dashboard"],
-      }),
       getEmployeeDistributionByStatus: build.query<
         GetEmployeeDistributionByStatusApiResponse,
         GetEmployeeDistributionByStatusApiArg
@@ -3418,8 +3411,6 @@ export type GetApprovedActiveEmployeeCountApiResponse = unknown;
 export type GetApprovedActiveEmployeeCountApiArg = void;
 export type GetApprovedActiveJobRoleCountApiResponse = unknown;
 export type GetApprovedActiveJobRoleCountApiArg = void;
-export type GetEmployeeChiefGroupCountApiResponse = unknown;
-export type GetEmployeeChiefGroupCountApiArg = void;
 export type GetEmployeeDistributionByStatusApiResponse = unknown;
 export type GetEmployeeDistributionByStatusApiArg = void;
 export type GetEmployeeJobCategoryGroupCountApiResponse = unknown;
@@ -6895,8 +6886,6 @@ export const {
   useLazyGetApprovedActiveEmployeeCountQuery,
   useGetApprovedActiveJobRoleCountQuery,
   useLazyGetApprovedActiveJobRoleCountQuery,
-  useGetEmployeeChiefGroupCountQuery,
-  useLazyGetEmployeeChiefGroupCountQuery,
   useGetEmployeeDistributionByStatusQuery,
   useLazyGetEmployeeDistributionByStatusQuery,
   useGetEmployeeJobCategoryGroupCountQuery,

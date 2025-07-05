@@ -60,29 +60,27 @@ public class UserPermissions
     }
     public static class Dashboard
     {
-
             // Cards
             public const string View = "canViewLetterCountBoard";
             public const string View1 = "canViewRecentLettersBoard";
-        // Cards
-        public const string View2 = "canviewallactiveemployees";
-        public const string View3 = "canviewallvacantjobs";
-        public const string View4 = "canviewallresignedemployees";
-        public const string View5 = "canviewallbusinessunits";
-        public const string View6 = "canviewallnewemployees";
-        public const string View7 = "canviewallpositions";
-        public const string View8 = "canviewturnoverrates";
-        public const string View9 = "canviewretentionrates";
+        public const string View2 = "canViewAllActiveEmployees";
+        public const string View3 = "canViewAllVacantJobs";
+        public const string View4 = "canViewAllResignedEmployees";
+        public const string View5 = "canViewAllBusinessUnits";
+        public const string View6 = "canViewAllNewEmployees";
+        public const string View7 = "canViewAllPositions";
+        public const string View8 = "canViewTurnoverRates";
+        public const string View9 = "canViewRetentionRates";
         //chart and graph
-        public const string View10 = "canviewemployeedistributionbystatusdoughnutchart";
-        public const string View11 = "canviewmonthlynewemployeesoffiscalyearbarchart";
+        public const string View10 = "canViewEmployeeDistributionByStatusDoughnutChart";
+        public const string View11 = "canViewMonthlyNewEmployeesOfFiscalYearBarChart";
         public const string View12 = "canviewemployeedistributionbychiefofficebarchart";
-        public const string View13 = "canviewemployeedistributionbyjobcategorypiechart";
-        public const string View14 = "canviewmonthlyhrmetricslinegraph";
+        public const string View13 = "canViewEmployeeDistributionByJobCategoryPieChart";
+        public const string View14 = "canViewMonthlyHRMetricsLineGraph";
 
         //approval
-        public const string View15 = "canviewallapprovalsummaries";
-        public const string View16 = "canviewallapprovalrequestgrid";
+        public const string View15 = "canViewAllApprovalSummaries";
+        public const string View16 = "canViewAllApprovalRequestGrid";
     }
 
 

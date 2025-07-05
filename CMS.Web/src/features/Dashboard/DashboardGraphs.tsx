@@ -36,7 +36,6 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
-  useGetEmployeeChiefGroupCountQuery,
   useGetEmployeeDistributionByStatusQuery,
   useGetEmployeeJobCategoryGroupCountQuery,
   useGetEmployeeRetentionRateQuery,

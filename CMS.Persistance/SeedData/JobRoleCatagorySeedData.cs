@@ -13,10 +13,9 @@ namespace CMS.Persistance.SeedData
             {
                 new JobRoleCategory() {Name="Officer",Description = "Officer"},
                 new JobRoleCategory() {Name="Acting",Description = "Acting"},
-                new JobRoleCategory() {Name="Branch Manager", Description = "Branch Manager"},
                 new JobRoleCategory() {Name="Division Manager", Description = "Division Manager"},
                 new JobRoleCategory() {Name="Department-Director", Description = "Department-Director"},
-                new JobRoleCategory() {Name="CEO Bank Hierarchy", Description = "CEO Bank Hierarchy"},
+                new JobRoleCategory() {Name="CEO", Description = "CEO"},
                 new JobRoleCategory() {Name="Section Head", Description = "Section Head"},
             };
             await context.JobRoleCatagories.AddRangeAsync(jobRoleCategory);

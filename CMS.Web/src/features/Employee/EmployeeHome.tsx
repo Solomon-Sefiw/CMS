@@ -603,7 +603,7 @@ export const EmployeesHome = () => {
             )}
           />
 
-          {selectedBusinessUnit?.id && selectedBusinessUnit?.id !== 1 && (
+          {selectedBusinessUnit?.id  && (
             <Button
               variant="contained"
               startIcon={<AddIcon />}

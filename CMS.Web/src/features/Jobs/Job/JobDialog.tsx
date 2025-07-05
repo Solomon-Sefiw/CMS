@@ -148,7 +148,7 @@ export const JobDialog = ({ onClose, job, title }: JobDialogProps) => {
                       name="businessUnitId"
                       label="Business Unit"
                       type="number"
-                      options={businessUnitLookups.filter(a=>(a.value!=1))}
+                      options={businessUnitLookups}
                       fullWidth
                     />
                   </Box>
