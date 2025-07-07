@@ -6,6 +6,7 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { App } from "./main/App";
 import { store } from "./app/store";
+import './features/i18n';
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);

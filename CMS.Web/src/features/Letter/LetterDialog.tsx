@@ -36,6 +36,7 @@ import { useAuth } from "../../hooks";
 import { useBusinessUnit } from "../BusinessUnit";
 import { DocumentDownload } from "../../components/DocumentDownload";
 import DocumentEditor from "./DocumentEditor";
+import { FormRichLetterTextField } from "../../components/form-controls/form-letter";
 
 interface LetterTypeOption {
   value: number;
@@ -136,8 +137,7 @@ export const LetterDialog = ({
       .required("Subject is required.")
       .max(200, "Subject cannot be longer than 200 characters."),
     content: Yup.string()
-      .required("Content is required.")
-      .max(1000, "Content cannot be longer than 1000 characters."),
+      .required("Content is required."),
     recipientId: Yup.string().nullable().when("businessUnitId", {
       is: (val: number | null | undefined) => val && val > 0,
       then: (schema) =>
@@ -470,7 +470,7 @@ export const LetterDialog = ({
                         )}
 
                         <Grid item xs={12}>
-                          <FormTextField
+                          {/* <FormTextField
                             name="content"
                             type="text"
                             placeholder="Letter Content"
@@ -482,7 +482,8 @@ export const LetterDialog = ({
                             error={!!errors?.content}
                             helperText={errors?.content}
                             disabled={isLocked}
-                          />
+                          /> */}
+                          <FormRichLetterTextField name="content" />
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 2 }}>
                           <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>

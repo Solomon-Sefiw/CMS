@@ -18,6 +18,7 @@ import { useAuth, useModal, usePermission } from "../hooks";
 import { LoggedInUser } from "./account";
 import { NotificationsDropdown } from "./NotificationDropDown";
 import dayjs from "dayjs";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const noop = () => {};
 
@@ -167,6 +168,7 @@ const permissions = usePermission();
             HCMS
           </Link>
         </Box>
+         <LanguageSwitcher />
         <Box sx={{ flex: 1 }}></Box>
         <Box
           component="span"

@@ -40,6 +40,7 @@ import {
 
 import { LetterStatus } from "../../app/api/enums";
 import { useAuth, usePermission } from "../../hooks";
+import { useTranslation } from "react-i18next";
 
 // Define a type for the card configuration to ensure type safety
 interface DashboardCard {
@@ -57,7 +58,7 @@ const LetterDashboardDemo = () => {
   const permissions = usePermission();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+const { t } = useTranslation();
   // State to hold the current time, updated every second
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -220,7 +221,7 @@ const LetterDashboardDemo = () => {
         }}
       >
         <Typography variant="h5" sx={{ color: 'primary.dark', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '1.8rem' } }}>
-          OFFICE LETTER MANAGEMENT SYSTEM
+           {t('welcome')}
         </Typography>
         <Typography variant="subtitle1" color="#ffffff" sx={{fontWeight: 'bold',backgroundColor: "#0a3d52", textAlign: { xs: 'center', sm: 'right' }, fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
           {formattedDateTime} {/* Updated to display real-time, 6 hours late */}
