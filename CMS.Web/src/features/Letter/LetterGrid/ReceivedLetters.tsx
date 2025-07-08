@@ -109,8 +109,8 @@ export const ReceivedLetters = () => {
                       <TableCell sx={{ fontWeight: "bold" }}>Sender</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>Recipient</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>Business Unit</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Document</TableCell> 
-                      <TableCell sx={{ fontWeight: "bold" }}>Sent Date</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Sent Date</TableCell> 
+                      <TableCell sx={{ fontWeight: "bold" }}>Document</TableCell>
                       <TableCell align="center">Actions</TableCell>
                     </TableRow>
                   </TableHead>

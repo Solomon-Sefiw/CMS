@@ -1,6 +1,18 @@
 {
   "welcome": "OFFICE LETTER MANAGEMENT SYSTEM",
+  "recent_letters": "Recent Letters",
   "upload_letter": "Upload Letter",
   "logout": "Logout",
-  "select_language": "Select Language"
+  "select_language": "Select Language",
+   "menu": {
+    "dashboard": "Dashboard",
+    "hcmsSetups": "HCMS Setups",
+    "sysAdmin": "System Admin",
+    "employees": "Employees",
+    "probation": "Probation",
+    "idManagement": "ID Management",
+    "letters": "Letters"
+  }
 }
+
+

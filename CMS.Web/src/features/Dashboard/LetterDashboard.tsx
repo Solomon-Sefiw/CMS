@@ -319,7 +319,7 @@ const { t } = useTranslation();
                 }}
               >
                 <Typography variant="h6" fontWeight="bold" color={"primary.dark"}>
-                  Recent Letters
+                  {t('recent_letters')}
                 </Typography>
               </Box>
 

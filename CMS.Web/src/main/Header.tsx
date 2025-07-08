@@ -19,6 +19,7 @@ import { LoggedInUser } from "./account";
 import { NotificationsDropdown } from "./NotificationDropDown";
 import dayjs from "dayjs";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const noop = () => {};
 
@@ -29,9 +30,9 @@ export const Header = ({
   onMenuClick: () => void;
   opened: boolean;
 }) => {
+  const { t } = useTranslation();
   const [logout] = useLogoutMutation();
   const { loggedIn } = useAuth();
-  const { isOpen, toggle } = useModal();
   const navigate = useNavigate();
 
   const NavigateToList = () => {
@@ -40,9 +41,6 @@ export const Header = ({
 
   const {
     data: probationList = [],
-    isLoading,
-    isError,
-    refetch,
   } = useGetAllProbationForNotificationQuery();
 const permissions = usePermission();
   const transformProbationListToNotifications = (probationList: any[]) => {
@@ -168,7 +166,6 @@ const permissions = usePermission();
             HCMS
           </Link>
         </Box>
-         <LanguageSwitcher />
         <Box sx={{ flex: 1 }}></Box>
         <Box
           component="span"
@@ -195,8 +192,13 @@ const permissions = usePermission();
                 alignItems: "center",
               }}
             >
+              <LanguageSwitcher />
+                <Divider
+                orientation="vertical"
+                sx={{ height: "auto", alignSelf: "stretch", mx: 2 }}
+              />
               <Button sx={{ textTransform: "none" }} onClick={() => logout()}>
-                Logout
+                {t('logout')}
               </Button>
               <Divider
                 orientation="vertical"

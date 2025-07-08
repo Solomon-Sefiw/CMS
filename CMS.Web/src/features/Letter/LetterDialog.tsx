@@ -8,8 +8,6 @@ import {
   Typography,
   Divider,
   Box,
-  Tabs,
-  Tab,
 } from "@mui/material";
 import { Formik, Form, FormikHelpers } from "formik";
 import {
@@ -19,7 +17,7 @@ import {
   FormTextField,
 } from "../../components";
 import { DocumentType, LetterType, LetterStatus } from "../../app/api/enums";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { Errors } from "../../components";
 import { useAlert } from "../notification";
 import * as Yup from "yup";
@@ -27,15 +25,15 @@ import {
   LetterDocument,
   LetterDto,
   useAddLetterDocumentMutation,
-  useCreateEditableLetterMutation,
   useCreateLetterMutation,
   useUpdateLetterMutation,
   useUsersQuery,
 } from "../../app/api";
 import { useAuth } from "../../hooks";
 import { useBusinessUnit } from "../BusinessUnit";
+import "react-quill/dist/quill.snow.css";
+import html2pdf from "html2pdf.js";
 import { DocumentDownload } from "../../components/DocumentDownload";
-import DocumentEditor from "./DocumentEditor";
 import { FormRichLetterTextField } from "../../components/form-controls/form-letter";
 
 interface LetterTypeOption {
@@ -71,9 +69,9 @@ const emptyLetterData: LetterDto = {
   recipientId: undefined,
   businessUnitId: undefined,
   letterDocuments: [],
-  isEditableDocument: false,
-  documentJsonContent: undefined,
 };
+
+
 
 export const LetterDialog = ({
   onClose,
@@ -86,14 +84,12 @@ export const LetterDialog = ({
     useCreateLetterMutation();
   const [updateLetter, { error: updateLetterError, isLoading: isUpdating }] =
     useUpdateLetterMutation();
-  const [createEditableLetter] = useCreateEditableLetterMutation();
   const [addLetterDocument] = useAddLetterDocumentMutation();
 
   const { showSuccessAlert, showErrorAlert } = useAlert();
   const [notification, setNotification] = useState<string>("");
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [isLocked, setIsLocked] = useState(false);
-  const [activeTab, setActiveTab] = useState(0);
   const [selectedLetterAttachment, setSelectedLetterAttachment] =
     useState<File | null>(null);
 
@@ -120,7 +116,6 @@ export const LetterDialog = ({
       setIsLocked(false);
       setNotification("This letter is being viewed/edited.");
       setOpenSnackbar(false);
-      setActiveTab(initialLetter.isEditableDocument ? 1 : 0);
     } else {
       setIsLocked(false);
       setOpenSnackbar(false);
@@ -136,8 +131,7 @@ export const LetterDialog = ({
     subject: Yup.string()
       .required("Subject is required.")
       .max(200, "Subject cannot be longer than 200 characters."),
-    content: Yup.string()
-      .required("Content is required."),
+    content: Yup.string().required("Content is required."),
     recipientId: Yup.string().nullable().when("businessUnitId", {
       is: (val: number | null | undefined) => val && val > 0,
       then: (schema) =>
@@ -158,52 +152,6 @@ export const LetterDialog = ({
     }
   }, []);
 
-  const handleCreateEditableDocument = async (content: string, jsonContent: string) => {
-    try {
-      const command = {
-        referenceNumber: `ED-${Date.now()}`,
-        subject: letterData.subject || "Editable Document",
-        content: content,
-        documentJson: jsonContent,
-        letterType: letterData.letterType || LetterType.InternalMemo,
-        senderId: user?.id,
-        recipientId: letterData.recipientId,
-        businessUnitId: letterData.businessUnitId || user?.branchId,
-      };
-
-      if (initialLetter?.id) {
-        await updateLetter({
-          ...initialLetter,
-          ...command,
-          updateLetterCommand: {
-            id: undefined,
-            referenceNumber: undefined,
-            subject: undefined,
-            content: undefined,
-            letterType: undefined,
-            status: undefined,
-            senderId: undefined,
-            recipientId: undefined,
-            businessUnitId: undefined,
-            isEditableDocument: undefined,
-            documentJsonContent: undefined
-          }
-        }).unwrap();
-      } else {
-        await createEditableLetter({ createEditableLetterCommand: command }).unwrap();
-      }
-
-      showSuccessAlert(
-        initialLetter?.id
-          ? "Editable document updated successfully!"
-          : "Editable document created successfully!"
-      );
-      onClose();
-    } catch (error: any) {
-      showErrorAlert(error?.data?.detail || "Failed to save editable document.");
-    }
-  };
-
   const handleSubmitTraditional = useCallback(
     async (
       values: LetterDto,
@@ -212,8 +160,6 @@ export const LetterDialog = ({
       const submitValues = {
         ...values,
         senderId: user?.id,
-        isEditableDocument: false,
-        documentJsonContent: null
       };
 
       try {
@@ -299,6 +245,25 @@ export const LetterDialog = ({
     (d) => d.documentType === DocumentType.LetterDocument && !d.isDeleted
   );
 
+const handleDownloadPdf = () => {
+  const element = document.createElement("div");
+  element.innerHTML = `
+    <div class="letter-page">
+      ${letterData.content || ""}
+    </div>
+  `;
+
+  const opt = {
+    margin: 0,
+    filename: "letter.pdf",
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  };
+
+  html2pdf().from(element).set(opt).save();
+};
+
   return (
     <Dialog
       scroll="paper"
@@ -339,235 +304,199 @@ export const LetterDialog = ({
       ) : (
         <>
           <DialogHeader title={title} onClose={onClose} />
-          <Tabs 
-            value={activeTab} 
-            onChange={(_, newValue) => setActiveTab(newValue)}
-            sx={{ px: 3 }}
+          <Formik
+            initialValues={letterData}
+            enableReinitialize={true}
+            onSubmit={handleSubmitTraditional}
+            validationSchema={validationSchema}
+            validateOnChange={true}
           >
-            <Tab label="Form Letter" disabled={initialLetter?.isEditableDocument} />
-            <Tab label="Editable Document" />
-          </Tabs>
-          
-          {activeTab === 0 ? (
-            <Formik
-              initialValues={letterData}
-              enableReinitialize={true}
-              onSubmit={handleSubmitTraditional}
-              validationSchema={validationSchema}
-              validateOnChange={true}
-            >
-              {({ handleSubmit, isSubmitting, values, setFieldValue }) => {
-                const filteredRecipientOptions = (users || [])
-                  .filter(
-                    (u) =>
-                      values.businessUnitId &&
-                      u.branchId === values.businessUnitId &&
-                      u.id !== user?.id
-                  )
-                  .map((u) => ({
-                    label:
-                      u.firstName && u.lastName
-                        ? `${u.firstName} ${u.lastName}`
-                        : u.firstName || u.lastName || "Unknown User",
-                    value: u.id ?? "", // Ensure value is never null
-                  }));
+            {({ handleSubmit, isSubmitting, values, setFieldValue }) => {
+              const filteredRecipientOptions = (users || [])
+                .filter(
+                  (u) =>
+                    values.businessUnitId &&
+                    u.branchId === values.businessUnitId &&
+                    u.id !== user?.id
+                )
+                .map((u) => ({
+                  label:
+                    u.firstName && u.lastName
+                      ? `${u.firstName} ${u.lastName}`
+                      : u.firstName || u.lastName || "Unknown User",
+                  value: u.id ?? "",
+                }));
 
-                return (
-                  <Form onSubmit={handleSubmit}>
-                    <DialogContent dividers={true} sx={{ p: 3 }}>
-                      <Grid container spacing={3}>
-                        {errors && (
-                          <Grid item xs={12}>
-                            <Errors errors={errors as any} />
-                          </Grid>
-                        )}
-
-                        <Grid item xs={12} sm={6}>
-                          <FormTextField
-                            name="referenceNumber"
-                            label="Reference Number"
-                            type="text"
-                            fullWidth
-                            error={!!errors?.referenceNumber}
-                            helperText={errors?.referenceNumber}
-                            disabled={isLocked}
-                          />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                          <FormSelectField
-                            name="letterType"
-                            label="Letter Type"
-                            type="number"
-                            options={letterTypeLookups}
-                            fullWidth
-                            error={!!errors?.letterType}
-                            helperText={errors?.letterType}
-                            disabled={isLocked}
-                          />
-                        </Grid>
-
+              return (
+                <Form onSubmit={handleSubmit}>
+                  <DialogContent dividers={true} sx={{ p: 3 }}>
+                    <Grid container spacing={3}>
+                      {errors && (
                         <Grid item xs={12}>
-                          <FormTextField
-                            name="subject"
-                            label="Subject"
-                            type="text"
-                            fullWidth
-                            error={!!errors?.subject}
-                            helperText={errors?.subject}
-                            disabled={isLocked}
-                          />
+                          <Errors errors={errors as any} />
                         </Grid>
+                      )}
 
-                        <Grid item xs={12} sm={6}>
-                          <FormSelectField
-                            name="businessUnitId"
-                            label="Business Unit"
-                            type="number"
-                            options={businessUnitLookups}
-                            fullWidth
-                            error={!!errors?.businessUnitId}
-                            helperText={errors?.businessUnitId}
-                            disabled={isLocked}
-                            onChange={(event) => {
-                              setFieldValue("businessUnitId", event.target.value);
-                              setFieldValue("recipientId", undefined);
-                            }}
-                          />
-                        </Grid>
-
-                        {values.businessUnitId && values.businessUnitId > 0 && (
-                          <Grid item xs={12} sm={6}>
-                            <FormSelectField
-                              name="recipientId"
-                              label="Recipient"
-                              type="string"
-                              options={filteredRecipientOptions}
-                              fullWidth
-                              error={!!errors?.recipientId}
-                              helperText={errors?.recipientId}
-                              disabled={
-                                isLocked || filteredRecipientOptions.length === 0
-                              }
-                              sx={
-                                filteredRecipientOptions.length === 0
-                                  ? { "& .MuiInputBase-root": { backgroundColor: "#f0f0f0" } }
-                                  : {}
-                              }
-                            />
-                            {filteredRecipientOptions.length === 0 &&
-                              values.businessUnitId && (
-                                <Typography
-                                  variant="caption"
-                                  color="textSecondary"
-                                  sx={{ ml: 1, mt: 0.5 }}
-                                >
-                                  No recipients found for this Business Unit
-                                  (excluding yourself).
-                                </Typography>
-                              )}
-                          </Grid>
-                        )}
-
-                        <Grid item xs={12}>
-                          {/* <FormTextField
-                            name="content"
-                            type="text"
-                            placeholder="Letter Content"
-                            label="Content"
-                            fullWidth
-                            multiline
-                            minRows={2}
-                            variant="outlined"
-                            error={!!errors?.content}
-                            helperText={errors?.content}
-                            disabled={isLocked}
-                          /> */}
-                          <FormRichLetterTextField name="content" />
-                        </Grid>
-                        <Grid item xs={12} sx={{ mt: 2 }}>
-                          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                            <Typography variant="subtitle2">Letter Attachment</Typography>
-                            <Box>
-                              {selectedLetterAttachment ? (
-                                <Typography
-                                  variant="body2"
-                                  sx={{ ml: 1, color: "text.secondary" }}
-                                >
-                                  Selected: {selectedLetterAttachment.name}
-                                </Typography>
-                              ) : (
-                                activeLetterAttachments.map((d) => (
-                                  <DocumentDownload
-                                    key={d.id}
-                                    documentId={d.documentId!}
-                                    label={d.fileName || "Download Attachment"}
-                                  />
-                                ))
-                              )}
-                            </Box>
-                            <DocumentUpload
-                              onAdd={handleAddLetterAttachment}
-                              label={
-                                activeLetterAttachments.length || selectedLetterAttachment
-                                  ? "Change Attachment"
-                                  : "Upload Attachment"
-                              }
-                              showIcon={true}
-                              size="medium"
-                              disabled={isLocked}
-                            />
-                          </Box>
-                          <Divider sx={{ my: 2 }} />
-                        </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <FormTextField
+                          name="referenceNumber"
+                          label="Reference Number"
+                          type="text"
+                          fullWidth
+                          error={!!errors?.referenceNumber}
+                          helperText={errors?.referenceNumber}
+                          disabled={isLocked}
+                        />
                       </Grid>
-                    </DialogContent>
-                    <DialogActions sx={{ p: 2, justifyContent: "flex-end", gap: 1 }}>
-                      <Button
-                        onClick={onClose}
-                        disabled={isSaving || isSubmitting}
-                        variant="outlined"
-                        color="secondary"
-                        sx={{ borderRadius: "8px" }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        type="submit"
-                        disabled={isSaving || isSubmitting || isLocked}
-                        sx={{ borderRadius: "8px" }}
-                      >
-                        {isSaving || isSubmitting ? "Saving..." : "Save"}
-                      </Button>
-                    </DialogActions>
-                  </Form>
-                );
-              }}
-            </Formik>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-              <DialogContent dividers sx={{ flex: 1 }}>
-                <DocumentEditor
-                  initialContent={initialLetter?.documentJsonContent ?? undefined}
-                  onSave={handleCreateEditableDocument}
-                  onCancel={onClose}
-                  readOnly={!!initialLetter?.id && isLocked}
-                />
-              </DialogContent>
-              <DialogActions sx={{ p: 2 }}>
-                <Button
-                  onClick={onClose}
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ borderRadius: "8px" }}
-                >
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Box>
-          )}
+
+                      <Grid item xs={12} sm={6}>
+                        <FormSelectField
+                          name="letterType"
+                          label="Letter Type"
+                          type="number"
+                          options={letterTypeLookups}
+                          fullWidth
+                          error={!!errors?.letterType}
+                          helperText={errors?.letterType}
+                          disabled={isLocked}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <FormTextField
+                          name="subject"
+                          label="Subject"
+                          type="text"
+                          fullWidth
+                          error={!!errors?.subject}
+                          helperText={errors?.subject}
+                          disabled={isLocked}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={6}>
+                        <FormSelectField
+                          name="businessUnitId"
+                          label="Business Unit"
+                          type="number"
+                          options={businessUnitLookups}
+                          fullWidth
+                          error={!!errors?.businessUnitId}
+                          helperText={errors?.businessUnitId}
+                          disabled={isLocked}
+                          onChange={(event) => {
+                            setFieldValue("businessUnitId", event.target.value);
+                            setFieldValue("recipientId", undefined);
+                          }}
+                        />
+                      </Grid>
+
+                      {values.businessUnitId && values.businessUnitId > 0 && (
+                        <Grid item xs={12} sm={6}>
+                          <FormSelectField
+                            name="recipientId"
+                            label="Recipient"
+                            type="string"
+                            options={filteredRecipientOptions}
+                            fullWidth
+                            error={!!errors?.recipientId}
+                            helperText={errors?.recipientId}
+                            disabled={
+                              isLocked || filteredRecipientOptions.length === 0
+                            }
+                            sx={
+                              filteredRecipientOptions.length === 0
+                                ? { "& .MuiInputBase-root": { backgroundColor: "#f0f0f0" } }
+                                : {}
+                            }
+                          />
+                          {filteredRecipientOptions.length === 0 &&
+                            values.businessUnitId && (
+                              <Typography
+                                variant="caption"
+                                color="textSecondary"
+                                sx={{ ml: 1, mt: 0.5 }}
+                              >
+                                No recipients found for this Business Unit
+                                (excluding yourself).
+                              </Typography>
+                            )}
+                        </Grid>
+                      )}
+
+                      <Grid item xs={12}>
+                        <FormRichLetterTextField name="content" />
+                      </Grid>
+                      <Grid item xs={12} sx={{ mt: 2 }}>
+                        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                          <Typography variant="subtitle2">Letter Attachment</Typography>
+                          <Box>
+                            {selectedLetterAttachment ? (
+                              <Typography
+                                variant="body2"
+                                sx={{ ml: 1, color: "text.secondary" }}
+                              >
+                                Selected: {selectedLetterAttachment.name}
+                              </Typography>
+                            ) : (
+                              activeLetterAttachments.map((d) => (
+                                <DocumentDownload
+                                  key={d.id}
+                                  documentId={d.documentId!}
+                                  label={d.fileName || "Download Attachment"}
+                                />
+                              ))
+                            )}
+                          </Box>
+                          <DocumentUpload
+                            onAdd={handleAddLetterAttachment}
+                            label={
+                              activeLetterAttachments.length || selectedLetterAttachment
+                                ? "Change Attachment"
+                                : "Upload Attachment"
+                            }
+                            showIcon={true}
+                            size="medium"
+                            disabled={isLocked}
+                          />
+                        </Box>
+                        <Divider sx={{ my: 2 }} />
+                      </Grid>
+                    </Grid>
+                  </DialogContent>
+                  <DialogActions sx={{ p: 2, justifyContent: "flex-end", gap: 1 }}>
+                    <Button
+                      onClick={onClose}
+                      disabled={isSaving || isSubmitting}
+                      variant="outlined"
+                      color="secondary"
+                      sx={{ borderRadius: "8px" }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleDownloadPdf}
+                      variant="contained"
+                      color="info"
+                      sx={{ borderRadius: "8px" }}
+                      disabled={!letterData.content}
+                    >
+                      Download PDF
+                    </Button>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      type="submit"
+                      disabled={isSaving || isSubmitting || isLocked}
+                      sx={{ borderRadius: "8px" }}
+                    >
+                      {isSaving || isSubmitting ? "Saving..." : "Save"}
+                    </Button>
+                  </DialogActions>
+                </Form>
+              );
+            }}
+          </Formik>
         </>
       )}
     </Dialog>

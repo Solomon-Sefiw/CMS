@@ -1,7 +1,17 @@
 
 {
-  "welcome": "የደብዳቤ አስተዳዳሪ ስርአት",
+  "welcome": "የደብዳቤ ማስተዳዳሪያ ሲስተም",
+  "recent_letters": "የቅርብ ጊዘ ደብዳቤዎች",
   "upload_letter": "ደብዳቤ አስገባ",
   "logout": "ውጣ",
-  "select_language": "ቋንቋ ይምረጡ"
+  "select_language": "ቋንቋ ይምረጡ",
+   "menu": {
+    "dashboard": "ዳሽቦርድ",
+    "hcmsSetups": "HCMS ቅንብሮች",
+    "sysAdmin": "የሲስተም አስተዳደር",
+    "employees": "ሰራተኞች",
+    "probation": "ሙከራ ጊዜ",
+    "idManagement": "መታወቂያ አስተዳደር",
+    "letters": "ደብዳቤዎች"
+  }
 }

@@ -30,49 +30,49 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePermission } from "../../hooks/usePermission";
+import { useTranslation } from "react-i18next";
 
 interface NavMenuItem {
-  label: string;
+  label: string; // i18n key
   icon: any;
   url?: string;
   subGroup?: NavMenuItem[];
   subMenu?: NavMenuItem[];
 }
+
 const navMenuItems: NavMenuItem[] = [
   {
-    label: "Dashboard",
+    label: "menu.dashboard",
     icon: <DashboardIcon color="primary" />,
     url: "/",
   },
-
   {
-    label: "HCMS Setups",
+    label: "menu.hcmsSetups",
     icon: <AccountBalanceIcon color="primary" />,
     url: "/setup",
   },
-
   {
-    label: "System Admin",
+    label: "menu.sysAdmin",
     icon: <AdminPanelSettingsIcon color="primary" />,
     url: "/sys-admin",
   },
   {
-    label: "Employees",
+    label: "menu.employees",
     icon: <GroupsIcon color="primary" />,
     url: "/employees",
   },
   {
-    label: "Probation",
+    label: "menu.probation",
     icon: <TimelapseOutlined color="primary" />,
     url: "/probation",
   },
   {
-    label: "ID Management",
+    label: "menu.idManagement",
     icon: <PermIdentityOutlined color="primary" />,
     url: "/employeeid",
   },
-      {
-    label: "Letters",
+  {
+    label: "menu.letters",
     icon: <EmailRounded color="primary" />,
     url: "/letters",
   },
@@ -94,9 +94,11 @@ const NavItem = ({
   sx?: SxProps<Theme> | undefined;
   opened: boolean;
 }) => {
+  const { t } = useTranslation();
   const navigator = useNavigate();
   const [subMenuOpened, setSubMenuOpened] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
   const navigateToPage = useCallback(
     (url: string) => {
       navigator(url);
@@ -150,7 +152,7 @@ const NavItem = ({
         <ListItemText
           primary={
             <Typography variant={"body1"} color="inherit">
-              {menuItem.label}
+              {t(menuItem.label)}
             </Typography>
           }
           sx={{ opacity: opened ? 1 : 0 }}
@@ -167,9 +169,9 @@ const NavItem = ({
           {opened && (
             <Collapse in={subMenuOpened} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {menuItem.subGroup.map((item, label) => (
+                {menuItem.subGroup.map((item, idx) => (
                   <NavItem
-                    key={label}
+                    key={idx}
                     sx={{ pl: 4 }}
                     menuItem={item}
                     onClose={onClose}
@@ -191,14 +193,12 @@ const NavItem = ({
                 horizontal: "left",
               }}
               open={Boolean(anchorEl)}
-              onClose={() => {
-                setAnchorEl(null);
-              }}
+              onClose={() => setAnchorEl(null)}
             >
               <List component="div" disablePadding>
-                {menuItem.subGroup.map((item, label) => (
+                {menuItem.subGroup.map((item, idx) => (
                   <NavItem
-                    key={label}
+                    key={idx}
                     sx={{ pl: 4 }}
                     menuItem={item}
                     onClose={onClose}
@@ -213,40 +213,51 @@ const NavItem = ({
     </ListItem>
   );
 };
+
 export const LeftNav = ({ opened, onClose }: Props) => {
   const permissions = usePermission();
 
   const menuItems = useMemo(() => {
-    return navMenuItems.filter(item => {
-      if (item.label === "HCMS Admin") {
-        return permissions.canCreateUpdateSetup || permissions.canApproveRejectSetup;
-      }
-      if (item.label === "System Admin") {
-        return permissions.canCreateUpdateUser;
-      }
-      if (item.label === "Employees") {
-        return  permissions.canViewEmployeePersonalInfo;
-      }
-      if (item.label === "ID Management") {
-        return permissions.CanViewEmployeeId;
-      }
-      if (item.label === "Probation") {
-        return permissions.CanViewEmployeeProbation;
-      }
-      return true;
-    }).filter(
-      (item) =>
-        (item.url !== "/sys-admi" || permissions.canCreateUpdateUser) &&
-        item.url !== "/home"
-    );
-  }, [permissions.canCreateUpdateUser, permissions.canCreateUpdateSetup, permissions.canApproveRejectSetup]);
+    return navMenuItems
+      .filter((item) => {
+        if (item.label === "menu.hcmsSetups") {
+          return permissions.canCreateUpdateSetup || permissions.canApproveRejectSetup;
+        }
+        if (item.label === "menu.sysAdmin") {
+          return permissions.canCreateUpdateUser;
+        }
+        if (item.label === "menu.employees") {
+          return permissions.canViewEmployeePersonalInfo;
+        }
+        if (item.label === "menu.idManagement") {
+          return permissions.CanViewEmployeeId;
+        }
+        if (item.label === "menu.probation") {
+          return permissions.CanViewEmployeeProbation;
+        }
+        return true;
+      })
+      .filter((item) => {
+        return (
+          (item.url !== "/sys-admi" || permissions.canCreateUpdateUser) &&
+          item.url !== "/home"
+        );
+      });
+  }, [
+    permissions.canCreateUpdateUser,
+    permissions.canCreateUpdateSetup,
+    permissions.canApproveRejectSetup,
+    permissions.canViewEmployeePersonalInfo,
+    permissions.CanViewEmployeeId,
+    permissions.CanViewEmployeeProbation,
+  ]);
 
   return (
     <List>
-      {menuItems.map((item, label) => (
+      {menuItems.map((item, idx) => (
         <NavItem
           menuItem={item}
-          key={label}
+          key={idx}
           onClose={onClose}
           opened={opened}
         />
