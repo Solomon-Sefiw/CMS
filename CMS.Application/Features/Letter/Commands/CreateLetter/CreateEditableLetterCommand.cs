@@ -16,7 +16,6 @@ namespace CMS.Application.Features.Letter.Commands.CreateLetter
             string ReferenceNumber,
             string Subject,
             string Content,
-            string DocumentJson,
             LetterType LetterType,
             string SenderId,
             string? RecipientId,
@@ -41,7 +40,6 @@ namespace CMS.Application.Features.Letter.Commands.CreateLetter
                     ReferenceNumber = request.ReferenceNumber,
                     Subject = request.Subject,
                     Content = request.Content,
-                    DocumentJsonContent = request.DocumentJson,
                     LetterType = request.LetterType,
                     Status = LetterStatus.pending,
                     SenderId = request.SenderId,
@@ -49,7 +47,6 @@ namespace CMS.Application.Features.Letter.Commands.CreateLetter
                     BusinessUnitId = request.BusinessUnitId,
                     ReceivedDate = DateTime.Now,
                     SentDate = DateTime.Now,
-                    IsEditableDocument = true
                 };
 
                 _dataService.Letters.Add(letter);

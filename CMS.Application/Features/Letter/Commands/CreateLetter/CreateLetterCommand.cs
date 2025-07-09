@@ -24,8 +24,6 @@ namespace CMS.Application.Features.Commands.CreateLetter
         public string? SenderId { get; set; }
         public string? RecipientId { get; set; }
         public int BusinessUnitId { get; set; }
-        public bool IsEditableDocument { get; set; }
-        public string? DocumentJsonContent { get; set; }
 
     }
 

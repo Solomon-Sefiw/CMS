@@ -29,18 +29,18 @@ namespace CMS.Persistance.SeedData
             {
                 Id = Guid.NewGuid(),
                 EmailType = EmailTypeEnum.UserAccountRegisterNotificationEnum,
-                EmailMessage = $"<br>Dear <strong>{{userRegister.UserName}}</strong>,<br><br>\r\nHuman Capital Management System User has been created!<br>\r\nUserName: <strong>{{userRegister.UserEmail}} </strong><br>\r\nPassword: <strong>{{userRegister.Password}} </strong><br><br>\r\nNote: This is a trial email testing for the Human Capital Management System!\r\n"
+                EmailMessage = $"<br>Dear <strong>{{userRegister.UserName}}</strong>,<br><br>\r\nCMS User has been created!<br>\r\nUserName: <strong>{{userRegister.UserEmail}} </strong><br>\r\nPassword: <strong>{{userRegister.Password}} </strong><br><br>\r\nNote: This is a trial email testing for the CMS!\r\n"
             },
               new EmailTemplate()
               {
                   Id = Guid.NewGuid(),
                   EmailType = EmailTypeEnum.UserLoginNotificationEnum,
-                  EmailMessage = $"<br>Dear <strong>{{userRegister.UserName}}</strong>, <br><br>\r\nPlease use the below verification code to complete your sign-in process!<br>\r\nVerification Code: <strong>{{userRegister.UserEmail}} </strong><br><br>\r\nNote: This is a trial email testing for the Human Capital Management System!<br>"
+                  EmailMessage = $"<br>Dear <strong>{{userRegister.UserName}}</strong>, <br><br>\r\nPlease use the below verification code to complete your sign-in process!<br>\r\nVerification Code: <strong>{{userRegister.UserEmail}} </strong><br><br>\r\nNote: This is a trial email testing for the CMS!<br>"
               },
               new EmailTemplate()
             {
                 EmailType = EmailTypeEnum.AppUserCreated,
-                EmailMessage = @"<html style=""font-family: Arial, sans-serif, 'Open Sans'""><body> <p>Hi {{Name}},</p> <p> We would like to confirm that your Human Capital Management System (CMS) portal account has successfully been created. To access the portal click the link below. </p> <p> <a href=""{{SmsUrl}}"">{{SmsUrl}}</a> </p> <p> Your temporary password is: <strong>{{TempPassword}}</strong> </p> <p> If you experience any issues please reach out our support team. <br /> <p> Regards, <br /> CMS team </p></body></html>",
+                EmailMessage = @"<html style=""font-family: Arial, sans-serif, 'Open Sans'""><body> <p>Hi {{Name}},</p> <p> We would like to confirm that your CMS portal account has successfully been created. To access the portal click the link below. </p> <p> <a href=""{{SmsUrl}}"">{{SmsUrl}}</a> </p> <p> Your temporary password is: <strong>{{TempPassword}}</strong> </p> <p> If you experience any issues please reach out our support team. <br /> <p> Regards, <br /> CMS team </p></body></html>",
                 IsHtml = true
             },
                new EmailTemplate{

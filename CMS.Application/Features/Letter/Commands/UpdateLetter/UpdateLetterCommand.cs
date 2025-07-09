@@ -22,8 +22,6 @@ namespace CMS.Application.Features.Letter.Commands.UpdateLetter
         public string? SenderId { get; set; }
         public string? RecipientId { get; set; }
         public int BusinessUnitId { get; set; }
-        public bool IsEditableDocument { get; set; }
-        public string? DocumentJsonContent { get; set; }
     }
 
     public class UpdateLetterHandler : IRequestHandler<UpdateLetterCommand, int>

@@ -4447,8 +4447,6 @@ export type Letter = {
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
   letterDocuments?: LetterDocument[] | null;
-  isEditableDocument?: boolean;
-  documentJsonContent?: string | null;
 };
 export type IDomainEvent = object;
 export type LetterRead = {
@@ -4482,8 +4480,6 @@ export type LetterRead = {
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
   letterDocuments?: LetterDocumentRead[] | null;
-  isEditableDocument?: boolean;
-  documentJsonContent?: string | null;
 };
 export type UserDocument = {
   isDeleted?: boolean | null;
@@ -4994,8 +4990,6 @@ export type LetterDto = {
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
   letterDocuments?: LetterDocument[] | null;
-  isEditableDocument?: boolean;
-  documentJsonContent?: string | null;
 };
 export type LetterDtoRead = {
   id?: number;
@@ -5013,8 +5007,6 @@ export type LetterDtoRead = {
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
   letterDocuments?: LetterDocumentRead[] | null;
-  isEditableDocument?: boolean;
-  documentJsonContent?: string | null;
 };
 export type DocumentEndpointRootPath = {
   path?: string | null;
@@ -6541,8 +6533,6 @@ export type CreateLetterCommand = {
   senderId?: string | null;
   recipientId?: string | null;
   businessUnitId?: number;
-  isEditableDocument?: boolean;
-  documentJsonContent?: string | null;
 };
 export type UpdateLetterCommand = {
   id?: number;
@@ -6554,8 +6544,6 @@ export type UpdateLetterCommand = {
   senderId?: string | null;
   recipientId?: string | null;
   businessUnitId?: number;
-  isEditableDocument?: boolean;
-  documentJsonContent?: string | null;
 };
 export type ApproveLetterCommand = {
   id?: number;
@@ -6564,7 +6552,6 @@ export type CreateEditableLetterCommand = {
   referenceNumber?: string | null;
   subject?: string | null;
   content?: string | null;
-  documentJson?: string | null;
   letterType?: LetterType;
   senderId?: string | null;
   recipientId?: string | null;
