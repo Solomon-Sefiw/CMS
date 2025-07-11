@@ -5,9 +5,9 @@ services:
     region: oregon
     plan: free
     branch: Solomon/v2  # or Solomon/v2 if that's your working branch
-    rootDir: CMS/CMS.API
+    rootDir: CMS/CMS
     buildCommand: dotnet publish -c Release -o out
-    startCommand: dotnet out/CMS.API.dll
+    startCommand: dotnet out/CMS.dll
     publishPath: out
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
