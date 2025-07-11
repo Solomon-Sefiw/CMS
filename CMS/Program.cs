@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Text.Json.Serialization;
 using CMS.API.Configurations;
@@ -42,11 +42,12 @@ builder.Services.AddEndpointsApiExplorer()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) // ✅ Add this
 {
     app.UseSwagger()
         .UseSwaggerUI();
-    await DataSeeder.SeedData(app);
+
+    await DataSeeder.SeedData(app); // Optional: seed in Production if needed
 }
 
 app.UseAuthentication();
