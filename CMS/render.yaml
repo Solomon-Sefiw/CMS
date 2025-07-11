@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: cms-api
+    env: dotnet
+    region: oregon
+    plan: free
+    branch: Solomon/v2  # or Solomon/v2 if that's your working branch
+    rootDir: CMS/CMS.API
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/CMS.API.dll
+    publishPath: out
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
