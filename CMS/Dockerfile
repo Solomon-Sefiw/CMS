@@ -4,20 +4,15 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /CMS
-
-# ✅ Updated paths based on your actual folder structure
-COPY ["CMS/Application/CMS.Application.csproj", "src/Application/"]
-COPY ["CMS/API/CMS.Api.csproj", "src/API/"]
-COPY ["CMS/Domain/CMS.Domain.csproj", "src/Domain/"]
-COPY ["CMS/Infrastructure/CMS.Infrastructure.csproj", "src/Infrastructure/"]
-COPY ["CMS/Persistence/CMS.Persistence.csproj", "src/Persistence/"]
-
-RUN dotnet restore "CMS/API/CMS.Api.csproj"
-
+WORKDIR /src
+COPY ["CMS.Application/CMS.Application.csproj", "CMS.Application/"]
+COPY ["CMS/CMS.Api.csproj", "CMS/"]
+COPY ["CMS.Domain/CMS.Domain.csproj", "CMS.Domain/"]
+COPY ["CMS.Infrastructure/CMS.Infrastructure/CMS.Infrastructure.csproj", "CMS.Infrastructure/"]
+COPY ["CMS.Persistance/CMS.Persistance.csproj", "CMS.Persistance/"]
+RUN dotnet restore "CMS/HCMS.Api.csproj"
 COPY . .
-
-WORKDIR "/CMS/API"
+WORKDIR "/src/CMS"
 RUN dotnet publish "CMS.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
