@@ -9,7 +9,7 @@ WORKDIR /src
 COPY ["CMS.Application/CMS.Application.csproj", "CMS.Application/"]
 COPY ["CMS/CMS.Api.csproj", "CMS/"]
 COPY ["CMS.Domain/CMS.Domain.csproj", "CMS.Domain/"]
-COPY ["CMS.Infrastructure/CMS.Infrastructure.csproj", "CMS.Infrastructure/"]
+COPY ["CMS.Infrastructure/CMS.Infrastructure/CMS.Infrastructure.csproj", "CMS.Infrastructure/"]
 COPY ["CMS.Persistance/CMS.Persistance.csproj", "CMS.Persistance/"]
 
 RUN dotnet restore "CMS/CMS.Api.csproj"
