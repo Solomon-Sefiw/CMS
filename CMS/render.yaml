@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: free
     branch: Solomon/v2  # or Solomon/v2 if that's your working branch
-    rootDir: CMS/CMS
+    rootDir: CMS
     buildCommand: dotnet publish -c Release -o out
     startCommand: dotnet out/CMS.dll
     publishPath: out
