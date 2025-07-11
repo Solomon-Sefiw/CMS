@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) // ✅ Ad
     app.UseSwagger()
         .UseSwaggerUI();
 
-  //  await DataSeeder.SeedData(app); // Optional: seed in Production if needed
+    await DataSeeder.SeedData(app); // Optional: seed in Production if needed
 }
 
 app.UseAuthentication();
