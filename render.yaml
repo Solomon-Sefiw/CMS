@@ -4,11 +4,10 @@ services:
     env: dotnet
     region: oregon
     plan: free
-    branch: master  # or Solomon/v2 if that's your working branch
-    rootDir: backend/MyApp.API
+    branch: Solomon/v2  # or master
+    rootDir: CMS
     buildCommand: dotnet publish -c Release -o out
-    startCommand: dotnet out/MyApp.API.dll
-    publishPath: out
+    startCommand: dotnet out/CMS.Api.dll
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
