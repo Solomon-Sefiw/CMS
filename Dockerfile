@@ -1,30 +1,27 @@
-# Dockerfile inside CMS/
-
+# Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
 WORKDIR /src
 
-COPY ["CMS.Application/CMS.Application.csproj", "CMS.Application/"]
-COPY ["CMS.Api/CMS.Api.csproj", "CMS.Api/"]
-COPY ["CMS.Domain/CMS.Domain.csproj", "CMS.Domain/"]
-COPY ["CMS.Infrastructure/CMS.Infrastructure.csproj", "CMS.Infrastructure/"]
-COPY ["CMS.Persistance/CMS.Persistance.csproj", "CMS.Persistance/"]
+# Copy project files with corrected paths
+COPY ["src/Application/CMS.Application.csproj", "src/Application/"]
+COPY ["src/API/CMS.Api.csproj", "src/API/"]
+COPY ["src/Domain/CMS.Domain.csproj", "src/Domain/"]
+COPY ["src/Infrastructure/CMS.Infrastructure.csproj", "src/Infrastructure/"]
+COPY ["src/Persistence/CMS.Persistence.csproj", "src/Persistence/"]
+COPY ["src/CommonServices/CMS.Services.csproj", "src/CommonServices/"]
 
-# Optional: Disable SSL strict check during restore (only if needed)
-ENV DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER=0
-ENV NUGET_SSL_VERIFY_CERTIFICATE=false
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+# Restore
+RUN dotnet restore "src/API/CMS.Api.csproj"
 
-RUN dotnet restore "CMS.Api/CMS.Api.csproj"
-
+# Copy everything
 COPY . .
 
-WORKDIR "/src/CMS.Api"
-
+# Set working directory and publish
+WORKDIR "/src/src/API"
 RUN dotnet publish "CMS.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-
+# Stage 2: Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
