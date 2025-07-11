@@ -1,13 +1,13 @@
+# render.yaml (corrected)
 services:
   - type: web
     name: cms-api
-    env: dotnet
+    runtime: docker # Changed from env: dotnet
     region: oregon
     plan: free
     branch: Solomon/v2
     rootDir: CMS
-    buildCommand: dotnet publish -c Release -o out
-    startCommand: dotnet out/CMS.Api.dll
+    # buildCommand and startCommand will be handled by your Dockerfile
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
