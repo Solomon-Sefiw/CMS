@@ -1,10 +1,10 @@
 services:
   - type: web
     name: cms-api
-    runtime: dotnet
+    env: dotnet
     region: oregon
     plan: free
-    branch: Solomon/v2  # or master
+    branch: Solomon/v2
     rootDir: CMS
     buildCommand: dotnet publish -c Release -o out
     startCommand: dotnet out/CMS.Api.dll
