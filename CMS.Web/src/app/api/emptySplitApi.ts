@@ -1,14 +1,11 @@
-// Or from '@reduxjs/toolkit/query' if not using the auto-generated hooks
+
 import { isRejected, MiddlewareAPI } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addNotification } from "../../features/notification";
-//import { addNotification } from "../../features";
-
-// initialize an empty api service that we'll inject endpoints into later as needed
 export const emptySplitApi = createApi({
   reducerPath: "HCMSApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "/",
+    baseUrl: "https://cms-api-cnxw.onrender.com/api",
     prepareHeaders: (headers) => {
       if (!headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");

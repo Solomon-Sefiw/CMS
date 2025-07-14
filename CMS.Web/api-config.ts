@@ -1,6 +1,35 @@
-// api-config.ts
-const config: any = {
-  schemaFile: "http://localhost:5023/swagger/v1/swagger.json",
+// // api-config.ts
+// const config: any = {
+//   schemaFile: "http://localhost:5023/swagger/v1/swagger.json",
+//   apiFile: "./src/app/api/emptySplitApi.ts",
+//   apiImport: "emptySplitApi",
+//   outputFile: "./src/app/api/HCMSApi.ts",
+//   exportName: "HCMSApi",
+//   hooks: { queries: true, lazyQueries: true, mutations: true },
+
+//   tag: {
+//     tagTypes: ["x-rtk-query-invalidates", "tags"],
+
+//     rtk: {
+//       mutations: {
+//         invalidates: "x-rtk-query-invalidates",
+//       },
+//       queries: {
+//         provides: "tags",
+//       },
+//     },
+//   },
+// };
+
+// export default config;
+
+// CMS.Web/src/app/api/api-config.ts
+
+
+
+
+const config = {
+  schemaFile: "https://cms-api-cnxw.onrender.com/swagger/v1/swagger.json",
   apiFile: "./src/app/api/emptySplitApi.ts",
   apiImport: "emptySplitApi",
   outputFile: "./src/app/api/HCMSApi.ts",
@@ -22,3 +51,4 @@ const config: any = {
 };
 
 export default config;
+
