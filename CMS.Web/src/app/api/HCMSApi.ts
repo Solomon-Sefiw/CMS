@@ -18,6 +18,7 @@ export const addTagTypes = [
   "EducationLevel",
   "EmployeeFamily",
   "FieldOfStudy",
+  "Health",
   "InstitutionName",
   "Job",
   "JobCategory",
@@ -1933,6 +1934,10 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["FieldOfStudy"],
       }),
+      getApiHealth: build.query<GetApiHealthApiResponse, GetApiHealthApiArg>({
+        query: () => ({ url: `/api/Health` }),
+        providesTags: ["Health"],
+      }),
       approveInstitutionName: build.mutation<
         ApproveInstitutionNameApiResponse,
         ApproveInstitutionNameApiArg
@@ -3800,6 +3805,8 @@ export type UpdateFieldOfStudyApiResponse = /** status 204 No Content */ void;
 export type UpdateFieldOfStudyApiArg = {
   updateFieldOfStudyCommand: UpdateFieldOfStudyCommand;
 };
+export type GetApiHealthApiResponse = unknown;
+export type GetApiHealthApiArg = void;
 export type ApproveInstitutionNameApiResponse =
   /** status 200 Success */ number;
 export type ApproveInstitutionNameApiArg = {
@@ -7012,6 +7019,8 @@ export const {
   useLazySearchAllFieldOfStudiesQuery,
   useSubmitFieldOfStudyMutation,
   useUpdateFieldOfStudyMutation,
+  useGetApiHealthQuery,
+  useLazyGetApiHealthQuery,
   useApproveInstitutionNameMutation,
   useGetInstitutionNameCountPerStatusQuery,
   useLazyGetInstitutionNameCountPerStatusQuery,
