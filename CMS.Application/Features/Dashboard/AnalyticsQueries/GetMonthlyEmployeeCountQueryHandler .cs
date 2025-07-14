@@ -22,7 +22,7 @@ namespace CMS.Application.Features.Dashboard.AnalyticsQueries
 
         public async Task<List<MonthlyEmployeeCountDto>> Handle(GetMonthlyEmployeeCountQuery request, CancellationToken cancellationToken)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             int fiscalYearStart = now.Month >= 7 ? now.Year : now.Year - 1;
 
             var fiscalStart = new DateOnly(fiscalYearStart, 7, 1);

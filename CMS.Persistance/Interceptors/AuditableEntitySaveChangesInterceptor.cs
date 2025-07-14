@@ -20,7 +20,7 @@ namespace SMS.Persistence.Interceptors
         public override InterceptionResult<int> SavingChanges(
             DbContextEventData eventData, InterceptionResult<int> result)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             HandleWorkflowEntityChange(eventData.Context, now);
             SetAuditFields(eventData.Context, now);
             return base.SavingChanges(eventData, result);
@@ -31,7 +31,7 @@ namespace SMS.Persistence.Interceptors
             InterceptionResult<int> result,
             CancellationToken cancellationToken = default)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             HandleWorkflowEntityChange(eventData.Context, now);
             HandleWorkflowEntityVersionNumber(eventData.Context);
             SetAuditFields(eventData.Context, now);

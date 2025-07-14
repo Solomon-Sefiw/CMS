@@ -58,7 +58,7 @@ public class CreateEmailNotificationCommandHandler : IRequestHandler<CreateEmail
 
             dataService.Emails.Add(email);
 
-          //  await dataService.SaveAsync(cancellationToken);
+            await dataService.SaveAsync(cancellationToken);
             await _emailService.Send(email.Id);
           //  backgroundJobService.EnqueueEmail(email.Id);
         }

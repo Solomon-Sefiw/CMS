@@ -45,8 +45,8 @@ namespace CMS.Application.Features.Letter.Commands.CreateLetter
                     SenderId = request.SenderId,
                     RecipientId = request.RecipientId,
                     BusinessUnitId = request.BusinessUnitId,
-                    ReceivedDate = DateTime.Now,
-                    SentDate = DateTime.Now,
+                    ReceivedDate = DateTime.UtcNow,
+                    SentDate = DateTime.UtcNow,
                 };
 
                 _dataService.Letters.Add(letter);

@@ -22,7 +22,7 @@ namespace CMS.Application.Features.Dashboard.AnalyticsQueries
 
         public async Task<EmployeeTurnoverRate> Handle(GetEmployeeTurnoverRateQuery request, CancellationToken cancellationToken)
         {
-            var oneYearAgo = DateOnly.FromDateTime(DateTime.Now.AddYears(-1));
+            var oneYearAgo = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1));
 
             var oneYearAgoInUTC = DateTime.UtcNow.AddYears(-1);
 

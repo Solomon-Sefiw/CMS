@@ -21,7 +21,7 @@ namespace CMS.Application.Features.Dashboard.ApprovalQueries
         }
         public async Task<PaginatedApprovalResult> Handle(GetAllApprovalItemsQuery request, CancellationToken cancellationToken)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             const string submittedBy = "Set up maker";
             var submittedStatus = ApprovalStatus.Submitted;
 

@@ -24,7 +24,7 @@ internal class AddEmployeeCommentCommandHandler : IRequestHandler<AddEmployeeCom
         {
             CommentType = request.CommentType.ToString(),
             Text = request.Text,
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             CommentedByUserId = "1",//userService.GetCurrentUserId(),
             CommentedBy = "Tse",//userService.GetCurrentUserFullName(),
             EmployeeId = request.Id

@@ -25,7 +25,7 @@ namespace CMS.Application.Features.Dashboard.AnalyticsQueries
                              e.ApprovalStatus == ApprovalStatus.Approved)
                  .CountAsync(cancellationToken);
 
-            var oneYearAgo = DateOnly.FromDateTime(DateTime.Now.AddYears(-1));
+            var oneYearAgo = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1));
 
             var previous = await _dataService.Employees
                 .Where(e => e.EmployeeStatus == EmployeeStatusEnum.Active &&

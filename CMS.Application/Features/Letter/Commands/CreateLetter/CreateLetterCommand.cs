@@ -42,8 +42,8 @@ namespace CMS.Application.Features.Commands.CreateLetter
         {
             var letter = _mapper.Map<Domain.letters.Letter>(request);
             // Set current date
-            letter.ReceivedDate = DateTime.Now;
-            letter.SentDate = DateTime.Now;
+            letter.ReceivedDate = DateTime.UtcNow;
+            letter.SentDate = DateTime.UtcNow;
             _context.Letters.Add(letter);
 
             await _context.SaveAsync(cancellationToken);

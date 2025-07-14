@@ -21,7 +21,7 @@ namespace CMS.Application.Features.Dashboard.AnalyticsQueries
         }
         public async Task<EmployeeRetentionRate> Handle(GetEmployeeRetentionRateQuery request, CancellationToken cancellationToken)
         {
-            var oneYearAgo = DateOnly.FromDateTime(DateTime.Now.AddYears(-1));
+            var oneYearAgo = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1));
             var oneYearAgoUtc = DateTime.UtcNow.AddYears(-1);
 
             var currentActive = await _dataService.Employees
