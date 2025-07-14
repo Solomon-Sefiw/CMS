@@ -15,11 +15,11 @@ namespace CMS.Persistance.Configuration
         {
             builder.HasKey(x => x.Id);
 
-            builder.ToTable(x => x.IsTemporal(t =>
-            {
-                t.HasPeriodStart("PeriodStart");
-                t.HasPeriodEnd("PeriodEnd");
-            }));
+            //builder.ToTable(x => x.IsTemporal(t =>
+            //{
+            //    t.HasPeriodStart("PeriodStart");
+            //    t.HasPeriodEnd("PeriodEnd");
+            //}));
 
             builder.Property(x => x.EntityType).HasConversion<string>();
             builder.Property(x => x.ChangeType).HasConversion<string>();

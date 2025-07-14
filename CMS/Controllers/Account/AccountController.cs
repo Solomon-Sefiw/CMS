@@ -311,15 +311,21 @@ public class AccountController : BaseController<AccountController>
             var role = await roleManager.FindByNameAsync(roleName);
             if (role != null)
                 claims.AddRange(await roleManager.GetClaimsAsync(role));
-
         }
+
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(GetClaimIdentity(user, claims ?? new List<Claim>())));
 
+        // ✅ Use UTC to avoid PostgreSQL timezone issues
         logger.LogInformation("User {Email} ({FirstName} {MiddleName} {LastName}) logged in at {Time}.",
-            user.Email, user.FirstName ?? "", user.MiddleName ?? "", user.LastName ?? "", DateTime.Now);
+            user.Email,
+            user.FirstName ?? "",
+            user.MiddleName ?? "",
+            user.LastName ?? "",
+            DateTime.UtcNow); // ✅ Use UTC
     }
+
 
     private bool IsLockedOut(HRUser user) => user.IsDeactivated || (user.LockoutEnd != null && user.LockoutEnd >= DateTime.UtcNow);
 

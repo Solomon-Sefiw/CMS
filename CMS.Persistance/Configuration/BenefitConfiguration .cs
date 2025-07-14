@@ -13,12 +13,12 @@ namespace CMS.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Benefit> builder)
         {
-            builder.ToTable("Benefits", b => b
-                .IsTemporal(t =>
-                {
-                    t.HasPeriodStart("PeriodStart");
-                    t.HasPeriodEnd("PeriodEnd");
-                }));
+            //builder.ToTable("Benefits", b => b
+            //    .IsTemporal(t =>
+            //    {
+            //        t.HasPeriodStart("PeriodStart");
+            //        t.HasPeriodEnd("PeriodEnd");
+            //    }));
 
             builder.HasKey(x => x.Id);
 

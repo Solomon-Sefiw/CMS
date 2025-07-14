@@ -14,13 +14,13 @@ public class WorkflowEnabledEntityConfiguration<T> : IEntityTypeConfiguration<T>
          ALTER TABLE [Shareholders] ALTER COLUMN PeriodStart DROP HIDDEN
         ALTER TABLE [Shareholders] ALTER COLUMN PeriodEnd DROP HIDDEN
         */
-        builder.ToTable(x => x.IsTemporal(t =>
-        {
-            t.HasPeriodStart("PeriodStart");
-            t.HasPeriodEnd("PeriodEnd");
+        //builder.ToTable(x => x.IsTemporal(t =>
+        //{
+        //    t.HasPeriodStart("PeriodStart");
+        //    t.HasPeriodEnd("PeriodEnd");
 
-            //t.UseHistoryTable("ShareholdersHistory");
-        }));
+        //    //t.UseHistoryTable("ShareholdersHistory");
+        //}));
 
         builder.Property(x => x.ApprovalStatus)
             .HasDefaultValue(ApprovalStatus.Draft)

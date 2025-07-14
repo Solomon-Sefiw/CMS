@@ -8,11 +8,11 @@
 //    {
 //        public void Configure(EntityTypeBuilder<Employee> builder)
 //        {
-//            builder.ToTable(x => x.IsTemporal(t =>
-//            {
-//                t.HasPeriodStart("PeriodStart");
-//                t.HasPeriodEnd("PeriodEnd");
-//            }));
+//            //builder.ToTable(x => x.IsTemporal(t =>
+//            //{
+//            //    t.HasPeriodStart("PeriodStart");
+//            //    t.HasPeriodEnd("PeriodEnd");
+//            //}));
 //            builder.Property(x => x.EmployeeId)
 //                .IsRequired()
 //                .HasDefaultValueSql("NEXT VALUE FOR EMPLOYEEID");
@@ -34,12 +34,6 @@ namespace CMS.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Employee> builder)
         {
-            // Enable temporal table support if you're using EF Core 8+ with PostgreSQL 16+
-            builder.ToTable(x => x.IsTemporal(t =>
-            {
-                t.HasPeriodStart("PeriodStart");
-                t.HasPeriodEnd("PeriodEnd");
-            }));
 
             // Removed SQL Server-specific default value
             builder.Property(x => x.EmployeeId)
