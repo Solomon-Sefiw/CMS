@@ -128,7 +128,9 @@ export const ApprovedEmployees = ({}: EmployeeListProps) => {
     setPagination(newPagination);
   }, []);
 
-  const safeItems = Array.isArray(itemsResponse?.items) ? itemsResponse.items : [];
+  const items = itemsResponse?.items ?? [];
+const safeItems = Array.isArray(items) ? items : [];
+
   // Use totalCount from the API response for accurate pagination
   const totalRowsFromApi = itemsResponse?.totalCount ?? 0;
 
