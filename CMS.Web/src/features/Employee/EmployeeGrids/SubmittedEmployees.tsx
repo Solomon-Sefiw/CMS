@@ -100,8 +100,14 @@ export const SubmittedEmployees = () => {
   }, []);
 
   // ✅ SAFELY handle itemsResponse
-  const items = Array.isArray(itemsResponse?.items) ? itemsResponse.items : [];
-  const totalRowsFromApi = itemsResponse?.totalCount ?? 0;
+let items: EmployeeDto[] = [];
+let totalRowsFromApi = 0;
+
+if (itemsResponse && Array.isArray(itemsResponse.items)) {
+  items = itemsResponse.items;
+  totalRowsFromApi = itemsResponse.totalCount ?? 0;
+}
+
 
   const showNoMatchingResultsAlert =
     debouncedSearchQuery && items.length === 0 && !isListLoading;
