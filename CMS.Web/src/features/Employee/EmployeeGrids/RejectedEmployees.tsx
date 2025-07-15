@@ -25,47 +25,34 @@ import { useBusinessUnitId } from "./businessUnitContext/BusinessUnitContext";
 import dayjs from "dayjs";
 
 // --- Utility Functions ---
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 const descendingComparator = (a: any, b: any, orderBy: string) => {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
+  if (b[orderBy] < a[orderBy]) return -1;
+  if (b[orderBy] > a[orderBy]) return 1;
   return 0;
 };
 
-const getComparator = (order: "asc" | "desc", orderBy: string) => {
-  return order === "desc"
+const getComparator = (order: "asc" | "desc", orderBy: string) =>
+  order === "desc"
     ? (a: any, b: any) => descendingComparator(a, b, orderBy)
     : (a: any, b: any) => -descendingComparator(a, b, orderBy);
-};
 
 const stableSort = (array: any[], comparator: any) => {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
+    return order !== 0 ? order : a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
 };
-
-// Custom debounce hook
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-  return debouncedValue;
-}
 
 // --- Interfaces ---
 interface PaginationState {
@@ -73,10 +60,7 @@ interface PaginationState {
   pageSize?: number;
 }
 
-interface EmployeeListProps {}
-
-// --- Main Component ---
-export const RejectedEmployees = ({}: EmployeeListProps) => {
+export const RejectedEmployees = () => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageNumber: 0,
     pageSize: 10,
@@ -84,45 +68,26 @@ export const RejectedEmployees = ({}: EmployeeListProps) => {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<string>("employeeId");
 
-  // Get raw search query from context
   const { searchQuery: rawSearchQuery } = useOutletContext<{ searchQuery: string }>();
-  // Debounce the search query to prevent excessive API calls
-  const debouncedSearchQuery = useDebounce(rawSearchQuery, 300); // 300ms debounce
-
+  const debouncedSearchQuery = useDebounce(rawSearchQuery, 300);
   const contextBusinessUnitId = useBusinessUnitId();
   const { navigateToDetailPage } = useNavigateToDetailPage();
 
-  // Fetch employee lists with pagination, sorting, and server-side search
-  const {
-    data: employeeListData, // Renamed to clarify it's the full response object
-    isLoading: isListLoading,
-  } = useGetAllEmployeetListsQuery({
+  const { data: itemsResponse, isLoading: isListLoading } = useGetAllEmployeetListsQuery({
     businessUnitId: contextBusinessUnitId ?? undefined,
-    pageNumber: pagination.pageNumber + 1, // API usually expects 1-based page numbers
+    pageNumber: pagination.pageNumber + 1,
     pageSize: pagination.pageSize,
     status: ApprovalStatus.Rejected,
-    searchQuery: debouncedSearchQuery, // Pass the debounced search query to the API
+    searchQuery: debouncedSearchQuery || undefined,
   });
 
-  // Extract items and totalCount safely
-  const safeItems = Array.isArray(employeeListData?.items) ? employeeListData.items : [];
-  const totalItemsCount = employeeListData?.totalCount || 0;
-
-  // Fetch counts separately (if they are global counts not affected by search)
   const { data: counts } = useGetEmployeeCountPerApprovalStatusQuery({
     businssUnitId: contextBusinessUnitId ?? undefined,
   });
 
-  // Effect to reset pagination when the business unit ID changes
-  useEffect(() => {
-    setPagination({ pageNumber: 0, pageSize: 10 });
-    // RTK Query will automatically refetch when contextBusinessUnitId changes
-  }, [contextBusinessUnitId]);
-
-  // Effect to reset pagination to page 0 when the debounced search query changes
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageNumber: 0 }));
-  }, [debouncedSearchQuery]);
+  }, [contextBusinessUnitId, debouncedSearchQuery]);
 
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === "asc";
@@ -130,18 +95,20 @@ export const RejectedEmployees = ({}: EmployeeListProps) => {
     setOrderBy(property);
   };
 
-  const handlePaginationChange = useCallback(
-    (newPagination: PaginationState) => {
-      setPagination(newPagination);
-    },
-    [setPagination]
-  );
+  const handlePaginationChange = useCallback((newPagination: PaginationState) => {
+    setPagination(newPagination);
+  }, []);
 
-  // Sorting is applied to the data fetched from the API (which is already filtered by the server)
-  const sortedItems = stableSort(safeItems, getComparator(order, orderBy));
+  // ✅ SAFELY handle itemsResponse
+  const items = Array.isArray(itemsResponse?.items) ? itemsResponse.items : [];
+  const totalRowsFromApi = itemsResponse?.totalCount ?? 0;
 
-  const showNoMatchingResultsAlert = debouncedSearchQuery && sortedItems.length === 0 && !isListLoading;
-  const showNoDataAvailable = !debouncedSearchQuery && sortedItems.length === 0 && !isListLoading;
+  const showNoMatchingResultsAlert =
+    debouncedSearchQuery && items.length === 0 && !isListLoading;
+  const showNoDataAvailable =
+    !debouncedSearchQuery && items.length === 0 && !isListLoading;
+
+  const sortedItems = stableSort(items, getComparator(order, orderBy));
 
   return (
     <Box>
@@ -176,87 +143,22 @@ export const RejectedEmployees = ({}: EmployeeListProps) => {
                 <Table size="medium">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "employeeId"}
-                          direction={orderBy === "employeeId" ? order : "asc"}
-                          onClick={() => handleRequestSort("employeeId")}
-                          sx={{
-                            width: 60,
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          ID
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "displayName"}
-                          direction={orderBy === "displayName" ? order : "asc"}
-                          onClick={() => handleRequestSort("displayName")}
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          Name
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "businessUnit"}
-                          direction={
-                            orderBy === "businessUnit" ? order : "asc"
-                          }
-                          onClick={() => handleRequestSort("businessUnit")}
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          BusinessUnit
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "jobTitle"}
-                          direction={
-                            orderBy === "jobTitle" ? order : "asc"
-                          }
-                          onClick={() =>
-                            handleRequestSort("jobTitle")
-                          }
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          Job Title
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "employementDate"}
-                          direction={orderBy === "employementDate" ? order : "asc"}
-                          onClick={() => handleRequestSort("employementDate")}
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          EmploymentDate
-                        </TableSortLabel>
-                      </TableCell>
+                      {["employeeId", "displayName", "businessUnit", "jobTitle", "employementDate"].map((key) => (
+                        <TableCell key={key} sx={{ fontWeight: "bold" }}>
+                          <TableSortLabel
+                            active={orderBy === key}
+                            direction={orderBy === key ? order : "asc"}
+                            onClick={() => handleRequestSort(key)}
+                            sx={{ "&:hover": { color: "primary.main" } }}
+                          >
+                            {key.replace(/([A-Z])/g, " $1").trim()}
+                          </TableSortLabel>
+                        </TableCell>
+                      ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {sortedItems.map((item: EmployeeDto) => ( // Explicitly type item as EmployeeDto
+                    {sortedItems.map((item: EmployeeDto) => (
                       <TableRow
                         key={item.id}
                         hover
@@ -265,25 +167,15 @@ export const RejectedEmployees = ({}: EmployeeListProps) => {
                           "& > *": { borderBottom: "unset" },
                         }}
                         onClick={navigateToDetailPage({
-                          id: item?.id as any, // Ensure these are correctly typed in EmployeeDto
-                          versionNumber: item?.versionNumber as any, // Ensure these are correctly typed in EmployeeDto
+                          id: item?.id as any,
+                          versionNumber: item?.versionNumber as any,
                         })}
                       >
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.employeeId}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.displayName}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.businessUnit}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.jobTitle}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {dayjs(item.employementDate).format("DD MMM YYYY")}
-                        </TableCell>
+                        <TableCell>{item.employeeId}</TableCell>
+                        <TableCell>{item.displayName}</TableCell>
+                        <TableCell>{item.businessUnit}</TableCell>
+                        <TableCell>{item.jobTitle}</TableCell>
+                        <TableCell>{dayjs(item.employementDate).format("DD MMM YYYY")}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -298,9 +190,7 @@ export const RejectedEmployees = ({}: EmployeeListProps) => {
         pageNumber={pagination.pageNumber}
         pageSize={pagination.pageSize}
         onChange={handlePaginationChange}
-        // Use totalItemsCount from the API response when a search query is active,
-        // otherwise use the general count for rejected employees.
-        totalRowsCount={debouncedSearchQuery ? totalItemsCount : counts?.rejected}
+        totalRowsCount={totalRowsFromApi}
         rowsPerPageOptions={[10, 20, 50]}
       />
     </Box>

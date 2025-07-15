@@ -15,8 +15,8 @@ import {
 import { useOutletContext } from "react-router-dom";
 import {
   useGetAllEmployeetListsQuery,
-  EmployeeDto,
   useGetEmployeeCountPerApprovalStatusQuery,
+  EmployeeDto,
 } from "../../../app/api";
 import { useNavigateToDetailPage } from "../useNavigateToDetailPage";
 import { ApprovalStatus } from "../../../app/api/enums";
@@ -25,49 +25,31 @@ import { useBusinessUnitId } from "./businessUnitContext/BusinessUnitContext";
 import dayjs from "dayjs";
 
 // --- Utility Functions ---
-
-// Debounce hook to delay state updates (e.g., search input)
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    // Cleanup function to cancel the timer if value changes before delay
-    return () => {
-      clearTimeout(handler);
-    };
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
   }, [value, delay]);
-
   return debouncedValue;
 }
 
 const descendingComparator = (a: any, b: any, orderBy: string) => {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
+  if (b[orderBy] < a[orderBy]) return -1;
+  if (b[orderBy] > a[orderBy]) return 1;
   return 0;
 };
 
-const getComparator = (order: "asc" | "desc", orderBy: string) => {
-  return order === "desc"
+const getComparator = (order: "asc" | "desc", orderBy: string) =>
+  order === "desc"
     ? (a: any, b: any) => descendingComparator(a, b, orderBy)
     : (a: any, b: any) => -descendingComparator(a, b, orderBy);
-};
 
 const stableSort = (array: any[], comparator: any) => {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
+    return order !== 0 ? order : a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
 };
@@ -78,10 +60,7 @@ interface PaginationState {
   pageSize?: number;
 }
 
-interface EmployeeListProps {}
-
-// --- Main Component ---
-export const ApprovedEmployees = ({}: EmployeeListProps) => {
+export const ApprovedEmployees = () => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageNumber: 0,
     pageSize: 10,
@@ -89,34 +68,26 @@ export const ApprovedEmployees = ({}: EmployeeListProps) => {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<string>("employeeId");
 
-  // Get raw search query from context and debounce it
   const { searchQuery: rawSearchQuery } = useOutletContext<{ searchQuery: string }>();
-  const debouncedSearchQuery = useDebounce(rawSearchQuery, 300); // Debounce for 300ms
-
+  const debouncedSearchQuery = useDebounce(rawSearchQuery, 300);
   const contextBusinessUnitId = useBusinessUnitId();
   const { navigateToDetailPage } = useNavigateToDetailPage();
 
-  // Fetch employee lists, passing the debounced search query to the API
-  const { data: itemsResponse, isLoading: isListLoading } =
-    useGetAllEmployeetListsQuery({
-      businessUnitId: contextBusinessUnitId ?? undefined,
-      pageNumber: pagination.pageNumber + 1, // API usually expects 1-based page numbers
-      pageSize: pagination.pageSize,
-      status: ApprovalStatus.Approved,
-      searchQuery: debouncedSearchQuery || undefined, // Pass debounced query
-    });
+  const { data: itemsResponse, isLoading: isListLoading } = useGetAllEmployeetListsQuery({
+    businessUnitId: contextBusinessUnitId ?? undefined,
+    pageNumber: pagination.pageNumber + 1,
+    pageSize: pagination.pageSize,
+    status: ApprovalStatus.Approved,
+    searchQuery: debouncedSearchQuery || undefined,
+  });
 
-  // This query for counts is kept if used for other dashboard metrics.
-  // If `counts` is solely for totalRowsCount here and you're now using itemsResponse.totalCount,
-  // this query could potentially be removed for this component to optimize.
   const { data: counts } = useGetEmployeeCountPerApprovalStatusQuery({
     businssUnitId: contextBusinessUnitId ?? undefined,
   });
 
-  // Reset pagination to the first page when business unit or search query changes
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageNumber: 0 }));
-  }, [contextBusinessUnitId, debouncedSearchQuery]); // Depend on debounced search query
+  }, [contextBusinessUnitId, debouncedSearchQuery]);
 
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === "asc";
@@ -128,21 +99,16 @@ export const ApprovedEmployees = ({}: EmployeeListProps) => {
     setPagination(newPagination);
   }, []);
 
-  const items = itemsResponse?.items ?? [];
-const safeItems = Array.isArray(items) ? items : [];
-
-  // Use totalCount from the API response for accurate pagination
+  // ✅ SAFELY handle itemsResponse
+  const items = Array.isArray(itemsResponse?.items) ? itemsResponse.items : [];
   const totalRowsFromApi = itemsResponse?.totalCount ?? 0;
 
-  // No client-side filtering needed as the API handles it
-  const displayItems = safeItems;
-
   const showNoMatchingResultsAlert =
-    debouncedSearchQuery && displayItems.length === 0 && !isListLoading;
+    debouncedSearchQuery && items.length === 0 && !isListLoading;
   const showNoDataAvailable =
-    !debouncedSearchQuery && displayItems.length === 0 && !isListLoading;
+    !debouncedSearchQuery && items.length === 0 && !isListLoading;
 
-  const sortedItems = stableSort(displayItems, getComparator(order, orderBy));
+  const sortedItems = stableSort(items, getComparator(order, orderBy));
 
   return (
     <Box>
@@ -177,81 +143,18 @@ const safeItems = Array.isArray(items) ? items : [];
                 <Table size="medium">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "employeeId"}
-                          direction={orderBy === "employeeId" ? order : "asc"}
-                          onClick={() => handleRequestSort("employeeId")}
-                          sx={{
-                            width: 60,
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          ID
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "displayName"}
-                          direction={orderBy === "displayName" ? order : "asc"}
-                          onClick={() => handleRequestSort("displayName")}
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          Name
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "businessUnit"}
-                          direction={
-                            orderBy === "businessUnit" ? order : "asc"
-                          }
-                          onClick={() => handleRequestSort("businessUnit")}
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          BusinessUnit
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "jobTitle"}
-                          direction={orderBy === "jobTitle" ? order : "asc"}
-                          onClick={() => handleRequestSort("jobTitle")}
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          Job Title
-                        </TableSortLabel>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>
-                        <TableSortLabel
-                          active={orderBy === "employementDate"}
-                          direction={
-                            orderBy === "employementDate" ? order : "asc"
-                          }
-                          onClick={() => handleRequestSort("employementDate")}
-                          sx={{
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          EmploymentDate
-                        </TableSortLabel>
-                      </TableCell>
+                      {["employeeId", "displayName", "businessUnit", "jobTitle", "employementDate"].map((key) => (
+                        <TableCell key={key} sx={{ fontWeight: "bold" }}>
+                          <TableSortLabel
+                            active={orderBy === key}
+                            direction={orderBy === key ? order : "asc"}
+                            onClick={() => handleRequestSort(key)}
+                            sx={{ "&:hover": { color: "primary.main" } }}
+                          >
+                            {key.replace(/([A-Z])/g, " $1").trim()}
+                          </TableSortLabel>
+                        </TableCell>
+                      ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -268,21 +171,11 @@ const safeItems = Array.isArray(items) ? items : [];
                           versionNumber: item?.versionNumber as any,
                         })}
                       >
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.employeeId}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.displayName}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.businessUnit}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {item.jobTitle}
-                        </TableCell>
-                        <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                          {dayjs(item.employementDate).format("DD MMM YYYY")}
-                        </TableCell>
+                        <TableCell>{item.employeeId}</TableCell>
+                        <TableCell>{item.displayName}</TableCell>
+                        <TableCell>{item.businessUnit}</TableCell>
+                        <TableCell>{item.jobTitle}</TableCell>
+                        <TableCell>{dayjs(item.employementDate).format("DD MMM YYYY")}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -293,7 +186,6 @@ const safeItems = Array.isArray(items) ? items : [];
         </>
       )}
 
-      {/* Pagination component uses the total count from the API response */}
       <Pagination
         pageNumber={pagination.pageNumber}
         pageSize={pagination.pageSize}
