@@ -17,6 +17,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails(config =>
 {
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("https://cms-web-2xtg.onrender.com", "http://localhost:3000") // ✅ Your frontend URL
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Only if you're using cookies or authorization headers
+    });
+});
 
 builder.Services.AddControllers(opt =>
 {
@@ -49,7 +59,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) // ✅ Ad
 
     await DataSeeder.SeedData(app); // Optional: seed in Production if needed
 }
-
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
