@@ -119,3 +119,10 @@
 //       </Dialog>
 //     );
 //   };
+import React from "react";
+
+function JobRoleViewDialog() {
+  return <div>Hello Job Role</div>;
+}
+
+export default JobRoleViewDialog;
