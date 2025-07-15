@@ -10,29 +10,45 @@ using CMS.Application;
 using CMS.Infrastructure;
 using CMS.Persistance.DBContext;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
+// 👇 Enable cookie configuration for Identity
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.None; // ✅ Needed for cross-site cookies
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // ✅ Must be Secure for SameSite=None
+    options.LoginPath = "/api/Account/login";
+    options.AccessDeniedPath = "/access-denied";
+});
 
 builder.Services.AddProblemDetails(config =>
 {
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://cms-web-2xtg.onrender.com", "http://localhost:3000") // ✅ Your frontend URL
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Only if you're using cookies or authorization headers
+        policy.WithOrigins(
+            "https://cms-web-2xtg.onrender.com",  // ✅ your deployed frontend
+            "http://localhost:3000"               // ✅ your dev frontend
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials(); // ✅ Critical: allow cookies to be sent
     });
 });
+
+// 👇 Add session support (optional but improves state handling)
+builder.Services.AddSession();
 
 builder.Services.AddControllers(opt =>
 {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
-}).AddJsonOptions(options =>
+})
+.AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
@@ -42,30 +58,30 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpClient();
 
-
 builder.Services.AddEndpointsApiExplorer()
     .AddSwagger()
     .AddApplicationServices()
     .AddInfrastructureService()
     .AddPersistenceService(builder.Configuration)
     .AddScoped<HttpContextAccessor>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) // ✅ Add this
+// ✅ Enable Swagger & Seeding in both Dev & Production
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
-    app.UseSwagger()
-        .UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
-    await DataSeeder.SeedData(app); // Optional: seed in Production if needed
+    await DataSeeder.SeedData(app); // Optional
 }
+
+// ⚠️ Order matters here!
 app.UseCors("AllowFrontend");
+
+app.UseSession(); // ✅ Needed if using session-based identity
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-//app.UseHttpsRedirection();
 app.MapControllers();
-
-
 app.Run();
