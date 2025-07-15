@@ -5,7 +5,7 @@ import { addNotification } from "../../features/notification";
 export const emptySplitApi = createApi({
   reducerPath: "HCMSApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://cms-api-cnxw.onrender.com/api",
+    baseUrl: "https://cms-api-cnxw.onrender.com",
     prepareHeaders: (headers) => {
       if (!headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
