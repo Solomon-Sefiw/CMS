@@ -128,9 +128,9 @@ export const DraftEmployees = ({}: EmployeeListProps) => {
     setPagination(newPagination);
   }, []); // Dependency array is empty as setPagination is stable
 
-  const safeItems = Array.isArray(itemsResponse?.items)
-    ? itemsResponse.items
-    : [];
+const items = itemsResponse?.items ?? [];
+const safeItems = Array.isArray(items) ? items : [];
+
   const totalRowsFromApi = itemsResponse?.totalCount ?? 0; // Get total count directly from API response
 
   // 'displayItems' now directly uses the server-filtered, paginated data
