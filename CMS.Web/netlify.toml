@@ -1,6 +1,6 @@
 [build]
   base = "CMS.Web"
-  publish = "CMS.Web/build"
+  publish = "build"          # ✅ Relative to CMS.Web
   command = "npm run build"
 
 [[redirects]]
