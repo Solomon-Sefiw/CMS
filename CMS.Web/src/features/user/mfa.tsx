@@ -2,7 +2,7 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { Box, Button, Fab, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useVerificationCodeMutation } from "../../app/api";
 import { Errors, FormTextField } from "../../components";
@@ -13,7 +13,7 @@ interface MFAFormFields {
 }
 
 const validationSchema = yup.object<YupShape<MFAFormFields>>({
-  code: yup.string().required().required("Verification Code is required"),
+  code: yup.string().required("Verification Code is required"),
 });
 
 const initialValues = {
@@ -22,6 +22,8 @@ const initialValues = {
 
 export const MFA = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email;
 
   const [verify, { error: verifyError, isLoading, reset }] =
     useVerificationCodeMutation();
@@ -32,25 +34,23 @@ export const MFA = () => {
       verify({
         verificationCode: {
           code: values.code,
+          email, // ✅ Add email to payload
         },
       })
         .unwrap()
         .then(() => {
           console.log("Verification successful, navigating to home");
           navigate("/home");
-          navigate("/home");
         })
         .catch(() => {
           console.error("Verification failed");
         });
     },
-    [navigate, reset, verify]
+    [navigate, reset, verify, email]
   );
 
   return (
-    <Box
-      sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}
-    >
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -67,23 +67,18 @@ export const MFA = () => {
                 alignItems: "center",
               }}
             >
-              <Fab color="warning" aria-label="add">
+              <Fab color="warning" aria-label="verify">
                 <VerifiedUserIcon />
               </Fab>
 
               {verifyError && (
                 <Errors errors={{ code: "Verification failed." }} />
               )}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
+
+              <Box sx={{ textAlign: "center" }}>
                 <Typography variant="h6">Enter Verification Code</Typography>
                 <Typography variant="body2">
-                  {`We've sent a verification code to your email`}
+                  We've sent a code to your email.
                 </Typography>
               </Box>
 
@@ -94,7 +89,6 @@ export const MFA = () => {
                   name="code"
                   autoFocus
                 />
-
                 <Button
                   size="large"
                   sx={{ my: 3 }}

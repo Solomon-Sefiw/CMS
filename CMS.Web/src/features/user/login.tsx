@@ -64,7 +64,7 @@ export const Login = () => {
         .catch((e) => {
           console.error("Login failed", e);
           if (e?.data?.needVerification) {
-            navigate("/verify");
+            navigate("/verify", { state: { email: values.email } }); // 👈 Pass email
           }
         });
     },
@@ -99,18 +99,16 @@ export const Login = () => {
             item
             sx={{
               display: "flex",
-              flex: 0,
               flexDirection: "column",
               justifyContent: "center",
-              //backgroundColor: "#0a3d52",
               backgroundColor: "#eaaa00",
-
+              
               p: 3,
             }}
           >
             <img src={logo} alt="logo" />
           </Grid>
-          {forgotPassword && (
+          {forgotPassword ? (
             <Grid item xs={8}>
               <Grid container spacing={3} sx={{ p: 3 }}>
                 <Grid item xs={12}>
@@ -121,7 +119,6 @@ export const Login = () => {
                     Enter your email.
                   </Typography>
                 </Grid>
-
                 <Grid item xs={12}>
                   <TextField
                     id="userEmail"
@@ -137,13 +134,10 @@ export const Login = () => {
                     }}
                   />
                 </Grid>
-
                 <Grid item xs={12}>
                   <Button
                     variant="contained"
-                    type="submit"
                     fullWidth
-                    className="button-block"
                     onClick={onRequestPasswordResetLink}
                     sx={{ py: 1.5 }}
                     disabled={!forgotPasswordEmail}
@@ -164,14 +158,12 @@ export const Login = () => {
                 </Grid>
               </Grid>
             </Grid>
-          )}
-          {!forgotPassword && (
+          ) : (
             <Grid item xs={8}>
               <Formik
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
                 validationSchema={validationSchema}
-                validateOnChange={true}
               >
                 <Form>
                   <Grid container spacing={2} sx={{ p: 3 }}>
@@ -185,9 +177,8 @@ export const Login = () => {
                             </Typography>
                           ) : (
                             <Typography>
-                              {" "}
-                              Invalid <strong> email</strong> or{" "}
-                              <strong>password.</strong>
+                              Invalid <strong>email</strong> or{" "}
+                              <strong>password</strong>.
                             </Typography>
                           )}
                         </Alert>
@@ -214,9 +205,7 @@ export const Login = () => {
                       />
                       <Button
                         disabled={loginResponse?.isLoading}
-                        onClick={() => {
-                          setForgotPassword(true);
-                        }}
+                        onClick={() => setForgotPassword(true)}
                       >
                         <strong>Forgot password?</strong>
                       </Button>
@@ -226,7 +215,6 @@ export const Login = () => {
                         variant="contained"
                         type="submit"
                         fullWidth
-                        className="button-block"
                         sx={{ py: 1.5 }}
                         disabled={loginResponse?.isLoading}
                       >

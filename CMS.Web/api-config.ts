@@ -1,6 +1,6 @@
 // api-config.ts
 const config: any = {
-  schemaFile: "http://localhost:5023/swagger/v1/swagger.json",
+  schemaFile: "http://cms-test.somee.com/swagger/v1/swagger.json",
   apiFile: "./src/app/api/emptySplitApi.ts",
   apiImport: "emptySplitApi",
   outputFile: "./src/app/api/HCMSApi.ts",

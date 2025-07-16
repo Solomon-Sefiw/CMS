@@ -2994,19 +2994,19 @@ export type AddBranchGradeApiResponse = /** status 200 Success */ number;
 export type AddBranchGradeApiArg = {
   addBranchGradeCommand: AddBranchGradeCommand;
 };
-export type ActivateUserApiResponse = /** status 200 Success */ void;
+export type ActivateUserApiResponse = unknown;
 export type ActivateUserApiArg = {
   userEmail: UserEmail;
 };
-export type ChangePasswordApiResponse = /** status 200 Success */ void;
+export type ChangePasswordApiResponse = unknown;
 export type ChangePasswordApiArg = {
   changePasswordPayload: ChangePasswordPayload;
 };
-export type DeactivateUserApiResponse = /** status 200 Success */ void;
+export type DeactivateUserApiResponse = unknown;
 export type DeactivateUserApiArg = {
   userEmail: UserEmail;
 };
-export type ForgotPasswordApiResponse = /** status 200 Success */ void;
+export type ForgotPasswordApiResponse = unknown;
 export type ForgotPasswordApiArg = {
   forgotPasswordPayload: ForgotPasswordPayload;
 };
@@ -3017,11 +3017,11 @@ export type LoginApiArg = {
 };
 export type LogoutApiResponse = unknown;
 export type LogoutApiArg = void;
-export type ResetPasswordApiResponse = /** status 200 Success */ void;
+export type ResetPasswordApiResponse = unknown;
 export type ResetPasswordApiArg = {
   resetPasswordPayload: ResetPasswordPayload;
 };
-export type VerificationCodeApiResponse = /** status 200 Success */ void;
+export type VerificationCodeApiResponse = unknown;
 export type VerificationCodeApiArg = {
   verificationCode: VerificationCode;
 };
@@ -4260,14 +4260,6 @@ export type AddBranchGradeCommand = {
   staffLimit?: number;
   description?: string | null;
 };
-export type ProblemDetails = {
-  type?: string | null;
-  title?: string | null;
-  status?: number | null;
-  detail?: string | null;
-  instance?: string | null;
-  [key: string]: any;
-};
 export type UserEmail = {
   email?: string | null;
 };
@@ -4294,6 +4286,7 @@ export type ResetPasswordPayload = {
 };
 export type VerificationCode = {
   code?: string | null;
+  email?: string | null;
 };
 export type AddressTypeEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type CountryEnum = 1;
@@ -4349,6 +4342,14 @@ export type HrRole = {
   description?: string | null;
   displayName?: string | null;
   claims?: StringIdentityRoleClaim[] | null;
+};
+export type ProblemDetails = {
+  type?: string | null;
+  title?: string | null;
+  status?: number | null;
+  detail?: string | null;
+  instance?: string | null;
+  [key: string]: any;
 };
 export type CreateRoleDto = {
   role?: HrRole;
