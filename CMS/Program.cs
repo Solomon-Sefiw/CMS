@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://amhara-cms.netlify.app", "http://amhara-cms.netlify.app", "https://cms-web-2xtg.onrender.com", "http://localhost:3000") // ✅ Your frontend URL
+        policy.WithOrigins("https://cms-web-2xtg.onrender.com", "http://localhost:3000") // ✅ Your frontend URL
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // Only if you're using cookies or authorization headers
