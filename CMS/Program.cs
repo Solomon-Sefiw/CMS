@@ -9,22 +9,22 @@ using CMS.Common;
 using CMS.Application;
 using CMS.Infrastructure;
 using CMS.Persistance.DBContext;
-using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.Services.AddProblemDetails(config =>
 {
 });
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://cms-web-2xtg.onrender.com")
+        policy.WithOrigins("https://cms-web-2xtg.onrender.com", "http://localhost:3000") // ✅ Your frontend URL
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowCredentials(); // Only if you're using cookies or authorization headers
     });
 });
 
@@ -37,17 +37,11 @@ builder.Services.AddControllers(opt =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.SameSite = SameSiteMode.None;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.IsEssential = true;
-});
-
 builder.Services.AddScoped<ApiExceptionFilterAttribute>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpClient();
+
 
 builder.Services.AddEndpointsApiExplorer()
     .AddSwagger()
@@ -55,26 +49,23 @@ builder.Services.AddEndpointsApiExplorer()
     .AddInfrastructureService()
     .AddPersistenceService(builder.Configuration)
     .AddScoped<HttpContextAccessor>();
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) // ✅ Add this
 {
     app.UseSwagger()
         .UseSwaggerUI();
 
-    // DataSeeder should be handled carefully in production.
-    // Consider running it as a separate deployment step or migration if truly needed.
-    // await DataSeeder.SeedData(app); 
+    await DataSeeder.SeedData(app); // Optional: seed in Production if needed
 }
-
-app.UseRouting();
-
 app.UseCors("AllowFrontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+//app.UseHttpsRedirection();
 app.MapControllers();
+
 
 app.Run();
