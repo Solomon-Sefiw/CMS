@@ -1,20 +1,18 @@
-
 import { isRejected, MiddlewareAPI } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addNotification } from "../../features/notification";
+
 export const emptySplitApi = createApi({
   reducerPath: "HCMSApi",
   baseQuery: fetchBaseQuery({
-   // baseUrl: "https://cms-api-cnxw.onrender.com",
-    baseUrl: "http://localhost:5023", // ✅ Use your local API URL
-         credentials: 'include', // ✅ include cookies if applicable
+    baseUrl: process.env.REACT_APP_API_BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers) => {
       if (!headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
       } else if (headers.get("Content-Type") === "multipart/form-data") {
         headers.delete("Content-Type");
       }
-
       return headers;
     },
   }),
@@ -40,6 +38,5 @@ export const rtkQueryErrorHandler =
         );
       }
     }
-
     return next(action);
   };
