@@ -23,8 +23,8 @@ namespace CMS.Persistance.DBContext
             services.AddScoped<PublishDomainEventsInterceptor>();
             services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
-            //services.AddDbContext<CMSDBContext>(item => item.UseNpgsql(configuration.GetConnectionString("CMSConnectionString")));
-            services.AddDbContext<CMSDBContext>(item => item.UseSqlServer(configuration.GetConnectionString("CMSConnectionString")));
+            services.AddDbContext<CMSDBContext>(item => item.UseNpgsql(configuration.GetConnectionString("CMSConnectionString")));
+            //services.AddDbContext<CMSDBContext>(item => item.UseSqlServer(configuration.GetConnectionString("CMSConnectionString")));
             services.AddScoped<IDataService, CMSDBContext>();
             services.AddScoped<IExchangeEmail, Exchange>();
         
