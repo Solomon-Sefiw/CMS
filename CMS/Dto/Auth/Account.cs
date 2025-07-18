@@ -1,6 +1,6 @@
 namespace CMS.Api.Dtos;
 
-public record VerificationCode(string Code, string Email);
+public record VerificationCode(string Code);
 
 public record UserEmail(string Email);
 

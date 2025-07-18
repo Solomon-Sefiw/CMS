@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace CMS.Infrastructure
 {
@@ -36,12 +37,12 @@ namespace CMS.Infrastructure
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.Cookie.Name = "CMS.Auth";
+                options.Cookie.Name = "auth";
                 options.Cookie.HttpOnly = true;
-                options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.LoginPath = "/api/account/login";
-                options.AccessDeniedPath = "/api/account/access-denied";
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure Secure (HTTPS)
+                options.Cookie.SameSite = SameSiteMode.None;             // Allow cross-site
+                options.Cookie.Domain = null;                            // Don't hardcode unless needed
+
                 options.ExpireTimeSpan = TimeSpan.FromHours(8);
                 options.SlidingExpiration = true;
 
@@ -50,15 +51,13 @@ namespace CMS.Infrastructure
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return Task.CompletedTask;
                 };
+
                 options.Events.OnRedirectToAccessDenied = context =>
                 {
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     return Task.CompletedTask;
                 };
             });
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie();
 
             services.AddAuthorization(options =>
             {
@@ -75,15 +74,12 @@ namespace CMS.Infrastructure
             var context = serviceProvider.GetRequiredService<CMSDBContext>();
 
             var roles = await roleManager.Roles.ToListAsync();
-
             foreach (var role in roles)
             {
                 var roleClaims = await roleManager.GetClaimsAsync(role);
-
                 foreach (var claim in roleClaims)
                 {
                     var policyName = claim.Value;
-
                     options.AddPolicy(policyName, policy =>
                     {
                         policy.RequireClaim(claim.Type, claim.Value);

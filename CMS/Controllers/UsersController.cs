@@ -18,10 +18,7 @@ namespace CMS.Api.Controllers
         private readonly IIdentityService identityService;
         private readonly UserManager<HRUser> userManager;
         private readonly RoleManager<HRRole> roleManager;
-
-        public UsersController(
-            IIdentityService identityService,
-            UserManager<HRUser> userManager,
+        public UsersController(IIdentityService identityService,UserManager<HRUser> userManager,
             RoleManager<HRRole> roleManager) : base()
         {
             this.identityService = identityService;
@@ -29,7 +26,7 @@ namespace CMS.Api.Controllers
             this.roleManager = roleManager;
         }
 
-        [Authorize]
+         [Authorize]
         [HttpGet("current")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<UserDto>> CurrentUserInfo()
@@ -47,36 +44,43 @@ namespace CMS.Api.Controllers
             if (user == null)
                 return NotFound("User not found");
 
+            // Roles
             var userRoles = await userManager.GetRolesAsync(user);
-            var permissions = new List<Permission>();
 
+            // Permissions from role claims
+            var permissions = new List<Permission>();
             foreach (var roleName in userRoles)
             {
                 var role = await roleManager.FindByNameAsync(roleName);
                 if (role != null)
                 {
                     var roleClaims = await roleManager.GetClaimsAsync(role);
-                    permissions.AddRange(roleClaims.Select(claim => new Permission
+                    foreach (var claim in roleClaims)
                     {
-                        Name = claim.Value,
-                        HasPermission = true
-                    }));
+                        permissions.Add(new Permission
+                        {
+                            Name = claim.Value,
+                            HasPermission = true
+                        });
+                    }
                 }
             }
 
+            // Get PhotoId from UserDocuments
             var photoId = user.UserDocuments
                 .Where(d => d.DocumentType == DocumentType.UserPhoto && d.IsDeleted != true)
                 .Select(d => d.DocumentId)
                 .FirstOrDefault();
-
             var signature = user.UserDocuments
-                .Where(d => d.DocumentType == DocumentType.UserSignature && d.IsDeleted != true)
-                .Select(d => d.DocumentId)
-                .FirstOrDefault();
+                    .Where(d => d.DocumentType == DocumentType.UserSignature && d.IsDeleted != true)
+                    .Select(d => d.DocumentId)
+                     .FirstOrDefault();
 
+            // Construct full document URL using base controller method
             var photoUrl = GetDocumentUrl(photoId);
 
-            return Ok(new UserDto
+            // Return DTO
+            var userDto = new UserDto
             {
                 Id = user.Id,
                 Email = user.Email,
@@ -86,11 +90,15 @@ namespace CMS.Api.Controllers
                 BranchId = user.BranchId,
                 Roles = userRoles.ToList(),
                 Permissions = permissions,
-                PhotoId = photoId,
+                PhotoId = photoId, 
                 PhotoUrl = photoUrl,
                 SignatureId = signature
-            });
+
+            };
+
+            return Ok(userDto);
         }
+
 
         [HttpPost("{id}/add-photo", Name = "AddUserPhoto")]
         [ProducesResponseType(200)]
@@ -98,16 +106,19 @@ namespace CMS.Api.Controllers
         {
             var command = new AddUserPhotoCommand(id, document.File);
             var doc = await mediator.Send(command);
+
             return new DocumentMetadataDto(GetDocumentUrl(doc.Id));
         }
-
-        [HttpPost("{id}/add-signature", Name = "AddUserSignature")]
+        [HttpPost("{id}/add-signature", Name = "AddUserSignature")]  
         [ProducesResponseType(200)]
         public async Task<DocumentMetadataDto> AddUserSignature(string id, [FromForm] UploadDocumentDto document)
         {
             var command = new AddUserSignatureCommand(id, document.File);
             var doc = await mediator.Send(command);
+
             return new DocumentMetadataDto(GetDocumentUrl(doc.Id));
         }
+
+
     }
 }

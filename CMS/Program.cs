@@ -12,39 +12,36 @@ using CMS.Persistance.DBContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS must support credentials
+// 🔐 CORS for cookies
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
                 "https://cms-web-2xtg.onrender.com",
-                "http://localhost:3000",
-                "https://amhara-cms.netlify.app")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // ✅ Allow sending cookies from frontend
+                "https://amhara-cms.netlify.app",
+                "http://localhost:3000"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // 🔐 Required for cookies
     });
 });
 
-// Controllers and filters
 builder.Services.AddControllers(opt =>
 {
-    var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
-})
-.AddJsonOptions(options =>
+}).AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddScoped<ApiExceptionFilterAttribute>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddHttpClient();
 
-// Service Registrations
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwagger()
@@ -55,7 +52,6 @@ builder.Services
 
 var app = builder.Build();
 
-// Swagger + optional data seeding
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
@@ -64,13 +60,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     await DataSeeder.SeedData(app);
 }
 
-// CORS before auth!
+// ✅ Set up CORS and auth middleware correctly
 app.UseCors("AllowFrontend");
 
-app.UseAuthentication();
+app.UseAuthentication(); // Must come before Authorization
 app.UseAuthorization();
-
-//app.UseHttpsRedirection();
 
 app.MapControllers();
 app.Run();
