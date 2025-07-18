@@ -34,7 +34,7 @@ export const MFA = () => {
       verify({
         verificationCode: {
           code: values.code,
-          email, // ✅ Add email to payload
+     //     email, // ✅ Add email to payload
         },
       })
         .unwrap()
