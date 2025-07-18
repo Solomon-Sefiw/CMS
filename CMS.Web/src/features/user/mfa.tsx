@@ -23,6 +23,7 @@ const initialValues = {
 export const MFA = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const email = location.state?.email;
 
   const [verify, { error: verifyError, isLoading, reset }] =
     useVerificationCodeMutation();
@@ -33,6 +34,7 @@ export const MFA = () => {
       verify({
         verificationCode: {
           code: values.code,
+          email, // ✅ Add email to payload
         },
       })
         .unwrap()
@@ -44,7 +46,7 @@ export const MFA = () => {
           console.error("Verification failed");
         });
     },
-    [navigate, reset, verify]
+    [navigate, reset, verify, email]
   );
 
   return (
