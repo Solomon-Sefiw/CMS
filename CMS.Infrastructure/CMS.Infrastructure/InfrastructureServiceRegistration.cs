@@ -5,13 +5,11 @@ using CMS.Domain.User;
 using CMS.Infrastructure.Identity;
 using CMS.Persistance.DBContext;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CMS.Infrastructure
 {
@@ -19,9 +17,11 @@ namespace CMS.Infrastructure
     {
         public static IServiceCollection AddInfrastructureService(this IServiceCollection services)
         {
+            // 🔧 Application services
             services.AddScoped<IDocumentUploadService, DocumentUploadService>();
             services.AddTransient<IIdentityService, IdentityService>();
 
+            // 👤 Identity setup
             _ = services.AddIdentity<HRUser, HRRole>(options =>
             {
                 options.Password.RequireNonAlphanumeric = false;
@@ -35,13 +35,14 @@ namespace CMS.Infrastructure
             .AddEntityFrameworkStores<CMSDBContext>()
             .AddDefaultTokenProviders();
 
+            // 🍪 Cookie config for cross-site & secure setup
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = "auth";
                 options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure Secure (HTTPS)
-                options.Cookie.SameSite = SameSiteMode.None;             // Allow cross-site
-                options.Cookie.Domain = null;                            // Don't hardcode unless needed
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.Domain = null; // set if needed explicitly
 
                 options.ExpireTimeSpan = TimeSpan.FromHours(8);
                 options.SlidingExpiration = true;
@@ -59,6 +60,7 @@ namespace CMS.Infrastructure
                 };
             });
 
+            // 🔐 Dynamic policy registration
             services.AddAuthorization(options =>
             {
                 AddDynamicAuthorizationPolicies(options, services).GetAwaiter().GetResult();
@@ -67,17 +69,17 @@ namespace CMS.Infrastructure
             return services;
         }
 
-        public static async Task AddDynamicAuthorizationPolicies(AuthorizationOptions options, IServiceCollection services)
+        private static async Task AddDynamicAuthorizationPolicies(AuthorizationOptions options, IServiceCollection services)
         {
-            var serviceProvider = services.BuildServiceProvider();
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<HRRole>>();
-            var context = serviceProvider.GetRequiredService<CMSDBContext>();
+            using var provider = services.BuildServiceProvider();
+            var roleManager = provider.GetRequiredService<RoleManager<HRRole>>();
+            var context = provider.GetRequiredService<CMSDBContext>();
 
             var roles = await roleManager.Roles.ToListAsync();
             foreach (var role in roles)
             {
-                var roleClaims = await roleManager.GetClaimsAsync(role);
-                foreach (var claim in roleClaims)
+                var claims = await roleManager.GetClaimsAsync(role);
+                foreach (var claim in claims)
                 {
                     var policyName = claim.Value;
                     options.AddPolicy(policyName, policy =>

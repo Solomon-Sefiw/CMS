@@ -248,25 +248,26 @@ public class AccountController : BaseController<AccountController>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [AllowAnonymous]
-    public async Task<IActionResult> VerificationCode([FromBody] VerificationCode dto)
+    public async Task<ActionResult> VerificationCode([FromBody] VerificationCode VerificationCode)
     {
-        if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Code))
-            return BadRequest(new { message = "Email and Code are required." });
+        if (string.IsNullOrWhiteSpace(VerificationCode?.Code)) return BadRequest();
 
-        var user = await userManager.FindByEmailAsync(dto.Email);
-        if (user == null)
-            return BadRequest(new { message = "Invalid email." });
+        var result = await signInManager.TwoFactorSignInAsync("Email", VerificationCode.Code, false, false);
 
-        var isValid = await userManager.VerifyTwoFactorTokenAsync(
-            user, TokenOptions.DefaultEmailProvider, dto.Code);
+        if (!result.Succeeded)
+        {
+            if (result.IsLockedOut)
+            {
+                return BadRequest(new LoginRes(false, false, true));
+            }
+            return BadRequest(new LoginRes(false, true, false));
+        }
 
-        if (!isValid)
-            return BadRequest(new { message = "Invalid verification code." });
-
-        await SignInAsync(user); // Your custom method to create JWT or cookie
+        var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
+        await SignInAsync(user);
         return Ok(new LoginRes(true));
-    }
 
+    }
 
     [HttpPost("logout")]
     [Authorize]

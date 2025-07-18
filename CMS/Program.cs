@@ -12,7 +12,7 @@ using CMS.Persistance.DBContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 CORS for cookies
+// 🔐 CORS for frontend and cookies
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -28,11 +28,13 @@ builder.Services.AddCors(options =>
     });
 });
 
+// 🔧 Controller settings
 builder.Services.AddControllers(opt =>
 {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
-}).AddJsonOptions(options =>
+})
+.AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
@@ -52,18 +54,18 @@ builder.Services
 
 var app = builder.Build();
 
+// Swagger & Data Seeding
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-
     await DataSeeder.SeedData(app);
 }
 
-// ✅ Set up CORS and auth middleware correctly
+// ✅ Correct middleware order
 app.UseCors("AllowFrontend");
 
-app.UseAuthentication(); // Must come before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
