@@ -12,7 +12,7 @@ using CMS.Persistance.DBContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 CORS for frontend and cookies
+// ✅ CORS Configuration (for cross-origin cookie usage)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); // 🔐 Required for cookies
+            .AllowCredentials(); // 🔐 Required for cookies to work cross-origin
     });
 });
 
@@ -54,6 +54,9 @@ builder.Services
 
 var app = builder.Build();
 
+// ✅ Add Cookie Policy middleware (REQUIRED for cookie settings to apply)
+app.UseCookiePolicy(); // 🔥 Required for cookie-based auth across domains
+
 // Swagger & Data Seeding
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
@@ -62,7 +65,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     await DataSeeder.SeedData(app);
 }
 
-// ✅ Correct middleware order
+// ✅ CORS must be before Authentication
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
