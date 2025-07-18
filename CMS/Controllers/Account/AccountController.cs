@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Claim = System.Security.Claims.Claim;
 
 namespace CMS.Api.Controllers;
@@ -23,35 +24,93 @@ public class AccountController : BaseController<AccountController>
     private readonly SignInManager<HRUser> signInManager;
     private readonly RoleManager<HRRole> roleManager;
     private readonly IConfiguration configuration;
+    private readonly ILogger<AccountController> logger;
 
     public AccountController(
         UserManager<HRUser> userManager,
         SignInManager<HRUser> signInManager,
         RoleManager<HRRole> roleManager,
-        IConfiguration configuration) : base()
+        IConfiguration configuration,
+        ILogger<AccountController> logger) : base()
     {
         this.userManager = userManager;
         this.signInManager = signInManager;
         this.roleManager = roleManager;
         this.configuration = configuration;
+        this.logger = logger;
     }
 
+    private bool IsLockedOut(HRUser user)
+    {
+        return user.IsDeactivated || (user.LockoutEnd != null && user.LockoutEnd >= DateTimeOffset.UtcNow);
+    }
+
+    private ClaimsIdentity GetClaimIdentity(HRUser user, List<Claim> userClaims)
+    {
+        var claimsIdentity = new ClaimsIdentity(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            ClaimTypes.Name,
+            ClaimTypes.Role);
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.FirstName ?? ""),
+            new Claim("middle_name", user.MiddleName ?? ""),
+            new Claim(ClaimTypes.Surname, user.LastName ?? ""),
+            new Claim(ClaimTypes.Email, user.Email ?? ""),
+            new Claim("branch_Id", user.BranchId.ToString())
+        };
+
+        if (userClaims?.Count > 0)
+        {
+            claimsIdentity.AddClaims(userClaims);
+        }
+
+        claimsIdentity.AddClaims(claims);
+        return claimsIdentity;
+    }
+
+    private async Task SignInAsync(HRUser user)
+    {
+        var claims = (await userManager.GetClaimsAsync(user))?.ToList();
+        var roles = await userManager.GetRolesAsync(user);
+
+        foreach (var roleName in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, roleName));
+            var role = await roleManager.FindByNameAsync(roleName);
+            if (role != null)
+                claims.AddRange(await roleManager.GetClaimsAsync(role));
+        }
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(GetClaimIdentity(user, claims ?? new List<Claim>())),
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                AllowRefresh = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(12)
+            });
+
+        logger.LogInformation("User {Email} logged in at {Time}", user.Email, DateTime.UtcNow);
+    }
 
     [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesDefaultResponseType]
     public async Task<ActionResult<LoginRes>> Login(LoginDto loginDto, string returnUrl = null)
     {
-        returnUrl = returnUrl ?? Url.Content("~/");
+        returnUrl ??= Url.Content("~/");
         var user = await userManager.FindByEmailAsync(loginDto.Email);
         if (user == null)
         {
             return BadRequest();
         }
 
-        if (user.IsDeactivated || IsLockedOut(user))
+        if (IsLockedOut(user))
         {
             return BadRequest(new LoginRes(false, false, true));
         }
@@ -66,7 +125,7 @@ public class AccountController : BaseController<AccountController>
             if (result.RequiresTwoFactor)
             {
                 await userManager.UpdateSecurityStampAsync(user);
-                var token = await this.userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                var token = await userManager.GenerateTwoFactorTokenAsync(user, "Email");
 
                 await mediator.Send(new CreateEmailNotificationCommand()
                 {
@@ -88,11 +147,9 @@ public class AccountController : BaseController<AccountController>
             }
 
             return BadRequest(new LoginRes(false));
-
         }
 
         await SignInAsync(user);
-
         return Ok(new LoginRes(true));
     }
 
@@ -155,9 +212,7 @@ public class AccountController : BaseController<AccountController>
        .ToDictionary(t => t.Code, t => t.Description);
 
         return BadRequest(errors);
-
     }
-
 
     [HttpPost("change-password")]
     [Microsoft.AspNetCore.Authorization.Authorize]
@@ -176,7 +231,6 @@ public class AccountController : BaseController<AccountController>
 
         if (result.Succeeded)
         {
-
             await mediator.Send(new CreateEmailNotificationCommand()
             {
                 Notification = new EmailNotification()
@@ -240,16 +294,15 @@ public class AccountController : BaseController<AccountController>
         return Ok();
     }
 
-
     [HttpPost("verification-code")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [AllowAnonymous]
-    public async Task<ActionResult> VerificationCode([FromBody] VerificationCode VerificationCode)
+    public async Task<ActionResult> VerificationCode([FromBody] VerificationCode verificationCode)
     {
-        if (string.IsNullOrWhiteSpace(VerificationCode?.Code)) return BadRequest();
+        if (string.IsNullOrWhiteSpace(verificationCode?.Code)) return BadRequest();
 
-        var result = await signInManager.TwoFactorSignInAsync("Email", VerificationCode.Code, false, false);
+        var result = await signInManager.TwoFactorSignInAsync("Email", verificationCode.Code, false, false);
 
         if (!result.Succeeded)
         {
@@ -263,7 +316,6 @@ public class AccountController : BaseController<AccountController>
         var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
         await SignInAsync(user);
         return Ok(new LoginRes(true));
-
     }
 
     [HttpPost("logout")]
@@ -274,50 +326,4 @@ public class AccountController : BaseController<AccountController>
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Ok();
     }
-
-    private ClaimsIdentity GetClaimIdentity(HRUser user, List<Claim> userClaims)
-    {
-        var claimsIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
-
-        var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user?.FirstName  ??""),
-                new Claim("middle_name", user?.MiddleName ??""),
-                new Claim(ClaimTypes.Surname, user?.LastName ??""),
-                new Claim(ClaimTypes.Email, user?.Email ??"")
-            };
-        claimsIdentity.AddClaims(claims);
-
-        if (userClaims?.Count() > 0)
-        {
-            claimsIdentity.AddClaims(userClaims);
-        }
-
-        return claimsIdentity;
-    }
-
-    private async Task SignInAsync(HRUser user)
-    {
-        var claims = (await userManager.GetClaimsAsync(user))?.ToList();
-        var roles = await userManager.GetRolesAsync(user);
-
-        foreach (var roleName in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, roleName));
-            var role = await roleManager.FindByNameAsync(roleName);
-            if (role != null)
-                claims.AddRange(await roleManager.GetClaimsAsync(role));
-
-        }
-        await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(GetClaimIdentity(user, claims ?? new List<Claim>())));
-
-        logger.LogInformation("User {Email} ({FirstName} {MiddleName} {LastName}) logged in at {Time}.",
-            user.Email, user.FirstName ?? "", user.MiddleName ?? "", user.LastName ?? "", DateTime.Now);
-    }
-
-    private bool IsLockedOut(HRUser user) => user.IsDeactivated || (user.LockoutEnd != null && user.LockoutEnd >= DateTime.UtcNow);
-
 }
