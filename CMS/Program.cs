@@ -17,16 +17,27 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
+        policy
+            .WithOrigins(
                 "https://cms-web-2xtg.onrender.com",
                 "https://amhara-cms.netlify.app",
                 "http://localhost:3000"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); // 🔐 Required for cookies to work cross-origin
+            .AllowCredentials();
+
+        // ✅ Ensure correct preflight response even for older browsers
+        policy.SetIsOriginAllowed(origin =>
+            new[]
+            {
+                "https://cms-web-2xtg.onrender.com",
+                "https://amhara-cms.netlify.app",
+                "http://localhost:3000"
+            }.Contains(origin));
     });
 });
+
 
 // 🔧 Controller settings
 builder.Services.AddControllers(opt =>

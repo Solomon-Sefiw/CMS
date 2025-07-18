@@ -97,6 +97,7 @@ const injectedRtkApi = api
           method: "POST",
           body: queryArg.loginDto,
           params: { returnUrl: queryArg.returnUrl },
+          credentials: "include",
         }),
         invalidatesTags: ["Account"],
       }),
@@ -123,6 +124,7 @@ const injectedRtkApi = api
           url: `/api/Account/verification-code`,
           method: "POST",
           body: queryArg.verificationCode,
+          credentials: "include",
         }),
         invalidatesTags: ["Account"],
       }),
@@ -4294,7 +4296,6 @@ export type ResetPasswordPayload = {
 };
 export type VerificationCode = {
   code?: string | null;
-  email?: string | null;
 };
 export type AddressTypeEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type CountryEnum = 1;
