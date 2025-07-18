@@ -95,6 +95,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/api/Account/login`,
           method: "POST",
+          credentials: 'include', 
           body: queryArg.loginDto,
           params: { returnUrl: queryArg.returnUrl },
         }),
@@ -122,6 +123,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/api/Account/verification-code`,
           method: "POST",
+          credentials: 'include', 
           body: queryArg.verificationCode,
         }),
         invalidatesTags: ["Account"],
@@ -133,6 +135,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/api/Address/create`,
           method: "POST",
+          credentials: 'include', 
           body: queryArg.createAddressCommand,
         }),
         invalidatesTags: ["Address", "EmployeeProfile", "BusinessUnit"],
