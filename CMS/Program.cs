@@ -9,19 +9,21 @@ using CMS.Common;
 using CMS.Application;
 using CMS.Infrastructure;
 using CMS.Persistance.DBContext;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http; // Added for SameSiteMode
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Cookies; // Added for forwarded headers
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddForwardedHeaders(new ForwardedHeadersOptions
+// Add services to the container
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
-builder.Services.AddProblemDetails(config => { });
+builder.Services.AddProblemDetails();
 
+// Enhanced CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -34,6 +36,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Configure cookie settings for production
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.None;
@@ -43,9 +46,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
-
 builder.Services.AddControllers(opt =>
 {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -54,6 +54,14 @@ builder.Services.AddControllers(opt =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+
+// Authentication configuration
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
 
 builder.Services.AddScoped<ApiExceptionFilterAttribute>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -68,20 +76,23 @@ builder.Services.AddEndpointsApiExplorer()
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline
 app.UseForwardedHeaders();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger()
-        .UseSwaggerUI();
+       .UseSwaggerUI();
 
     await DataSeeder.SeedData(app);
 }
 
+app.UseRouting();
 app.UseCors("AllowFrontend");
+
+// Important: These must be in this exact order
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
