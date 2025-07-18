@@ -9,65 +9,44 @@ using CMS.Common;
 using CMS.Application;
 using CMS.Infrastructure;
 using CMS.Persistance.DBContext;
-using Microsoft.AspNetCore.Http; // Added for SameSiteMode
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Authentication.Cookies; // Added for forwarded headers
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
-
-builder.Services.AddProblemDetails();
-
-// Enhanced CORS configuration
+// CORS must support credentials
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://cms-web-2xtg.onrender.com", "http://localhost:3000")
+        policy.WithOrigins(
+                "https://cms-web-2xtg.onrender.com",
+                "http://localhost:3000",
+                "https://amhara-cms.netlify.app")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials()
-              .SetPreflightMaxAge(TimeSpan.FromHours(1));
+              .AllowCredentials(); // ✅ Allow sending cookies from frontend
     });
 });
 
-// Configure cookie settings for production
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.SameSite = SameSiteMode.None;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromHours(12);
-    options.SlidingExpiration = true;
-});
-
+// Controllers and filters
 builder.Services.AddControllers(opt =>
 {
-    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
-}).AddJsonOptions(options =>
+})
+.AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
-
-// Authentication configuration
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.Cookie.SameSite = SameSiteMode.None;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    });
 
 builder.Services.AddScoped<ApiExceptionFilterAttribute>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpClient();
 
-builder.Services.AddEndpointsApiExplorer()
+// Service Registrations
+builder.Services
+    .AddEndpointsApiExplorer()
     .AddSwagger()
     .AddApplicationServices()
     .AddInfrastructureService()
@@ -76,23 +55,22 @@ builder.Services.AddEndpointsApiExplorer()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
-app.UseForwardedHeaders();
-
+// Swagger + optional data seeding
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
-    app.UseSwagger()
-       .UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
     await DataSeeder.SeedData(app);
 }
 
-app.UseRouting();
+// CORS before auth!
 app.UseCors("AllowFrontend");
 
-// Important: These must be in this exact order
 app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseHttpsRedirection();
 
 app.MapControllers();
 app.Run();
