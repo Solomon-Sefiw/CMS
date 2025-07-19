@@ -31,7 +31,12 @@ export const LoggedInUser = () => {
     <>
       {" "}
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Typography sx={{ fontStyle: "italic", mr: 1,}} variant="body2">
+        <Typography
+         sx={{ fontStyle: "italic",
+           mr: 1,
+           color : "white"
+
+        }} variant="body2">
           {user?.firstName}
         </Typography>
         <Box>

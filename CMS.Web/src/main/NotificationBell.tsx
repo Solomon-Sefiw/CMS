@@ -10,7 +10,10 @@ interface NotificationBellProps {
 
 export const NotificationBell = ({ count, onClick }: NotificationBellProps) => (
   <Tooltip title="Notifications">
-    <IconButton color="primary" onClick={onClick}>
+    <IconButton 
+    sx={{color : "white"}}
+   // color="primary" 
+    onClick={onClick}>
       <Badge badgeContent={count} color="error">
         <NotificationsIcon />
       </Badge>

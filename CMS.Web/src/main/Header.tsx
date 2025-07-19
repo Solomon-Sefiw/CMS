@@ -150,7 +150,9 @@ const permissions = usePermission();
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {loggedIn && (
             <Button
-              sx={{ px: 2 }}
+              sx={{ px: 2,
+                color : "white"
+               }}
               startIcon={opened ? <ChevronLeftIcon /> : <MenuIcon />}
               onClick={onMenuClick}
             >
@@ -161,9 +163,13 @@ const permissions = usePermission();
             variant="h6"
             component={RouterLink}
             to="/Home"
-            sx={{ cursor: "pointer", textDecoration: "none", color: "#002a73" }}
+            sx={{ cursor: "pointer",
+               textDecoration: "none", 
+               //color: "#002a73"
+               color : "white"
+               }}
           >
-            HCMS
+            CMS
           </Link>
         </Box>
         <Box sx={{ flex: 1 }}></Box>
@@ -197,7 +203,7 @@ const permissions = usePermission();
                 orientation="vertical"
                 sx={{ height: "auto", alignSelf: "stretch", mx: 2 }}
               />
-              <Button sx={{ textTransform: "none" }} onClick={() => logout()}>
+              <Button sx={{ textTransform: "none", color : "white" }} onClick={() => logout()}>
                 {t('logout')}
               </Button>
               <Divider

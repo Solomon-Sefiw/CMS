@@ -92,8 +92,8 @@ export const MainLayout = () => {
           transition: open ? theme.transitions.create("width") : "none",
         }}
       >
-        <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
-          <Header onMenuClick={onMenuOpen} opened={open} />
+        <Toolbar disableGutters sx={{ justifyContent: "space-between",  backgroundColor: "#0a3d52",}}>
+          <Header  onMenuClick={onMenuOpen} opened={open} />
         </Toolbar>
       </AppBar>
 
