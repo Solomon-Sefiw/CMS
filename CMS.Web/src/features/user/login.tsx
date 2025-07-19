@@ -13,7 +13,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useForgotPasswordMutation, useLoginMutation } from "../../app/api";
-import logo from "../../assets/transparent-logo.png";
+import logo from "../../assets/login.png";
 import { FormTextField } from "../../components/form-controls";
 import { YupShape } from "../../utils";
 import { useAlert } from "../notification";
@@ -64,7 +64,7 @@ export const Login = () => {
         .catch((e) => {
           console.error("Login failed", e);
           if (e?.data?.needVerification) {
-            navigate("/verify", { state: { email: values.email } }); // 👈 Pass email
+            navigate("/verify", { state: { email: values.email } }); 
           }
         });
     },
@@ -101,7 +101,8 @@ export const Login = () => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              backgroundColor: "#eaaa00",
+              //backgroundColor: "#eaaa00",
+              backgroundColor: "#0a3d52",
               
               p: 3,
             }}
