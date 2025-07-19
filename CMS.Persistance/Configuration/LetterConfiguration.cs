@@ -39,6 +39,11 @@ public class UserConfiguration : IEntityTypeConfiguration<HRUser>
 {
     public void Configure(EntityTypeBuilder<HRUser> builder)
     {
+        builder.ToTable(x => x.IsTemporal(t =>
+        {
+            t.HasPeriodStart("PeriodStart");
+            t.HasPeriodEnd("PeriodEnd");
+        }));
         // Configure navigation properties
         builder.HasMany(u => u.SentLetters)
             .WithOne(l => l.Sender)

@@ -8,11 +8,11 @@ namespace CMS.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Employee> builder)
         {
-            //builder.ToTable(x => x.IsTemporal(t =>
-            //{
-            //    t.HasPeriodStart("PeriodStart");
-            //    t.HasPeriodEnd("PeriodEnd");
-            //}));
+            builder.ToTable(x => x.IsTemporal(t =>
+            {
+                t.HasPeriodStart("PeriodStart");
+                t.HasPeriodEnd("PeriodEnd");
+            }));
             builder.Property(x => x.EmployeeId)
                 .IsRequired()
                 .HasDefaultValueSql("NEXT VALUE FOR EMPLOYEEID");
