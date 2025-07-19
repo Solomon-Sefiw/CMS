@@ -9,6 +9,8 @@ using CMS.Common;
 using CMS.Application;
 using CMS.Infrastructure;
 using CMS.Persistance.DBContext;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,11 @@ builder.Services.AddControllers(opt =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
+// Data Protection (required for consistent token generation in production)
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "dataprotectionkeys")))
+    .SetApplicationName("CMS");
+
 builder.Services.AddScoped<ApiExceptionFilterAttribute>();
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -55,7 +62,12 @@ builder.Services
 var app = builder.Build();
 
 // ✅ Add Cookie Policy middleware (REQUIRED for cookie settings to apply)
-app.UseCookiePolicy(); // 🔥 Required for cookie-based auth across domains
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.None,
+    Secure = CookieSecurePolicy.Always,
+    HttpOnly = HttpOnlyPolicy.Always
+});
 
 // Swagger & Data Seeding
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())

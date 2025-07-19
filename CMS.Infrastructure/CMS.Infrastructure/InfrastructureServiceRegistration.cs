@@ -30,10 +30,22 @@ namespace CMS.Infrastructure
 
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
                 options.Lockout.MaxFailedAccessAttempts = 5;
+
+                // Token settings
+                options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultEmailProvider;
+                options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             })
             .AddRoles<HRRole>()
             .AddEntityFrameworkStores<CMSDBContext>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<EmailTokenProvider<HRUser>>(TokenOptions.DefaultEmailProvider);
+
+            // Configure token lifespan
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+                options.TokenLifespan = TimeSpan.FromMinutes(15));
+
+            //services.Configure<EmailTokenProvider<HRUser>>(options =>
+            //    options.TokenLifespan = TimeSpan.FromMinutes(15));
 
             // 🍪 Cookie config for cross-site & secure setup
             services.ConfigureApplicationCookie(options =>
@@ -46,6 +58,8 @@ namespace CMS.Infrastructure
 
                 options.ExpireTimeSpan = TimeSpan.FromHours(8);
                 options.SlidingExpiration = true;
+                options.LoginPath = "/api/account/login";
+                options.AccessDeniedPath = "/api/account/access-denied";
 
                 options.Events.OnRedirectToLogin = context =>
                 {
@@ -58,6 +72,23 @@ namespace CMS.Infrastructure
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     return Task.CompletedTask;
                 };
+            });
+
+            // Configure Two-Factor cookies
+            services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorRememberMeScheme, options =>
+            {
+                options.Cookie.Name = "twofactor";
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.HttpOnly = true;
+            });
+
+            services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorUserIdScheme, options =>
+            {
+                options.Cookie.Name = "twofactoruser";
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.HttpOnly = true;
             });
 
             // 🔐 Dynamic policy registration
