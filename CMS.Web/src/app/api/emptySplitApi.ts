@@ -7,8 +7,8 @@ export const emptySplitApi = createApi({
   baseQuery: fetchBaseQuery({
    // baseUrl: "https://cms-api-cnxw.onrender.com",
     baseUrl: "https://cms-api.somee.com",
-    //baseUrl: "http://localhost:5023", // ✅ Use your local API URL
-         credentials: 'include', // ✅ include cookies if applicable
+    //baseUrl: "http://localhost:5023", 
+         credentials: 'include', // ✅ include cookies 
     prepareHeaders: (headers) => {
       if (!headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
