@@ -1,8 +1,10 @@
 // EmployeeIDCard.tsx
 import { Box, Paper, Typography } from "@mui/material";
 import { EmployeeDto } from "../../app/api/HCMSApi";
-import BrhanLogo from "../../assets/Brhanlogo.png";
-import logoTwo from "../../assets/logoTwo.png";
+// import BrhanLogo from "../../assets/Brhanlogo.png";
+// import logoTwo from "../../assets/logoTwo.png";
+import BrhanLogo from "../../images/image.png";
+import logoTwo from "../../images/image.png";
 
 interface Props {
   employee: EmployeeDto;
@@ -90,18 +92,18 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
         <Typography variant="body2">Tel: 0116-185732</Typography>
         <Typography variant="caption">P.O.Box 387 Code 1110</Typography>
         <Typography variant="body2">Addis Ababa, Ethiopia</Typography>
-        <Typography variant="body2">info@berhanbanksc.com</Typography>
+        <Typography variant="body2">info@ethiopiancourt.com</Typography>
         <Typography></Typography>
         <Box
           sx={{
             width: "100%",
             height: "10mm",
-            backgroundColor: "yellow",
+            backgroundColor: "#0a3d52",
             textAlign: "center",
             justifyContent: "center",
           }}
         >
-          <Typography variant="body2">www.berhanbanksc.com</Typography>
+          <Typography variant="body2">www.ethiopian.cms.com</Typography>
         </Box>
       </Paper>
       <Paper
@@ -123,9 +125,9 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
         {/* Text Section */}
         <Box sx={{ paddingTop: "30px" }}>
           <Typography>We hereby certify that the bearer of this ID</Typography>
-          <Typography>card is an employee of Berhan Bank S.C.</Typography>
-          <Typography>ይህን መታወቂያ ካርድ የያዙ ግለሰብ የብርሃን ባንክ</Typography>
-          <Typography>አ.ማ. ሰራተኛ መሆናቸውን እናረጋግጣለን።</Typography>
+          <Typography>card is an employee of ethiopian court</Typography>
+          <Typography>ይህን መታወቂያ ካርድ የያዙ ግለሰብ የኢትዮጲያ </Typography>
+          <Typography>ፍርድ ቤት ሰራተኛ መሆናቸውን እናረጋግጣለን።</Typography>
         </Box>
 
         <Box
@@ -169,7 +171,7 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
               dominantBaseline="middle"
             >
               <textPath href="#topCurve" startOffset="50%">
-                ብርሃን ባንክ አ.ማ.
+                የኢትዮጲያ ፍርድ ቤት
               </textPath>
             </text>
           </svg>
@@ -225,7 +227,7 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
               dominantBaseline="middle"
             >
               <textPath href="#bottomCurve" startOffset="50%">
-                Berhan Bank S.C.
+               Ethiopian Court
               </textPath>
             </text>
           </svg>
@@ -243,7 +245,7 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
           sx={{
             width: "100%",
             height: "10mm",
-            backgroundColor: "yellow",
+            backgroundColor: "#0a3d52",
             textAlign: "center",
             justifyContent: "center",
           }}

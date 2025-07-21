@@ -27,6 +27,7 @@ import {
 import { LetterApprovalButton } from "../LetterApprovalButton";
 import { DocumentType } from "../../../app/api/enums";
 import { DocumentDownload } from "../../../components/DocumentDownload";
+import { LetterDetailDialog } from "../LetterDetailDialog";
 interface PaginationState {
   pageNumber: number;
   pageSize?: number;
@@ -196,6 +197,16 @@ export const RespondedLetters = () => {
                                       Edit
                                     </Button>
                                   )}
+                                 {(item.status === LetterStatus.responded ||
+                                    item.status === LetterStatus.received) && (
+                                    <Button
+                                      size="small"
+                                      onClick={() => setSelectedLetter(item)}
+                                      disabled={!permissions.canApproveRejectSetup}
+                                    >
+                                      Detail
+                                    </Button>
+                                  )}
                                 </>
                               )}
                             </Box>
@@ -228,7 +239,7 @@ export const RespondedLetters = () => {
       )}
 
       {selectedLetter && (
-        <LetterDialog
+        <LetterDetailDialog
           initialLetter={selectedLetter}
           onClose={() => {
             setSelectedLetter(undefined);
