@@ -261,7 +261,7 @@ const permissions = usePermission();
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <MenuItem onClick={() => handleTakeAction(menuEmployee, "Active")}
-        //disabled={!permissions.CanActivateDeactivateEmployeeProbation}
+        disabled={!permissions.CanActivateDeactivateEmployeeProbation}
         >
           <CheckCircleOutline color="success" sx={{ mr: 1 }} />
           Active

@@ -85,6 +85,7 @@ namespace CMS.Persistance.SeedData
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.Approve, ClaimCategory = ClaimCategory.EmployeeProbation},
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.Submit, ClaimCategory = ClaimCategory.EmployeeProbation},
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.Terminate, ClaimCategory = ClaimCategory.EmployeeProbation},
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.Probation.Activate, ClaimCategory = ClaimCategory.EmployeeProbation},
             });
             // Extract permissions for Employee - PersonalInfo
             permissions.AddRange(new[]
