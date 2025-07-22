@@ -11,6 +11,8 @@ using CMS.Application.Features.Educations.Setups.FieldOfStudy.Models;
 using CMS.Application.Features.Educations.Setups.InstitutionName.Models;
 using CMS.Application.Features.Educations.Setups.InstitutionName.Queries;
 using CMS.Application.Features.Employees;
+using CMS.Application.Features.Employees.EmployeeActivities.ActingAssignment.Models;
+using CMS.Application.Features.Employees.EmployeeActivities.DelegationAssignment.Models;
 using CMS.Application.Features.Employees.Family.Model;
 using CMS.Application.Features.Employees.Queries;
 using CMS.Application.Features.Jobs.JobRoles.Setups.JobRoleCatagory.Models;
@@ -18,7 +20,9 @@ using CMS.Application.Features.Letter.Commands.UpdateLetter;
 using CMS.Application.Features.Letter.Models;
 using CMS.Application.Models;
 using CMS.Domain;
+using CMS.Domain.Acting;
 using CMS.Domain.Adress;
+using CMS.Domain.Delegations;
 using CMS.Domain.Education;
 using CMS.Domain.Education.awards;
 using CMS.Domain.Employee;
@@ -39,7 +43,6 @@ namespace CMS.Application.Profiles
             CreateMap<CreateLetterCommand, Letter>().ReverseMap();
             CreateMap<UpdateLetterCommand, Letter>().ReverseMap();
             CreateMap<Letter, LetterDto>().ReverseMap();
-
             CreateMap<CreateEmployeeProfileCommand, Employee>().ReverseMap();
             CreateMap<BusinessUnit, BusinessUnitDto>();
             CreateMap<CreateBusinessUnitCommand, UpdateBusinessUnitCommand>().ReverseMap();
@@ -47,6 +50,8 @@ namespace CMS.Application.Profiles
             CreateMap<HRRole, ApplicationRole>();
             CreateMap<EmployeeChangeLog, EmployeeChangeLogDto>();
             CreateMap<Region, RegionDto>();
+            CreateMap<Delegation, DelegationDto>();
+            CreateMap<Acting, ActingDto>();
             CreateMap<JobRoleCategory, JobRoleCatagoryDto>();
             CreateMap<SubCity, SubCityDto>(); 
             CreateMap<Award, AwardDto>(); 
