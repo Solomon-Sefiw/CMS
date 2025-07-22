@@ -30,7 +30,8 @@ namespace CMS.Application.Features.Employees.Experience.Commands
                 JobTitle = request.JobTitle,
                 City = request.City,
                 LastSalary = request.LastSalary,
-                ReasonForResignation = request.ReasonForResignation
+                ReasonForResignation = request.ReasonForResignation,
+                ExperienceType = request.ExperienceType 
             };
             dataService.EmployeeExperiences.Add(EmployeeExperience);
             await dataService.SaveAsync(cancellationToken);

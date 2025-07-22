@@ -79,6 +79,9 @@ import { EmployeeIDHome } from "../features/EmployeeIdManagement/EmployeeIDHome"
 import { EmployeesIdManagementList } from "../features/EmployeeIdManagement/EmployeesIdManagementListList";
 import { ProbationApprovalRequests, DraftProbation, RejectedProbation } from "../features/Probation/ProbationGrids";
 import { ProbationHome } from "../features/Probation/ProbationHome";
+import { ActingHome } from "../features/Employee/ActivityTab/Acting/ActingHome";
+import { DelegationHome } from "../features/Employee/ActivityTab/Delegation/DelegationHome";
+import { EmployeeActivity } from "../features/Employee/ActivityTab/EmployeeActivity";
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -119,7 +122,7 @@ const AppRoutes = () => {
         </Route>
 
 
-          {/*Branch Grade */}
+        {/*Branch Grade */}
         <Route path="branch-grade" element={<BranchGradeHome />}>
           <Route index element={<ApprovedBranchGrades />} />
           <Route
@@ -194,7 +197,7 @@ const AppRoutes = () => {
 
 
 
-         {/* Education Related */}
+        {/* Education Related */}
         <Route path="education-level" element={<EducationLevelHome />}>
           <Route index element={<ApprovedEducationLevels />} />
           <Route
@@ -259,15 +262,25 @@ const AppRoutes = () => {
 
         <Route path="jobtitle" element={<JobRoleHome />} />
         <Route path="employees" element={<EmployeesHome />}>
-          <Route index element={<ApprovedEmployees />} /> 
+          <Route index element={<ApprovedEmployees />} />
           <Route path="approval-requests" element={<SubmittedEmployees />} />
-          <Route path="rejected-approval-requests" element={<RejectedEmployees />}/>
+          <Route path="rejected-approval-requests" element={<RejectedEmployees />} />
           <Route path="draft" element={<DraftEmployees />} />
         </Route>
         <Route path="/employee-detail/:id" element={<EmployeeDetail />}>
           <Route index element={<SummaryTab />} />
           <Route path="summary" element={<SummaryTab />} />
           <Route path="promotion" element={<PromotionTab />} />
+                    <Route path="activities" element={<EmployeeActivity />}>
+            <Route path="delegation">
+              <Route index element={<Navigate to="approved" replace />} />
+              <Route path=":status" element={<DelegationHome />} />
+            </Route>
+            <Route path="acting">
+              <Route index element={<Navigate to="approved" replace />} />
+              <Route path=":status" element={<ActingHome />} />
+            </Route>
+          </Route>
           <Route path="other" element={<EmployeeEducation />} />
           <Route path="documents" element={<DocumentsTab />} />
         </Route>
@@ -321,7 +334,7 @@ const AppRoutes = () => {
         </Route>
         {/* */}
 
-         <Route path="/probation" element={<ProbationHome />}>
+        <Route path="/probation" element={<ProbationHome />}>
           <Route index element={<ProbationApprovalRequests />} />
           <Route
             path="/probation/underProbation"
@@ -350,9 +363,9 @@ const AppRoutes = () => {
 
 
 
-        
 
-                {/* Business Unit  */}
+
+        {/* Business Unit  */}
         <Route path="businessunit" element={<BusinessUnitsHome />}>
           <Route index element={<ApprovedBusinessUnits />} />
           <Route path="business-unit/:id" element={<BusinessUnitDetail />} />
@@ -360,7 +373,7 @@ const AppRoutes = () => {
           <Route path="rejected-approval-requests" element={<RejectedApprovalRequests />} />
           <Route path="draft" element={<DraftBusinessUnits />} />
         </Route>
-       <Route path="region" element={<RegionHome />}>
+        <Route path="region" element={<RegionHome />}>
           <Route index element={<ApprovedRegions />} />
           <Route path="approval-requests" element={<RegionApprovalRequests />} />
           <Route path="rejected-approval-requests" element={<RegionRejectedApprovalRequest />} />
@@ -369,16 +382,16 @@ const AppRoutes = () => {
         {/* Subcity */}
         <Route path="sub-city" element={<SubCityHome />}>
           <Route index element={<ApprovedSubCities />} />
-          <Route path="approval-requests" element={<SubCityApprovalRequests />}/>
-          <Route path="rejected-approval-requests" element={<SubCityRejectedApprovalRequest />}/>
+          <Route path="approval-requests" element={<SubCityApprovalRequests />} />
+          <Route path="rejected-approval-requests" element={<SubCityRejectedApprovalRequest />} />
           <Route path="draft" element={<DraftSubCities />} />
         </Route>
 
-         {/* Letters */}
+        {/* Letters */}
         <Route path="letters" element={<LetterHome />}>
           <Route index element={<RespondedLetters />} />
-          <Route path="received" element={<ReceivedLetters />}/>
-          <Route path="archived" element={<ArchivedLetters />}/>
+          <Route path="received" element={<ReceivedLetters />} />
+          <Route path="archived" element={<ArchivedLetters />} />
           <Route path="pending" element={<PendingLetters />} />
         </Route>
 

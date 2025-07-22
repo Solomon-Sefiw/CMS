@@ -21,6 +21,8 @@ using CMS.Domain.Education;
 using CMS.Domain.Employee;
 using CMS.Domain.Jobs;
 using CMS.Domain.Language;
+using CMS.Domain.Acting;
+using CMS.Domain.Delegations;
 
 namespace CMS.Persistance.DBContext
 {
@@ -65,6 +67,8 @@ namespace CMS.Persistance.DBContext
         /// </summary>
 
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Acting> Actings { get; set; }
+        public DbSet<Delegation> Delegations { get; set; }
         public DbSet<JobType> JobTypes { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<JobRole> JobRoles { get; set; }

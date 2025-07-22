@@ -48,6 +48,7 @@ namespace CMS.Application.Features.Employees.Experience.Queries
                     City = experience.City,
                     LastSalary = experience.LastSalary,
                     ReasonForResignation = experience.ReasonForResignation,
+                    ExperienceType = experience.ExperienceType,
                     EmployeeId = experience.EmployeeId,
                 };
 

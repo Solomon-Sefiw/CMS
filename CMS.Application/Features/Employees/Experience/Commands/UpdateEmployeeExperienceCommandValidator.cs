@@ -40,10 +40,10 @@ namespace CMS.Application.Features.Employees.Experience.Commands
         private bool BeMoreThanSixMonths(UpdateEmployeeExperienceCommand command)
         {
             var startDate = command.StartDate.ToDateTime(new TimeOnly(0, 0));  // Convert DateOnly to DateTime
-            var endDate = command.EndDate.ToDateTime(new TimeOnly(0, 0));  // Convert DateOnly to DateTime
+            var endDate = command.EndDate?.ToDateTime(new TimeOnly(0, 0));  // Convert DateOnly to DateTime
 
             var experienceDuration = endDate - startDate;
-            return experienceDuration.Days >= 180; 
+            return experienceDuration?.Days >= 180; 
         }
     }
 }

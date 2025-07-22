@@ -36,6 +36,7 @@ namespace CMS.Application.Features.Employees.Experience.Commands
             experience.City = request.City;
             experience.LastSalary = request.LastSalary;
             experience.ReasonForResignation = request.ReasonForResignation;
+            experience.ExperienceType = request.ExperienceType;
             experience.EmployeeId = request.EmployeeId;
             await dataService.SaveAsync(cancellationToken);
             return experience.Id;

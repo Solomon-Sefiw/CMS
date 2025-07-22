@@ -30,15 +30,14 @@ export const EmployeeDetailTabs = () => {
         label: "Employee Details",
         href: `/employee-detail/${employeeId}/other`,
       },
-      // {
-      //   label: "Promotion",
-      //   href: `/employee-detail/${employeeId}/promotion`,
-      // },
-
-      // {
-      //   label: "Eployee Documents",
-      //   href: `/employee-detail/${employeeId}/documents`,
-      // },
+      {
+        label: "Employee Activities",
+        href: `/employee-detail/${employeeId}/activities`,
+      },
+      {
+        label: "Eployee Documents",
+        href: `/employee-detail/${employeeId}/documents`,
+      },
     ];
 
     return tabs;

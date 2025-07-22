@@ -3,6 +3,7 @@ export const addTagTypes = [
   "BranchGrade",
   "Dashboard",
   "Account",
+  "Acting",
   "Address",
   "EmployeeProfile",
   "BusinessUnit",
@@ -13,6 +14,7 @@ export const addTagTypes = [
   "BenefitUnitOfMeasurement",
   "BenefitValues",
   "Contact",
+  "Delegation",
   "Documents",
   "Education",
   "EducationLevel",
@@ -96,8 +98,6 @@ const injectedRtkApi = api
           url: `/api/Account/login`,
           method: "POST",
           body: queryArg.loginDto,
-          params: { returnUrl: queryArg.returnUrl },
-          credentials: "include",
         }),
         invalidatesTags: ["Account"],
       }),
@@ -124,10 +124,85 @@ const injectedRtkApi = api
           url: `/api/Account/verification-code`,
           method: "POST",
           body: queryArg.verificationCode,
-          credentials: "include",
         }),
         invalidatesTags: ["Account"],
       }),
+      approveActing: build.mutation<
+        ApproveActingApiResponse,
+        ApproveActingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Acting/approve`,
+          method: "PATCH",
+          body: queryArg.approveActingCommand,
+        }),
+        invalidatesTags: ["Acting"],
+      }),
+      getActingCountPerStatus: build.query<
+        GetActingCountPerStatusApiResponse,
+        GetActingCountPerStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Acting/count`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Acting"],
+      }),
+      createActing: build.mutation<CreateActingApiResponse, CreateActingApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Acting/Create`,
+            method: "POST",
+            body: queryArg.createActingCommand,
+          }),
+          invalidatesTags: ["Acting"],
+        }
+      ),
+      getPaginatedActings: build.query<
+        GetPaginatedActingsApiResponse,
+        GetPaginatedActingsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Acting/GetPaginatedActings`,
+          params: {
+            id: queryArg.id,
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["Acting"],
+      }),
+      rejectActing: build.mutation<RejectActingApiResponse, RejectActingApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Acting/Reject`,
+            method: "PATCH",
+            body: queryArg.rejectActingCommand,
+          }),
+          invalidatesTags: ["Acting"],
+        }
+      ),
+      submitActing: build.mutation<SubmitActingApiResponse, SubmitActingApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Acting/submit`,
+            method: "PATCH",
+            body: queryArg.submitActingCommand,
+          }),
+          invalidatesTags: ["Acting"],
+        }
+      ),
+      updateActing: build.mutation<UpdateActingApiResponse, UpdateActingApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Acting/Update`,
+            method: "PUT",
+            body: queryArg.updateActingCommand,
+          }),
+          invalidatesTags: ["Acting"],
+        }
+      ),
       createAddress: build.mutation<
         CreateAddressApiResponse,
         CreateAddressApiArg
@@ -1088,6 +1163,93 @@ const injectedRtkApi = api
           params: { userId: queryArg.userId },
         }),
         providesTags: ["Dashboard"],
+      }),
+      approveDelegation: build.mutation<
+        ApproveDelegationApiResponse,
+        ApproveDelegationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/approve`,
+          method: "PATCH",
+          body: queryArg.approveDelegationCommand,
+        }),
+        invalidatesTags: ["Delegation"],
+      }),
+      getDelegationCountPerStatus: build.query<
+        GetDelegationCountPerStatusApiResponse,
+        GetDelegationCountPerStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/count`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Delegation"],
+      }),
+      createDelegation: build.mutation<
+        CreateDelegationApiResponse,
+        CreateDelegationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/Create`,
+          method: "POST",
+          body: queryArg.createDelegationCommand,
+        }),
+        invalidatesTags: ["Delegation"],
+      }),
+      getAllDelegation: build.query<
+        GetAllDelegationApiResponse,
+        GetAllDelegationApiArg
+      >({
+        query: () => ({ url: `/api/Delegation/GetAll` }),
+        providesTags: ["Delegation"],
+      }),
+      getPaginatedDelegations: build.query<
+        GetPaginatedDelegationsApiResponse,
+        GetPaginatedDelegationsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/GetPaginatedDelegations`,
+          params: {
+            id: queryArg.id,
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["Delegation"],
+      }),
+      rejectDelegation: build.mutation<
+        RejectDelegationApiResponse,
+        RejectDelegationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/Reject`,
+          method: "PATCH",
+          body: queryArg.rejectDelegationCommand,
+        }),
+        invalidatesTags: ["Delegation"],
+      }),
+      submitDelegation: build.mutation<
+        SubmitDelegationApiResponse,
+        SubmitDelegationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/submit`,
+          method: "PATCH",
+          body: queryArg.submitDelegationCommand,
+        }),
+        invalidatesTags: ["Delegation"],
+      }),
+      updateDelegation: build.mutation<
+        UpdateDelegationApiResponse,
+        UpdateDelegationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/Update`,
+          method: "PUT",
+          body: queryArg.updateDelegationCommands,
+        }),
+        invalidatesTags: ["Delegation"],
       }),
       getApiDocumentsById: build.query<
         GetApiDocumentsByIdApiResponse,
@@ -3014,7 +3176,6 @@ export type ForgotPasswordApiArg = {
 };
 export type LoginApiResponse = /** status 200 Success */ LoginRes;
 export type LoginApiArg = {
-  returnUrl?: string;
   loginDto: LoginDto;
 };
 export type LogoutApiResponse = unknown;
@@ -3023,9 +3184,42 @@ export type ResetPasswordApiResponse = /** status 200 Success */ void;
 export type ResetPasswordApiArg = {
   resetPasswordPayload: ResetPasswordPayload;
 };
-export type VerificationCodeApiResponse = /** status 200 Success */ void;
+export type VerificationCodeApiResponse = /** status 200 Success */ LoginRes;
 export type VerificationCodeApiArg = {
   verificationCode: VerificationCode;
+};
+export type ApproveActingApiResponse = /** status 200 Success */ number;
+export type ApproveActingApiArg = {
+  approveActingCommand: ApproveActingCommand;
+};
+export type GetActingCountPerStatusApiResponse =
+  /** status 200 Success */ ActingCountsByStatus;
+export type GetActingCountPerStatusApiArg = {
+  id?: number;
+};
+export type CreateActingApiResponse = /** status 200 Success */ number;
+export type CreateActingApiArg = {
+  createActingCommand: CreateActingCommand;
+};
+export type GetPaginatedActingsApiResponse =
+  /** status 200 Success */ PaginatedActinglistRead;
+export type GetPaginatedActingsApiArg = {
+  id?: number;
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+};
+export type RejectActingApiResponse = /** status 200 Success */ number;
+export type RejectActingApiArg = {
+  rejectActingCommand: RejectActingCommand;
+};
+export type SubmitActingApiResponse = /** status 200 Success */ number;
+export type SubmitActingApiArg = {
+  submitActingCommand: SubmitActingCommand;
+};
+export type UpdateActingApiResponse = /** status 200 Success */ number;
+export type UpdateActingApiArg = {
+  updateActingCommand: UpdateActingCommand;
 };
 export type CreateAddressApiResponse = /** status 200 Success */ number;
 export type CreateAddressApiArg = {
@@ -3438,6 +3632,42 @@ export type SearchAllLettersForDashboardApiResponse =
   /** status 200 Success */ LetterDtoRead[];
 export type SearchAllLettersForDashboardApiArg = {
   userId?: string;
+};
+export type ApproveDelegationApiResponse = /** status 200 Success */ number;
+export type ApproveDelegationApiArg = {
+  approveDelegationCommand: ApproveDelegationCommand;
+};
+export type GetDelegationCountPerStatusApiResponse =
+  /** status 200 Success */ DelegationCountsByStatus;
+export type GetDelegationCountPerStatusApiArg = {
+  id?: number;
+};
+export type CreateDelegationApiResponse = /** status 200 Success */ number;
+export type CreateDelegationApiArg = {
+  createDelegationCommand: CreateDelegationCommand;
+};
+export type GetAllDelegationApiResponse =
+  /** status 200 Success */ DelegationListsRead;
+export type GetAllDelegationApiArg = void;
+export type GetPaginatedDelegationsApiResponse =
+  /** status 200 Success */ PaginatedDelegationlistRead;
+export type GetPaginatedDelegationsApiArg = {
+  id?: number;
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+};
+export type RejectDelegationApiResponse = /** status 200 Success */ number;
+export type RejectDelegationApiArg = {
+  rejectDelegationCommand: RejectDelegationCommand;
+};
+export type SubmitDelegationApiResponse = /** status 200 Success */ number;
+export type SubmitDelegationApiArg = {
+  submitDelegationCommand: SubmitDelegationCommand;
+};
+export type UpdateDelegationApiResponse = /** status 200 Success */ number;
+export type UpdateDelegationApiArg = {
+  updateDelegationCommands: UpdateDelegationCommands;
 };
 export type GetApiDocumentsByIdApiResponse = /** status 200 Success */ Blob;
 export type GetApiDocumentsByIdApiArg = {
@@ -4297,6 +4527,603 @@ export type ResetPasswordPayload = {
 export type VerificationCode = {
   code?: string | null;
 };
+export type ApproveActingCommand = {
+  id?: number;
+};
+export type ActingCountsByStatus = {
+  approved?: number;
+  submitted?: number;
+  rejected?: number;
+  draft?: number;
+};
+export type CreateActingCommand = {
+  employeeId?: number;
+  jobRoleId?: number;
+  businessUnitId?: number | null;
+  startDate?: string;
+  endDate?: string | null;
+};
+export type ApprovalStatus = 1 | 2 | 3 | 4;
+export type Gender = 0 | 1 | 2;
+export type MartialStatus = 1 | 2 | 3 | 4;
+export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type Status = 1 | 2;
+export type BusinessUnitType = {
+  value?: BusinessUnitTypeEnum;
+  name?: string | null;
+  description?: string | null;
+  numberOfDigits?: number;
+  order?: number;
+  isActive?: boolean;
+};
+export type BusinessUnit = {
+  id?: number;
+  businessUnitID?: string | null;
+  name?: string | null;
+  parentId?: number;
+  type?: BusinessUnitTypeEnum;
+  businessUnitCode?: string | null;
+  staffStrength?: number | null;
+  approvalStatus?: ApprovalStatus;
+  status?: Status;
+  businessUnitType?: BusinessUnitType;
+};
+export type JobStatus = 1 | 2;
+export type JobRoleCategory = {
+  id?: number;
+  name?: string | null;
+  description?: string | null;
+  jobRoles?: JobRole[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type JobGradeRomanId =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18
+  | 19
+  | 20
+  | 21
+  | 22
+  | 23
+  | 24
+  | 25
+  | 26
+  | 27
+  | 28
+  | 29
+  | 30
+  | 31
+  | 32
+  | 33
+  | 34
+  | 35
+  | 36
+  | 37
+  | 38
+  | 39
+  | 40;
+export type JobGradeStep = {
+  id?: number;
+  jobGradeId?: number;
+  jobGrade?: JobGrade;
+  stepNumber?: number;
+  salaryAmount?: number;
+};
+export type JobGrade = {
+  jobGradeId?: number;
+  jobGradeRomanId?: JobGradeRomanId;
+  name?: string | null;
+  baseSalary?: number;
+  stepCoefficient?: number;
+  ceilingSalary?: number | null;
+  description?: string | null;
+  approvalStatus?: ApprovalStatus;
+  statusRemark?: string | null;
+  steps?: JobGradeStep[] | null;
+};
+export type JobCatagory = {
+  id?: number;
+  jobCategoryName?: string | null;
+  approvalStatus?: ApprovalStatus;
+  probationPeriodInDays?: number;
+  isActive?: boolean;
+  createdAt?: string;
+  lastModifiedAt?: string;
+};
+export type ActivationEnum = 0 | 1;
+export type BenefitUnitOfMeasurement = {
+  id?: number;
+  name?: string | null;
+  isUnitPriced?: boolean;
+  description?: string | null;
+  remark?: string | null;
+  approvalStatus?: ApprovalStatus;
+  benefits?: Benefit[] | null;
+};
+export type BenefitValue = {
+  id?: number;
+  benefitId?: number;
+  benefit?: Benefit;
+  value?: number;
+  approvalStatus?: ApprovalStatus;
+  description?: string | null;
+  remark?: string | null;
+};
+export type BenefitUnitPrice = {
+  id?: number;
+  benefitId?: number;
+  price?: number;
+  effectiveDate?: string;
+  approvalStatus?: ApprovalStatus;
+  benefit?: Benefit;
+  remark?: string | null;
+  isActive?: ActivationEnum;
+};
+export type Benefit = {
+  id?: number;
+  name?: string | null;
+  unitOfMeasurementId?: number;
+  unitOfMeasurement?: BenefitUnitOfMeasurement;
+  approvalStatus?: ApprovalStatus;
+  isActive?: ActivationEnum;
+  remark?: string | null;
+  benefitValues?: BenefitValue[] | null;
+  jobRoleBenefits?: JobRoleBenefit[] | null;
+  benefitUnitPrices?: BenefitUnitPrice[] | null;
+};
+export type JobRoleBenefit = {
+  id?: number;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  benefitId?: number;
+  benefit?: Benefit;
+  benefitValueId?: number;
+  benefitValue?: BenefitValue;
+  isDeleted?: boolean;
+  deletedDate?: string | null;
+  createdDate?: string | null;
+  modifiedDate?: string | null;
+};
+export type JobRole = {
+  id?: number;
+  roleName?: string | null;
+  jobCatagoryId?: number;
+  jobRoleCategoryId?: number;
+  jobRoleCategory?: JobRoleCategory;
+  jobGradeId?: number;
+  jobGrade?: JobGrade;
+  jobCatagory?: JobCatagory;
+  description?: string | null;
+  approvalStatus?: ApprovalStatus;
+  statusRemark?: string | null;
+  isActive?: ActivationEnum;
+  jobRoleBenefits?: JobRoleBenefit[] | null;
+};
+export type Job = {
+  id?: number;
+  jobRoleId?: number;
+  businessUnitId?: number;
+  isVacant?: boolean;
+  jobStatus?: JobStatus;
+  approvalStatus?: ApprovalStatus;
+  isLocked?: boolean;
+  businessUnit?: BusinessUnit;
+  jobRole?: JobRole;
+  remark?: string | null;
+};
+export type EmployeeStatusEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+export type ProbationResult = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export type EmployeeIdCardStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type EmployeeIdCardReplaceReason = 1 | 2 | 3 | 4 | 5;
+export type DocumentType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type EmployeeDocument = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  employeeId?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+};
+export type EmployeeComment = {
+  id?: number;
+  employeeId?: number;
+  commentType?: string | null;
+  commentedByUserId?: string | null;
+  commentedBy?: string | null;
+  text?: string | null;
+  date?: string;
+  employee?: Employee;
+};
+export type EmployeeCommentRead = {
+  id?: number;
+  employeeId?: number;
+  commentType?: string | null;
+  commentedByUserId?: string | null;
+  commentedBy?: string | null;
+  text?: string | null;
+  date?: string;
+  employee?: Employee;
+};
+export type InstitutionName = {
+  id?: number;
+  name?: string | null;
+  description?: string | null;
+  educations?: Education[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type EducationLevel = {
+  id?: number;
+  name?: string | null;
+  description?: string | null;
+  educations?: Education[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type Award = {
+  id?: number;
+  name?: string | null;
+  description?: string | null;
+  educations?: Education[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type FieldOfStudy = {
+  id?: number;
+  name?: string | null;
+  description?: string | null;
+  educations?: Education[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type Education = {
+  id?: number;
+  startDate?: string;
+  endDate?: string;
+  schoolCity?: string | null;
+  institutionNameId?: number;
+  institutionName?: InstitutionName;
+  educationLevelId?: number;
+  educationLevel?: EducationLevel;
+  awardId?: number;
+  award?: Award;
+  fieldOfStudyId?: number;
+  fieldOfStudy?: FieldOfStudy;
+  employeeId?: number | null;
+  employee?: Employee;
+};
+export type EducationRead = {
+  id?: number;
+  startDate?: string;
+  endDate?: string;
+  schoolCity?: string | null;
+  institutionNameId?: number;
+  institutionName?: InstitutionName;
+  educationLevelId?: number;
+  educationLevel?: EducationLevel;
+  awardId?: number;
+  award?: Award;
+  fieldOfStudyId?: number;
+  fieldOfStudy?: FieldOfStudy;
+  employeeId?: number | null;
+  employee?: Employee;
+};
+export type LanguageEnum =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18
+  | 19
+  | 20
+  | 21
+  | 22
+  | 23
+  | 24
+  | 25
+  | 26
+  | 27
+  | 28
+  | 29
+  | 30
+  | 31
+  | 32
+  | 33
+  | 34
+  | 35
+  | 36
+  | 37
+  | 38
+  | 39
+  | 40
+  | 41
+  | 42
+  | 43
+  | 44
+  | 45
+  | 46
+  | 47
+  | 48
+  | 49
+  | 50
+  | 51
+  | 52
+  | 53
+  | 54
+  | 55
+  | 56
+  | 57
+  | 58
+  | 59
+  | 60
+  | 61
+  | 62
+  | 63
+  | 64
+  | 65
+  | 66
+  | 67
+  | 68
+  | 69
+  | 70
+  | 71
+  | 72
+  | 73;
+export type SkillLevelEnum = 1 | 2 | 3 | 4;
+export type LanguageSkill = {
+  id?: number;
+  language?: LanguageEnum;
+  speaking?: SkillLevelEnum;
+  listening?: SkillLevelEnum;
+  writing?: SkillLevelEnum;
+  reading?: SkillLevelEnum;
+  employeeId?: number;
+  employee?: Employee;
+};
+export type LanguageSkillRead = {
+  id?: number;
+  language?: LanguageEnum;
+  speaking?: SkillLevelEnum;
+  listening?: SkillLevelEnum;
+  writing?: SkillLevelEnum;
+  reading?: SkillLevelEnum;
+  employeeId?: number;
+  employee?: Employee;
+};
+export type EmployeeEmergencyContact = {
+  id?: number;
+  name?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  isWorking?: boolean;
+  workingFirmName?: string | null;
+  employeeId?: number;
+};
+export type EmployeeEmergencyContactRead = {
+  id?: number;
+  name?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  isWorking?: boolean;
+  workingFirmName?: string | null;
+  employeeId?: number;
+};
+export type EmployeeFamilyType = 1 | 2 | 3;
+export type SpouseIsWorking = 0 | 1 | 2;
+export type IsParentLiving = 0 | 1 | 2;
+export type ParentType = 0 | 1 | 2;
+export type EmployeeFamily = {
+  id?: number;
+  employeeId?: number;
+  employees?: Employee;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  fatherFullName?: string | null;
+  motherFullName?: string | null;
+  dateOfBirth?: string | null;
+  gender?: Gender;
+  approvalStatus?: ApprovalStatus;
+  workingFirm?: string | null;
+  familyType?: EmployeeFamilyType;
+  spouseIsWorking?: SpouseIsWorking;
+  isParentLiving?: IsParentLiving;
+  familyParentType?: ParentType;
+  parentLivelyHood?: string | null;
+  isActive?: ActivationEnum;
+  comment?: string | null;
+};
+export type EmployeeFamilyRead = {
+  id?: number;
+  employeeId?: number;
+  employees?: Employee;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  fatherFullName?: string | null;
+  motherFullName?: string | null;
+  dateOfBirth?: string | null;
+  gender?: Gender;
+  approvalStatus?: ApprovalStatus;
+  workingFirm?: string | null;
+  familyType?: EmployeeFamilyType;
+  spouseIsWorking?: SpouseIsWorking;
+  isParentLiving?: IsParentLiving;
+  familyParentType?: ParentType;
+  parentLivelyHood?: string | null;
+  isActive?: ActivationEnum;
+  comment?: string | null;
+};
+export type Employee = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  id?: number;
+  employeeId?: number;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  amharicFirstName?: string | null;
+  amharicMiddleName?: string | null;
+  amharicLastName?: string | null;
+  amharicDisplayName?: string | null;
+  businessUnitID?: number;
+  jobId?: number;
+  birthDate?: string;
+  employementDate?: string;
+  gender?: Gender;
+  martialStatus?: MartialStatus;
+  businessUnits?: BusinessUnit;
+  job?: Job;
+  isNew?: boolean;
+  employeeStatus?: EmployeeStatusEnum;
+  probationResult?: ProbationResult;
+  probationRemark?: string | null;
+  employeeIDCardStatus?: EmployeeIdCardStatus;
+  idReplaceReason?: EmployeeIdCardReplaceReason;
+  employeeDocuments?: EmployeeDocument[] | null;
+  employeeComments?: EmployeeComment[] | null;
+  educations?: Education[] | null;
+  languageSkills?: LanguageSkill[] | null;
+  employeeEmergencyContacts?: EmployeeEmergencyContact[] | null;
+  employeeFamilies?: EmployeeFamily[] | null;
+  employeeIdCardStatusRemark?: string | null;
+};
+export type IDomainEvent = object;
+export type EmployeeRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  domainEvents?: IDomainEvent[] | null;
+  id?: number;
+  employeeId?: number;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  amharicFirstName?: string | null;
+  amharicMiddleName?: string | null;
+  amharicLastName?: string | null;
+  amharicDisplayName?: string | null;
+  businessUnitID?: number;
+  jobId?: number;
+  birthDate?: string;
+  employementDate?: string;
+  gender?: Gender;
+  martialStatus?: MartialStatus;
+  businessUnits?: BusinessUnit;
+  job?: Job;
+  isNew?: boolean;
+  employeeStatus?: EmployeeStatusEnum;
+  probationResult?: ProbationResult;
+  probationRemark?: string | null;
+  employeeIDCardStatus?: EmployeeIdCardStatus;
+  idReplaceReason?: EmployeeIdCardReplaceReason;
+  employeeDocuments?: EmployeeDocument[] | null;
+  employeeComments?: EmployeeCommentRead[] | null;
+  educations?: EducationRead[] | null;
+  languageSkills?: LanguageSkillRead[] | null;
+  employeeEmergencyContacts?: EmployeeEmergencyContactRead[] | null;
+  employeeFamilies?: EmployeeFamilyRead[] | null;
+  employeeIdCardStatusRemark?: string | null;
+};
+export type ActingDto = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type ActingDtoRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type PaginatedActinglist = {
+  items?: ActingDto[] | null;
+  totalCount?: number;
+};
+export type PaginatedActinglistRead = {
+  items?: ActingDtoRead[] | null;
+  totalCount?: number;
+};
+export type RejectActingCommand = {
+  id?: number;
+};
+export type SubmitActingCommand = {
+  id?: number;
+};
+export type UpdateActingCommand = {
+  id?: number;
+  employeeId?: number;
+  jobRoleId?: number;
+  businessUnitId?: number | null;
+  startDate?: string;
+  endDate?: string | null;
+};
 export type AddressTypeEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type CountryEnum = 1;
 export type CreateAddressCommand = {
@@ -4374,32 +5201,8 @@ export type UserRoleRead = {
   role?: HrRole;
   user?: HrUser;
 };
-export type ApprovalStatus = 1 | 2 | 3 | 4;
 export type LetterType = 1 | 2 | 3;
 export type LetterStatus = 1 | 2 | 3 | 4;
-export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-export type Status = 1 | 2;
-export type BusinessUnitType = {
-  value?: BusinessUnitTypeEnum;
-  name?: string | null;
-  description?: string | null;
-  numberOfDigits?: number;
-  order?: number;
-  isActive?: boolean;
-};
-export type BusinessUnit = {
-  id?: number;
-  businessUnitID?: string | null;
-  name?: string | null;
-  parentId?: number;
-  type?: BusinessUnitTypeEnum;
-  businessUnitCode?: string | null;
-  staffStrength?: number | null;
-  approvalStatus?: ApprovalStatus;
-  status?: Status;
-  businessUnitType?: BusinessUnitType;
-};
-export type DocumentType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export type LetterDocument = {
   isDeleted?: boolean | null;
   deletedBy?: string | null;
@@ -4457,7 +5260,6 @@ export type Letter = {
   businessUnits?: BusinessUnit;
   letterDocuments?: LetterDocument[] | null;
 };
-export type IDomainEvent = object;
 export type LetterRead = {
   createdAt?: string | null;
   modifiedAt?: string | null;
@@ -4696,7 +5498,6 @@ export type ApproveBenefitCommand = {
   id?: number;
   remark?: string | null;
 };
-export type ActivationEnum = 0 | 1;
 export type BenefitDto = {
   id?: number;
   name?: string | null;
@@ -5017,6 +5818,80 @@ export type LetterDtoRead = {
   businessUnits?: BusinessUnit;
   letterDocuments?: LetterDocumentRead[] | null;
 };
+export type ApproveDelegationCommand = {
+  id?: number;
+};
+export type DelegationCountsByStatus = {
+  approved?: number;
+  submitted?: number;
+  rejected?: number;
+  draft?: number;
+};
+export type CreateDelegationCommand = {
+  employeeId?: number;
+  jobRoleId?: number;
+  businessUnitId?: number | null;
+  startDate?: string;
+  endDate?: string | null;
+};
+export type DelegationDto = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type DelegationDtoRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type DelegationLists = {
+  approved?: DelegationDto[] | null;
+  submitted?: DelegationDto[] | null;
+  rejected?: DelegationDto[] | null;
+  draft?: DelegationDto[] | null;
+};
+export type DelegationListsRead = {
+  approved?: DelegationDtoRead[] | null;
+  submitted?: DelegationDtoRead[] | null;
+  rejected?: DelegationDtoRead[] | null;
+  draft?: DelegationDtoRead[] | null;
+};
+export type PaginatedDelegationlist = {
+  items?: DelegationDto[] | null;
+  totalCount?: number;
+};
+export type PaginatedDelegationlistRead = {
+  items?: DelegationDtoRead[] | null;
+  totalCount?: number;
+};
+export type RejectDelegationCommand = {
+  id?: number;
+};
+export type SubmitDelegationCommand = {
+  id?: number;
+};
+export type UpdateDelegationCommands = {
+  id?: number;
+  employeeId?: number;
+  jobRoleId?: number;
+  businessUnitId?: number | null;
+  startDate?: string;
+  endDate?: string | null;
+};
 export type DocumentEndpointRootPath = {
   path?: string | null;
 };
@@ -5105,22 +5980,19 @@ export type ActivateEmployeeGurantersCommand = {
   employeeId?: number;
   comment?: string | null;
 };
+export type ExperienceType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export type AddEmployeeExperienceCommand = {
   id?: number;
   firmName?: string | null;
   startDate?: string;
-  endDate?: string;
+  endDate?: string | null;
   jobTitle?: string | null;
   city?: string | null;
   lastSalary?: number;
   reasonForResignation?: string | null;
+  experienceType?: ExperienceType;
   employeeId?: number;
 };
-export type Gender = 0 | 1 | 2;
-export type EmployeeFamilyType = 1 | 2 | 3;
-export type SpouseIsWorking = 0 | 1 | 2;
-export type IsParentLiving = 0 | 1 | 2;
-export type ParentType = 0 | 1 | 2;
 export type AddEmployeeFamilyCommand = {
   id?: number;
   employeeId?: number;
@@ -5190,521 +6062,18 @@ export type DeActivateEmployeeGurantersCommand = {
   employeeId?: number;
   comment?: string | null;
 };
-export type MartialStatus = 1 | 2 | 3 | 4;
-export type JobStatus = 1 | 2;
-export type JobRoleCategory = {
-  id?: number;
-  name?: string | null;
-  description?: string | null;
-  jobRoles?: JobRole[] | null;
-  approvalStatus?: ApprovalStatus;
-};
-export type JobGradeRomanId =
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | 13
-  | 14
-  | 15
-  | 16
-  | 17
-  | 18
-  | 19
-  | 20
-  | 21
-  | 22
-  | 23
-  | 24
-  | 25
-  | 26
-  | 27
-  | 28
-  | 29
-  | 30
-  | 31
-  | 32
-  | 33
-  | 34
-  | 35
-  | 36
-  | 37
-  | 38
-  | 39
-  | 40;
-export type JobGradeStep = {
-  id?: number;
-  jobGradeId?: number;
-  jobGrade?: JobGrade;
-  stepNumber?: number;
-  salaryAmount?: number;
-};
-export type JobGrade = {
-  jobGradeId?: number;
-  jobGradeRomanId?: JobGradeRomanId;
-  name?: string | null;
-  baseSalary?: number;
-  stepCoefficient?: number;
-  ceilingSalary?: number | null;
-  description?: string | null;
-  approvalStatus?: ApprovalStatus;
-  statusRemark?: string | null;
-  steps?: JobGradeStep[] | null;
-};
-export type JobCatagory = {
-  id?: number;
-  jobCategoryName?: string | null;
-  approvalStatus?: ApprovalStatus;
-  probationPeriodInDays?: number;
-  isActive?: boolean;
-  createdAt?: string;
-  lastModifiedAt?: string;
-};
-export type BenefitUnitOfMeasurement = {
-  id?: number;
-  name?: string | null;
-  isUnitPriced?: boolean;
-  description?: string | null;
-  remark?: string | null;
-  approvalStatus?: ApprovalStatus;
-  benefits?: Benefit[] | null;
-};
-export type BenefitValue = {
-  id?: number;
-  benefitId?: number;
-  benefit?: Benefit;
-  value?: number;
-  approvalStatus?: ApprovalStatus;
-  description?: string | null;
-  remark?: string | null;
-};
-export type BenefitUnitPrice = {
-  id?: number;
-  benefitId?: number;
-  price?: number;
-  effectiveDate?: string;
-  approvalStatus?: ApprovalStatus;
-  benefit?: Benefit;
-  remark?: string | null;
-  isActive?: ActivationEnum;
-};
-export type Benefit = {
-  id?: number;
-  name?: string | null;
-  unitOfMeasurementId?: number;
-  unitOfMeasurement?: BenefitUnitOfMeasurement;
-  approvalStatus?: ApprovalStatus;
-  isActive?: ActivationEnum;
-  remark?: string | null;
-  benefitValues?: BenefitValue[] | null;
-  jobRoleBenefits?: JobRoleBenefit[] | null;
-  benefitUnitPrices?: BenefitUnitPrice[] | null;
-};
-export type JobRoleBenefit = {
-  id?: number;
-  jobRoleId?: number;
-  jobRole?: JobRole;
-  benefitId?: number;
-  benefit?: Benefit;
-  benefitValueId?: number;
-  benefitValue?: BenefitValue;
-  isDeleted?: boolean;
-  deletedDate?: string | null;
-  createdDate?: string | null;
-  modifiedDate?: string | null;
-};
-export type JobRole = {
-  id?: number;
-  roleName?: string | null;
-  jobCatagoryId?: number;
-  jobRoleCategoryId?: number;
-  jobRoleCategory?: JobRoleCategory;
-  jobGradeId?: number;
-  jobGrade?: JobGrade;
-  jobCatagory?: JobCatagory;
-  description?: string | null;
-  approvalStatus?: ApprovalStatus;
-  statusRemark?: string | null;
-  isActive?: ActivationEnum;
-  jobRoleBenefits?: JobRoleBenefit[] | null;
-};
-export type Job = {
-  id?: number;
-  jobRoleId?: number;
-  businessUnitId?: number;
-  isVacant?: boolean;
-  jobStatus?: JobStatus;
-  approvalStatus?: ApprovalStatus;
-  isLocked?: boolean;
-  businessUnit?: BusinessUnit;
-  jobRole?: JobRole;
-  remark?: string | null;
-};
-export type EmployeeStatusEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-export type ProbationResult = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-export type EmployeeIdCardStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7;
-export type EmployeeIdCardReplaceReason = 1 | 2 | 3 | 4 | 5;
-export type EmployeeDocument = {
-  isDeleted?: boolean | null;
-  deletedBy?: string | null;
-  deletedAt?: string | null;
-  deletionComment?: string | null;
-  id?: number;
-  employeeId?: number;
-  documentType?: DocumentType;
-  documentId?: string | null;
-  fileName?: string | null;
-};
-export type EmployeeComment = {
-  id?: number;
-  employeeId?: number;
-  commentType?: string | null;
-  commentedByUserId?: string | null;
-  commentedBy?: string | null;
-  text?: string | null;
-  date?: string;
-  employee?: Employee;
-};
-export type EmployeeCommentRead = {
-  id?: number;
-  employeeId?: number;
-  commentType?: string | null;
-  commentedByUserId?: string | null;
-  commentedBy?: string | null;
-  text?: string | null;
-  date?: string;
-  employee?: Employee;
-};
-export type InstitutionName = {
-  id?: number;
-  name?: string | null;
-  description?: string | null;
-  educations?: Education[] | null;
-  approvalStatus?: ApprovalStatus;
-};
-export type EducationLevel = {
-  id?: number;
-  name?: string | null;
-  description?: string | null;
-  educations?: Education[] | null;
-  approvalStatus?: ApprovalStatus;
-};
-export type Award = {
-  id?: number;
-  name?: string | null;
-  description?: string | null;
-  educations?: Education[] | null;
-  approvalStatus?: ApprovalStatus;
-};
-export type FieldOfStudy = {
-  id?: number;
-  name?: string | null;
-  description?: string | null;
-  educations?: Education[] | null;
-  approvalStatus?: ApprovalStatus;
-};
-export type Education = {
-  id?: number;
-  startDate?: string;
-  endDate?: string;
-  schoolCity?: string | null;
-  institutionNameId?: number;
-  institutionName?: InstitutionName;
-  educationLevelId?: number;
-  educationLevel?: EducationLevel;
-  awardId?: number;
-  award?: Award;
-  fieldOfStudyId?: number;
-  fieldOfStudy?: FieldOfStudy;
-  employeeId?: number | null;
-  employee?: Employee;
-};
-export type EducationRead = {
-  id?: number;
-  startDate?: string;
-  endDate?: string;
-  schoolCity?: string | null;
-  institutionNameId?: number;
-  institutionName?: InstitutionName;
-  educationLevelId?: number;
-  educationLevel?: EducationLevel;
-  awardId?: number;
-  award?: Award;
-  fieldOfStudyId?: number;
-  fieldOfStudy?: FieldOfStudy;
-  employeeId?: number | null;
-  employee?: Employee;
-};
-export type LanguageEnum =
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | 13
-  | 14
-  | 15
-  | 16
-  | 17
-  | 18
-  | 19
-  | 20
-  | 21
-  | 22
-  | 23
-  | 24
-  | 25
-  | 26
-  | 27
-  | 28
-  | 29
-  | 30
-  | 31
-  | 32
-  | 33
-  | 34
-  | 35
-  | 36
-  | 37
-  | 38
-  | 39
-  | 40
-  | 41
-  | 42
-  | 43
-  | 44
-  | 45
-  | 46
-  | 47
-  | 48
-  | 49
-  | 50
-  | 51
-  | 52
-  | 53
-  | 54
-  | 55
-  | 56
-  | 57
-  | 58
-  | 59
-  | 60
-  | 61
-  | 62
-  | 63
-  | 64
-  | 65
-  | 66
-  | 67
-  | 68
-  | 69
-  | 70
-  | 71
-  | 72
-  | 73;
-export type SkillLevelEnum = 1 | 2 | 3 | 4;
-export type LanguageSkill = {
-  id?: number;
-  language?: LanguageEnum;
-  speaking?: SkillLevelEnum;
-  listening?: SkillLevelEnum;
-  writing?: SkillLevelEnum;
-  reading?: SkillLevelEnum;
-  employeeId?: number;
-  employee?: Employee;
-};
-export type LanguageSkillRead = {
-  id?: number;
-  language?: LanguageEnum;
-  speaking?: SkillLevelEnum;
-  listening?: SkillLevelEnum;
-  writing?: SkillLevelEnum;
-  reading?: SkillLevelEnum;
-  employeeId?: number;
-  employee?: Employee;
-};
-export type EmployeeEmergencyContact = {
-  id?: number;
-  name?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  isWorking?: boolean;
-  workingFirmName?: string | null;
-  employeeId?: number;
-};
-export type EmployeeEmergencyContactRead = {
-  id?: number;
-  name?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  displayName?: string | null;
-  isWorking?: boolean;
-  workingFirmName?: string | null;
-  employeeId?: number;
-};
-export type Employee = {
-  createdAt?: string | null;
-  modifiedAt?: string | null;
-  createdBy?: string | null;
-  modifiedBy?: string | null;
-  approvalStatus?: ApprovalStatus;
-  approvedBy?: string | null;
-  approvedAt?: string | null;
-  submittedBy?: string | null;
-  submittedAt?: string | null;
-  rejectedBy?: string | null;
-  rejectedAt?: string | null;
-  workflowComment?: string | null;
-  versionNumber?: string;
-  skipStateTransitionCheck?: boolean;
-  id?: number;
-  employeeId?: number;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  displayName?: string | null;
-  amharicFirstName?: string | null;
-  amharicMiddleName?: string | null;
-  amharicLastName?: string | null;
-  amharicDisplayName?: string | null;
-  businessUnitID?: number;
-  jobId?: number;
-  birthDate?: string;
-  employementDate?: string;
-  gender?: Gender;
-  martialStatus?: MartialStatus;
-  businessUnits?: BusinessUnit;
-  job?: Job;
-  isNew?: boolean;
-  employeeStatus?: EmployeeStatusEnum;
-  probationResult?: ProbationResult;
-  probationRemark?: string | null;
-  employeeIDCardStatus?: EmployeeIdCardStatus;
-  idReplaceReason?: EmployeeIdCardReplaceReason;
-  employeeDocuments?: EmployeeDocument[] | null;
-  employeeComments?: EmployeeComment[] | null;
-  educations?: Education[] | null;
-  languageSkills?: LanguageSkill[] | null;
-  employeeEmergencyContacts?: EmployeeEmergencyContact[] | null;
-  employeeFamilies?: EmployeeFamily[] | null;
-  employeeIdCardStatusRemark?: string | null;
-};
-export type EmployeeRead = {
-  createdAt?: string | null;
-  modifiedAt?: string | null;
-  createdBy?: string | null;
-  modifiedBy?: string | null;
-  approvalStatus?: ApprovalStatus;
-  approvedBy?: string | null;
-  approvedAt?: string | null;
-  submittedBy?: string | null;
-  submittedAt?: string | null;
-  rejectedBy?: string | null;
-  rejectedAt?: string | null;
-  workflowComment?: string | null;
-  versionNumber?: string;
-  skipStateTransitionCheck?: boolean;
-  domainEvents?: IDomainEvent[] | null;
-  id?: number;
-  employeeId?: number;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  displayName?: string | null;
-  amharicFirstName?: string | null;
-  amharicMiddleName?: string | null;
-  amharicLastName?: string | null;
-  amharicDisplayName?: string | null;
-  businessUnitID?: number;
-  jobId?: number;
-  birthDate?: string;
-  employementDate?: string;
-  gender?: Gender;
-  martialStatus?: MartialStatus;
-  businessUnits?: BusinessUnit;
-  job?: Job;
-  isNew?: boolean;
-  employeeStatus?: EmployeeStatusEnum;
-  probationResult?: ProbationResult;
-  probationRemark?: string | null;
-  employeeIDCardStatus?: EmployeeIdCardStatus;
-  idReplaceReason?: EmployeeIdCardReplaceReason;
-  employeeDocuments?: EmployeeDocument[] | null;
-  employeeComments?: EmployeeCommentRead[] | null;
-  educations?: EducationRead[] | null;
-  languageSkills?: LanguageSkillRead[] | null;
-  employeeEmergencyContacts?: EmployeeEmergencyContactRead[] | null;
-  employeeFamilies?: EmployeeFamily[] | null;
-  employeeIdCardStatusRemark?: string | null;
-};
-export type EmployeeFamily = {
-  id?: number;
-  employeeId?: number;
-  employees?: Employee;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  fatherFullName?: string | null;
-  motherFullName?: string | null;
-  dateOfBirth?: string | null;
-  gender?: Gender;
-  approvalStatus?: ApprovalStatus;
-  workingFirm?: string | null;
-  familyType?: EmployeeFamilyType;
-  spouseIsWorking?: SpouseIsWorking;
-  isParentLiving?: IsParentLiving;
-  familyParentType?: ParentType;
-  parentLivelyHood?: string | null;
-  isActive?: ActivationEnum;
-  comment?: string | null;
-};
-export type EmployeeFamilyRead = {
-  id?: number;
-  employeeId?: number;
-  employees?: EmployeeRead;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  fatherFullName?: string | null;
-  motherFullName?: string | null;
-  dateOfBirth?: string | null;
-  gender?: Gender;
-  approvalStatus?: ApprovalStatus;
-  workingFirm?: string | null;
-  familyType?: EmployeeFamilyType;
-  spouseIsWorking?: SpouseIsWorking;
-  isParentLiving?: IsParentLiving;
-  familyParentType?: ParentType;
-  parentLivelyHood?: string | null;
-  isActive?: ActivationEnum;
-  comment?: string | null;
-};
 export type EmployeeExperienceDto = {
   id?: number;
   firmName?: string | null;
   startDate?: string;
-  endDate?: string;
+  endDate?: string | null;
   jobTitle?: string | null;
   city?: string | null;
   lastSalary?: number;
   reasonForResignation?: string | null;
   employeeId?: number;
   employeeName?: string | null;
+  experienceType?: ExperienceType;
 };
 export type EmployeeGurantersDto = {
   id?: number;
@@ -5726,11 +6095,12 @@ export type UpdateEmployeeExperienceCommand = {
   id?: number;
   firmName?: string | null;
   startDate?: string;
-  endDate?: string;
+  endDate?: string | null;
   jobTitle?: string | null;
   city?: string | null;
   lastSalary?: number;
   reasonForResignation?: string | null;
+  experienceType?: ExperienceType;
   employeeId?: number;
 };
 export type UpdateEmployeeFamilyCommand = {
@@ -6743,6 +7113,15 @@ export const {
   useLogoutMutation,
   useResetPasswordMutation,
   useVerificationCodeMutation,
+  useApproveActingMutation,
+  useGetActingCountPerStatusQuery,
+  useLazyGetActingCountPerStatusQuery,
+  useCreateActingMutation,
+  useGetPaginatedActingsQuery,
+  useLazyGetPaginatedActingsQuery,
+  useRejectActingMutation,
+  useSubmitActingMutation,
+  useUpdateActingMutation,
   useCreateAddressMutation,
   useGetAddressByRequestIdQuery,
   useLazyGetAddressByRequestIdQuery,
@@ -6900,6 +7279,17 @@ export const {
   useLazyGetVacantJobsCountQuery,
   useSearchAllLettersForDashboardQuery,
   useLazySearchAllLettersForDashboardQuery,
+  useApproveDelegationMutation,
+  useGetDelegationCountPerStatusQuery,
+  useLazyGetDelegationCountPerStatusQuery,
+  useCreateDelegationMutation,
+  useGetAllDelegationQuery,
+  useLazyGetAllDelegationQuery,
+  useGetPaginatedDelegationsQuery,
+  useLazyGetPaginatedDelegationsQuery,
+  useRejectDelegationMutation,
+  useSubmitDelegationMutation,
+  useUpdateDelegationMutation,
   useGetApiDocumentsByIdQuery,
   useLazyGetApiDocumentsByIdQuery,
   useDownloadDocumentQuery,
