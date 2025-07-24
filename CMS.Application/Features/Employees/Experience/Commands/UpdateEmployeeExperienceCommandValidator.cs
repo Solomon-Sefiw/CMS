@@ -24,11 +24,11 @@ namespace CMS.Application.Features.Employees.Experience.Commands
             RuleFor(experience => experience.LastSalary)
                 .NotEmpty().WithMessage("Last Salary is required.");
 
-            RuleFor(experience => experience)
-                .Must(BeUniqueExperience).WithMessage("An experience with the same Start Date and End Date already exists.");
+            //RuleFor(experience => experience)
+            //    .Must(BeUniqueExperience).WithMessage("An experience with the same Start Date and End Date already exists.");
 
-            RuleFor(experience => experience)
-                .Must(BeMoreThanSixMonths).WithMessage("Experience must be at least six months long.");
+            //RuleFor(experience => experience)
+            //    .Must(BeMoreThanSixMonths).WithMessage("Experience must be at least six months long.");
         }
 
         private bool BeUniqueExperience(UpdateEmployeeExperienceCommand command)
