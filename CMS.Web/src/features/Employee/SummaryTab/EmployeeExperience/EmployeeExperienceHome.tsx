@@ -25,7 +25,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Add from "@mui/icons-material/Add";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { ContactType, Country, Status } from "../../../../app/api/enums";
+import { ContactType, Country, ExperienceType, Status } from "../../../../app/api/enums";
 import { EmployeeExperienceUpdate } from "./EmployeeExperienceUpdate";
 import { EmployeeExperience } from "./EmployeeExperience";
 
@@ -119,6 +119,9 @@ export const EmployeeExperienceHome = ({
                         <TableCell sx={{ fontWeight: "bold" }}>
                           EndDate
                         </TableCell>
+                       <TableCell sx={{ fontWeight: "bold" }}>
+                          Experiance Type
+                        </TableCell>
                         <TableCell sx={{ fontWeight: "bold" }}>
                           Action
                         </TableCell>
@@ -148,6 +151,9 @@ export const EmployeeExperienceHome = ({
                                       EmployeeExperienceList?.endDate
                                     ).format("MMMM D, YYYY")
                                   : "-"}
+                              </TableCell>
+                                  <TableCell>
+                                { ExperienceType[EmployeeExperienceList.experienceType ? EmployeeExperienceList.experienceType : 0] }
                               </TableCell>
                               <TableCell>
                                 <Button

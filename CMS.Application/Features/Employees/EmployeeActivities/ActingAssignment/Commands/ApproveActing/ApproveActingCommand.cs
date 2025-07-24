@@ -38,7 +38,7 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.ActingAssignment
 
                 var experienceCommand = new AddEmployeeExperienceCommand
                 {
-                    FirmName = "Berhan Bank SC.", // Or fetch dynamically
+                    FirmName = delegation.BusinessUnit.Name, // Or fetch dynamically
                     StartDate = delegation.StartDate,
                     EndDate = delegation.EndDate.HasValue ? delegation.EndDate.Value : null,
                     JobTitle = delegation.JobRole.RoleName,

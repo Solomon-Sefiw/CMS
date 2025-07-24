@@ -41,15 +41,25 @@ namespace CMS.API.Controllers
 
         protected IAuthorizationService authorizationService => _authorizationService ??=
            HttpContext.RequestServices.GetService<IAuthorizationService>();
+        //protected string GetDocumentUrl(string documentId)
+        //{
+        //    if (documentId == null) return null;
+
+        //    return Url.Action(
+        //        action: nameof(DocumentsController.Get),
+        //        controller: DocumentsController.ShortName,
+        //        values: new { Id = documentId.ToString() });
+        //}
         protected string GetDocumentUrl(string documentId)
         {
-            if (documentId == null) return null;
+            if (string.IsNullOrEmpty(documentId)) return null;
 
-            return Url.Action(
-                action: nameof(DocumentsController.Get),
-                controller: DocumentsController.ShortName,
-                values: new { Id = documentId.ToString() });
+            var request = HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}";
+
+            return $"{baseUrl}/api/documents/{documentId}";
         }
+
         public UserDto CurrentUser => _currentUser ??= GetCurrentUser();
         private UserDto GetCurrentUser()
         {

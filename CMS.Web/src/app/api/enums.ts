@@ -15,6 +15,16 @@ export enum MartialStatus {
   Divorced = 3,
   Widowed = 4,
 }
+    export enum ExperienceType
+    {
+        External = 1,
+        NewHire = 2,
+        Delegation = 3,
+        Acting = 4,
+        Promotion = 5,
+        Demotion = 6,
+        Transfer = 7,
+    }
 export enum ClaimCategory {
         User = 1,
         Setup = 2,

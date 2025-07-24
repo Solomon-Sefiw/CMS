@@ -26,7 +26,81 @@ namespace CMS.Api.Controllers
             this.roleManager = roleManager;
         }
 
-         [Authorize]
+        // [Authorize]
+        //[HttpGet("current")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<ActionResult<UserDto>> CurrentUserInfo()
+        //{
+        //    var currentUserId = CurrentUser?.Id;
+
+        //    if (string.IsNullOrEmpty(currentUserId))
+        //        return Unauthorized();
+
+        //    var user = await userManager.Users
+        //        .Include(u => u.Roles)
+        //        .Include(u => u.UserDocuments.Where(d => d.IsDeleted != true))
+        //        .FirstOrDefaultAsync(u => u.Id == currentUserId);
+
+        //    if (user == null)
+        //        return NotFound("User not found");
+
+        //    // Roles
+        //    var userRoles = await userManager.GetRolesAsync(user);
+
+        //    // Permissions from role claims
+        //    var permissions = new List<Permission>();
+        //    foreach (var roleName in userRoles)
+        //    {
+        //        var role = await roleManager.FindByNameAsync(roleName);
+        //        if (role != null)
+        //        {
+        //            var roleClaims = await roleManager.GetClaimsAsync(role);
+        //            foreach (var claim in roleClaims)
+        //            {
+        //                permissions.Add(new Permission
+        //                {
+        //                    Name = claim.Value,
+        //                    HasPermission = true
+        //                });
+        //            }
+        //        }
+        //    }
+
+        //    // Get PhotoId from UserDocuments
+        //    var photoId = user.UserDocuments
+        //        .Where(d => d.DocumentType == DocumentType.UserPhoto && d.IsDeleted != true)
+        //        .Select(d => d.DocumentId)
+        //        .FirstOrDefault();
+        //    var signature = user.UserDocuments
+        //            .Where(d => d.DocumentType == DocumentType.UserSignature && d.IsDeleted != true)
+        //            .Select(d => d.DocumentId)
+        //             .FirstOrDefault();
+
+        //    // Construct full document URL using base controller method
+        //    var photoUrl = GetDocumentUrl(photoId);
+
+        //    // Return DTO
+        //    var userDto = new UserDto
+        //    {
+        //        Id = user.Id,
+        //        Email = user.Email,
+        //        FirstName = user.FirstName,
+        //        MiddleName = user.MiddleName,
+        //        LastName = user.LastName,
+        //        BranchId = user.BranchId,
+        //        Roles = userRoles.ToList(),
+        //        Permissions = permissions,
+        //        PhotoId = photoId, 
+        //        PhotoUrl = photoUrl,
+        //        SignatureId = signature
+
+        //    };
+
+        //    return Ok(userDto);
+        //}
+
+
+        [Authorize]
         [HttpGet("current")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<UserDto>> CurrentUserInfo()
@@ -44,10 +118,8 @@ namespace CMS.Api.Controllers
             if (user == null)
                 return NotFound("User not found");
 
-            // Roles
             var userRoles = await userManager.GetRolesAsync(user);
 
-            // Permissions from role claims
             var permissions = new List<Permission>();
             foreach (var roleName in userRoles)
             {
@@ -66,20 +138,18 @@ namespace CMS.Api.Controllers
                 }
             }
 
-            // Get PhotoId from UserDocuments
             var photoId = user.UserDocuments
                 .Where(d => d.DocumentType == DocumentType.UserPhoto && d.IsDeleted != true)
                 .Select(d => d.DocumentId)
                 .FirstOrDefault();
-            var signature = user.UserDocuments
-                    .Where(d => d.DocumentType == DocumentType.UserSignature && d.IsDeleted != true)
-                    .Select(d => d.DocumentId)
-                     .FirstOrDefault();
 
-            // Construct full document URL using base controller method
+            var signature = user.UserDocuments
+                .Where(d => d.DocumentType == DocumentType.UserSignature && d.IsDeleted != true)
+                .Select(d => d.DocumentId)
+                .FirstOrDefault();
+
             var photoUrl = GetDocumentUrl(photoId);
 
-            // Return DTO
             var userDto = new UserDto
             {
                 Id = user.Id,
@@ -90,10 +160,9 @@ namespace CMS.Api.Controllers
                 BranchId = user.BranchId,
                 Roles = userRoles.ToList(),
                 Permissions = permissions,
-                PhotoId = photoId, 
+                PhotoId = photoId,
                 PhotoUrl = photoUrl,
                 SignatureId = signature
-
             };
 
             return Ok(userDto);
