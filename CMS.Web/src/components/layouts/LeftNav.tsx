@@ -235,6 +235,9 @@ export const LeftNav = ({ opened, onClose }: Props) => {
         if (item.label === "menu.probation") {
           return permissions.CanViewEmployeeProbation;
         }
+                if (item.label === "menu.letters") {
+          return permissions.CanViewLetter;
+        }
         return true;
       })
       .filter((item) => {
