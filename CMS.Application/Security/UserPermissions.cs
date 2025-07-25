@@ -58,6 +58,16 @@ public class UserPermissions
         public const string Activate = "canActivateAddressAndContact";
         public const string Deactivate = "canDeactivateAddressAndContact";
     }
+    public static class Letter
+    {
+        public const string View = "canViewLetter";
+        public const string Edit = "canCreateUpdateLetter";
+        public const string Approve = "canApproveRejectLetter";
+        public const string Submit = "canSubmitLetter";
+        public const string Activate = "canActivateLetter";
+        public const string Deactivate = "canDeactivateLetter";
+
+    }
     public static class Dashboard
     {
             // Cards

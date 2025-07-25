@@ -103,7 +103,7 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
             justifyContent: "center",
           }}
         >
-          <Typography variant="body2">www.ethiopian.cms.com</Typography>
+          <Typography variant="body2">www.ethiopianCourt.com</Typography>
         </Box>
       </Paper>
       <Paper
@@ -250,7 +250,7 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
             justifyContent: "center",
           }}
         >
-          <Typography variant="body2">www.berhanbanksc.com</Typography>
+          <Typography variant="body2">www.ethiopianCourt.com</Typography>
         </Box>
       </Paper>
     </Box>

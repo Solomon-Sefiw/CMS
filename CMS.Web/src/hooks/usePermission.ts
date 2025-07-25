@@ -71,6 +71,14 @@ export const usePermission = () => {
 
    const CanViewLetterCountBoard = hasPermission(Permission.canViewLetterCountBoard);
    const CanViewRecentLettersBoard = hasPermission(Permission.canViewRecentLettersBoard);
+       //Letter
+    const CanViewLetter = hasPermission(Permission.canViewLetter);
+    const CanCreateUpdateLetter = hasPermission(Permission.canCreateUpdateLetter);
+    const CanSubmitLetter = hasPermission(Permission.canSubmitLetter);
+    const CanApproveRejectLetter = hasPermission(Permission.canApproveRejectLetter);
+    const CanActivateLetter = hasPermission(Permission.canActivateLetter);
+    const CanDeactivateLetter = hasPermission(Permission.canDeactivateLetter);
+
 
 
     return {
@@ -129,7 +137,14 @@ export const usePermission = () => {
       CanViewAllApprovalRequestGrid,
             //Dashboard
       CanViewLetterCountBoard,
-      CanViewRecentLettersBoard
+      CanViewRecentLettersBoard,
+            //Letter
+      CanViewLetter,
+      CanSubmitLetter,
+      CanCreateUpdateLetter,
+      CanApproveRejectLetter,
+      CanActivateLetter,
+      CanDeactivateLetter
     };
   }, [hasPermission]);
 

@@ -9,7 +9,9 @@ using CMS.Application.Features.Letter.Commands.SubmitLetter;
 using CMS.Application.Features.Letter.Commands.UpdateLetter;
 using CMS.Application.Features.Letter.Models;
 using CMS.Application.Features.Letter.Queries;
+using CMS.Application.Security;
 using CMS.Domain.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Api.Controllers.LetterController
@@ -19,6 +21,7 @@ namespace CMS.Api.Controllers.LetterController
     public class LetterController : BaseController<LetterController>
     {
         [HttpPost]
+        [Authorize(Policy = AuthPolicy.Letter.canCreateUpdateLetter)]
         public async Task<ActionResult<int>> CreateLetter(CreateLetterCommand command)
         {
             var letterId = await mediator.Send(command);
@@ -26,6 +29,7 @@ namespace CMS.Api.Controllers.LetterController
         }
 
         [HttpPut] // Use {id} in the route for PUT
+        [Authorize(Policy = AuthPolicy.Letter.canCreateUpdateLetter)]
         public async Task<IActionResult> UpdateLetter(UpdateLetterCommand command)
         {
 
@@ -33,6 +37,7 @@ namespace CMS.Api.Controllers.LetterController
             return NoContent(); // 204 No Content is typical for successful updates that don't return data
         }
         [HttpGet("count", Name = "GetLetterCountPerStatus")]
+        [Authorize(Policy = AuthPolicy.Letter.canViewLetter)]
         [ProducesResponseType(200)]
         public async Task<LetterCountsByStatus> GetLetterCountPerStatus(string userId)
         {
@@ -40,6 +45,7 @@ namespace CMS.Api.Controllers.LetterController
         }
 
         [HttpGet("GetLettersForPagination", Name = "GetLettersForPagination")]
+        [Authorize(Policy = AuthPolicy.Letter.canViewLetter)]
         [ProducesResponseType(200)]
         public async Task<ActionResult<PaginatedLetterList>> GetLettersForPagination(LetterStatus status, int pageNumber, int pageSize,string userId)
         {
@@ -48,6 +54,7 @@ namespace CMS.Api.Controllers.LetterController
             return searchResult;
         }
         [HttpGet("search-all")]
+        [Authorize(Policy = AuthPolicy.Letter.canViewLetter)]
         public async Task<ActionResult<List<LetterDto>>> SearchAllLetters(string userId)
         {
             var query = new SearchLettersQuery(userId);
@@ -56,6 +63,7 @@ namespace CMS.Api.Controllers.LetterController
         }
 
         [HttpPatch("submit", Name = "SubmitLetter")]
+        [Authorize(Policy = AuthPolicy.Letter.canSubmitLetter)]
         [ProducesResponseType(200)]
         public async Task<ActionResult<int>> SubmitLetter([FromBody] SubmitLetterCommand command)
         {
@@ -65,6 +73,7 @@ namespace CMS.Api.Controllers.LetterController
 
 
         [HttpPatch("approve", Name = "ApproveLetter")]
+        [Authorize(Policy = AuthPolicy.Letter.canApproveRejectLetter)]
         [ProducesResponseType(200)]
         public async Task<ActionResult<int>> ApproveLetter([FromBody] ApproveLetterCommand command)
         {
@@ -74,6 +83,7 @@ namespace CMS.Api.Controllers.LetterController
 
 
         [HttpPatch("Reject", Name = "RejectLetter")]
+        [Authorize(Policy = AuthPolicy.Letter.canApproveRejectLetter)]
         [ProducesResponseType(200)]
         public async Task<ActionResult<int>> RejectLetter([FromBody] RejectLetterCommand command)
         {
@@ -82,6 +92,7 @@ namespace CMS.Api.Controllers.LetterController
         }
 
         [HttpPost("{id}/add-Document", Name = "AddLetterDocument")]
+        [Authorize(Policy = AuthPolicy.Letter.canCreateUpdateLetter)]
         [ProducesResponseType(200)]
         public async Task<DocumentMetadataDto> AddLetterDocument(int id, DocumentType documentType , [FromForm] UploadDocumentDto document)
         {

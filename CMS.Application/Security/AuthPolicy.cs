@@ -51,6 +51,7 @@ public class AuthPolicy
         public const string canDeactivateSetup = "canDeactivateSetup";
     }
 
+
     //SetUp Related Policy
     public static class AddressAndContact
     {
@@ -59,6 +60,16 @@ public class AuthPolicy
         public const string canActivateAddressAndContact = "canActivateAddressAndContact";
         public const string canDeactivateAddressAndContact = "canDeactivateAddressAndContact";
     }
+    public static class Letter
+    {
+        public const string canViewLetter = "canViewLetter";
+        public const string canCreateUpdateLetter = "canCreateUpdateLetter";
+        public const string canApproveRejectLetter = "canApproveRejectLetter";
+        public const string canSubmitLetter = "canSubmitLetter";
+        public const string canActivateLetter = "canActivateLetter";
+        public const string canDeactivateLetter = "canDeactivateLetter";
+    }
+
     public static class Dashboard
     {
         public const string canViewLetterCountBoard = "canViewLetterCountBoard";

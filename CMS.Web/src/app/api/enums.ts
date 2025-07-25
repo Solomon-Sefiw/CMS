@@ -360,6 +360,13 @@ export enum Permission {
   // Dashboard
   canViewLetterCountBoard = "canViewLetterCountBoard",
   canViewRecentLettersBoard = "canViewRecentLettersBoard",
+    // letter 
+  canViewLetter = "canViewLetter",
+  canCreateUpdateLetter = "canCreateUpdateLetter",
+  canApproveRejectLetter = "canApproveRejectLetter",
+  canSubmitLetter = "canSubmitLetter",
+  canActivateLetter = "canActivateLetter",
+  canDeactivateLetter = "canDeactivateLetter",
 
 }
 export enum Guarantee {
