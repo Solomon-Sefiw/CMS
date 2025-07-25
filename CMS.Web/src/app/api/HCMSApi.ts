@@ -5183,7 +5183,7 @@ export type CreateRoleDto = {
   role?: HrRole;
   permissionNames?: string[] | null;
 };
-export type ClaimCategory = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type ClaimCategory = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type PermissionClaim = {
   id?: string;
   claimValue?: string | null;
