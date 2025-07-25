@@ -33,6 +33,7 @@ export enum ClaimCategory {
         AddressAndContact = 5,
         EmployeeId = 6,
         Dashboard = 7,
+        Letter = 8,
 }
 
 export enum ApprovalStatus {

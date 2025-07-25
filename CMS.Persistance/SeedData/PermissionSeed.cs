@@ -33,6 +33,16 @@ namespace CMS.Persistance.SeedData
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Setup.Activate, ClaimCategory = ClaimCategory.Setup },
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Setup.Deactivate, ClaimCategory = ClaimCategory.Setup },
             });
+            // Extract permissions for Letter
+            permissions.AddRange(new[]
+            {
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Letter.View, ClaimCategory = ClaimCategory.Letter },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Letter.Edit, ClaimCategory = ClaimCategory.Letter  },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Letter.Submit, ClaimCategory = ClaimCategory.Letter },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Letter.Approve, ClaimCategory = ClaimCategory.Letter },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Letter.Activate, ClaimCategory = ClaimCategory.Letter },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Letter.Deactivate, ClaimCategory = ClaimCategory.Letter },
+            });
 
             // Extract permissions for Address and Contact
             permissions.AddRange(new[]
@@ -98,6 +108,7 @@ namespace CMS.Persistance.SeedData
                     new Permission { Id = Guid.NewGuid(), ClaimValue = UserPermissions.Employee.PersonalInfo.Deactivate, ClaimCategory = ClaimCategory.EmployeePersonalInfo  },
 
                 });
+
 
 
             // Add the permissions to the context and save them to the database
