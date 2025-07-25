@@ -192,7 +192,7 @@ export const ArchivedLetters = () => {
                                     <Button
                                       size="small"
                                       onClick={() => setSelectedLetter(item)}
-                                      disabled={!permissions.canCreateUpdateSetup}
+                                      disabled={!permissions.CanCreateUpdateLetter}
                                     >
                                       Edit
                                     </Button>

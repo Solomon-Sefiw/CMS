@@ -70,9 +70,6 @@ export const LetterHome: React.FC = () => {
   // Event handlers
   const onDialogClose = useCallback(() => {
     setDialogOpened(false);
-    // Optionally refetch data if a new letter was added/updated
-    // useGetLetterCountPerStatusQuery().refetch(); // if counts might change after add/update
-    // useSearchAllLettersQuery().refetch();      // if full list might change
   }, []);
 
 
@@ -94,8 +91,6 @@ export const LetterHome: React.FC = () => {
     } else {
       setAutoCompleteOpen(false);
     }
-    // Also, clear the main searchQuery if the searchInput becomes too short,
-    // so the child component doesn't filter with stale query
     if (searchInput.length < 3 && searchQuery !== "") {
       setSearchQuery("");
     }
@@ -158,7 +153,7 @@ export const LetterHome: React.FC = () => {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setDialogOpened(true)}
-          disabled={!permissions.canCreateUpdateSetup}
+          disabled={!permissions.CanCreateUpdateLetter}
           sx={{
             borderRadius: "8px", // Consistent rounded corners
             px: 3, // More horizontal padding

@@ -71,7 +71,7 @@ export const ApproveOrRejectRequestButton = ({ id }: { id: number }) => {
           setSelectedAction("approve");
         }}
         size="small"
-        disabled={!permissions.canApproveRejectSetup}
+        disabled={!permissions.CanApproveRejectLetter}
       >
         Approve
       </Button>
@@ -82,7 +82,7 @@ export const ApproveOrRejectRequestButton = ({ id }: { id: number }) => {
           setSelectedAction("reject");
         }}
         size="small"
-        disabled={!permissions.canApproveRejectSetup}
+        disabled={!permissions.CanApproveRejectLetter}
       >
         Reject
       </Button>

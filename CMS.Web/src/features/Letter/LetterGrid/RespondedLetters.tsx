@@ -192,7 +192,7 @@ export const RespondedLetters = () => {
                                     <Button
                                       size="small"
                                       onClick={() => setSelectedLetter(item)}
-                                      disabled={!permissions.canCreateUpdateSetup}
+                                      disabled={!permissions.CanCreateUpdateLetter}
                                     >
                                       Edit
                                     </Button>
@@ -202,7 +202,7 @@ export const RespondedLetters = () => {
                                     <Button
                                       size="small"
                                       onClick={() => setSelectedLetter(item)}
-                                      disabled={!permissions.canApproveRejectSetup}
+                                    //  disabled={!permissions.canApproveRejectSetup}
                                     >
                                       Detail
                                     </Button>

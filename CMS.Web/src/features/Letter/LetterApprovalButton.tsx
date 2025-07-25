@@ -43,7 +43,7 @@ export const LetterApprovalButton = ({ id }: { id: number }) => {
           setDialogOpened(true);
         }}
         size="small"
-        disabled={!permissions.canSubmitSetup}
+        disabled={!permissions.CanSubmitLetter}
       >
         Submit
       </Button>
