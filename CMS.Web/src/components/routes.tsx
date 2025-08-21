@@ -10,11 +10,38 @@ import {
 
 import { useAuth, usePermission } from "../hooks";
 import { Login, MFA } from "../features/user";
-import { ForgotPassword } from "../main/account";
-
+import { BusinessUnitsHome } from "../features/BusinessUnit";
+import { JobCatagoryHome } from "../features/Jobs/JobCatagory/JobCatagoryHome";
+import { JobGradeHome } from "../features/Jobs/JobGrade/JobGradeHome";
+import { JobRoleHome } from "../features/Jobs/JobRole/JobRoleHome";
+import { EmployeesHome } from "../features/Employee/EmployeeHome";
+import { JobHome } from "../features/Jobs/Job/JobHome";
+import {
+  ApprovalRequests,
+  ApprovedBusinessUnits,
+  DraftBusinessUnits,
+  RejectedApprovalRequests,
+} from "../features/BusinessUnit/BuisnessUnitGrids";
+import { EmployeeDetail } from "../features/Employee/EmployeeDetail/EmployeeDetails";
+import { SummaryTab } from "../features/Employee/SummaryTab/SummaryTab";
+import { DocumentsTab } from "../features/Employee/documentsTab/DocumentsTab";
+import BusinessUnitDetail from "../features/BusinessUnit/BusinessUnitDetail";
+import {
+  ApprovedJobs,
+  DraftJobs,
+  JobApprovalRequests,
+  JobRejectedApprovalRequest,
+} from "../features/Jobs/Job/JobGrids";
+import {
+  ApprovedJobRole,
+  DraftJobRole,
+  JobRoleApprovalRequests,
+  JobRoleRejectedApprovalRequests,
+} from "../features/Jobs/JobRole/JobRoleGrids";
 import SetupMenu from "./layouts/SetupMenu";
+import { EmployeeEducation } from "../features/Employee/SummaryTab/Education/EmployeeEducation";
+import { ForgotPassword } from "../main/account";
 import { AuthenticatedRoutes } from "./authenticated-routes";
-
 import {
   RegisterNewUser,
   SysAdminDashboard,
@@ -24,68 +51,148 @@ import {
 import { Roles } from "../features/SysAdmin/RoleRegister/Roles";
 import { RoleDetail } from "../features/SysAdmin/RoleRegister/RoleDetail";
 import { RegisterNewRole } from "../features/SysAdmin/RoleRegister/RegisterNewRole";
-
-import Home from "../features/Dashboard/Home";
-import { BusinessUnitsHome } from "../features/BusinessUnit";
-import { ApprovalRequests, ApprovedBusinessUnits, DraftBusinessUnits, RejectedApprovalRequests } from "../features/BusinessUnit/BuisnessUnitGrids";
-import BusinessUnitDetail from "../features/BusinessUnit/BusinessUnitDetail";
-import { RegionHome } from "../features/Address/Region/RegionHome";
-import { ApprovedRegions, DraftRegions, RegionApprovalRequests, RegionRejectedApprovalRequest } from "../features/Address/Region/RegionGrids";
-import { SubCityHome } from "../features/Address/SubCity/SubCityHome";
-import { ApprovedSubCities, DraftSubCities, SubCityApprovalRequests, SubCityRejectedApprovalRequest } from "../features/Address/SubCity/SubCityGrids";
-import { LetterHome } from "../features/Letter/LetterHome";
-import { ArchivedLetters, PendingLetters, ReceivedLetters, RespondedLetters } from "../features/Letter/LetterGrid";
-import { ApprovedBenefits, BenefitApprovalRequests, BenefitRejectedApprovalRequest, DraftBenefits } from "../features/Benefits/Benefit/BenefitGrids";
-import { BenefitHome } from "../features/Benefits/Benefit/BenefitHome";
-import { ApprovedBenefitUnitOfMeasurements, BenefitUnitOfMeasurementApprovalRequests, BenefitUnitOfMeasurementRejectedApprovalRequest, DraftBenefitUnitOfMeasurements } from "../features/Benefits/BenefitUnitOfMeasurement/BenefitUnitOfMeasurementGrids";
-import { BenefitUnitOfMeasurementHome } from "../features/Benefits/BenefitUnitOfMeasurement/BenefitUnitOfMeasurementHome";
-import { ApprovedBenefitUnitPrices, BenefitUnitPriceApprovalRequests, BenefitUnitPriceRejectedApprovalRequest, DraftBenefitUnitPrices } from "../features/Benefits/BenefitUnitPrice/BenefitUnitPriceGrids";
-import { BenefitUnitPriceHome } from "../features/Benefits/BenefitUnitPrice/BenefitUnitPriceHome";
-import { ApprovedBenefitValues, BenefitValueApprovalRequests, BenefitValueRejectedApprovalRequest, DraftBenefitValues } from "../features/Benefits/BenefitValue/BenefitValueGrids";
-import { BenefitValueHome } from "../features/Benefits/BenefitValue/BenefitValueHome";
-import { ApprovedBranchGrades, BranchGradeApprovalRequests, BranchGradeRejectedApprovalRequest, DraftBranchGrades } from "../features/BranchGrade/BranchGradeGrids";
-import { BranchGradeHome } from "../features/BranchGrade/BranchGradeHome";
-import { DocumentsTab } from "../features/Employee/documentsTab/DocumentsTab";
-import { EmployeeDetail } from "../features/Employee/EmployeeDetail/EmployeeDetails";
-import { ApprovedEmployees, SubmittedEmployees, RejectedEmployees, DraftEmployees } from "../features/Employee/EmployeeGrids";
-import { EmployeesHome } from "../features/Employee/EmployeeHome";
-import { PromotionTab } from "../features/Employee/promotionTab/PromotionTab";
-import { ApprovedAwards, SubmittedAwards, RejectedAwards, DraftAwards } from "../features/Employee/SummaryTab/Education/Award/AwardGrids";
-import { AwardHome } from "../features/Employee/SummaryTab/Education/Award/AwardHome";
-import { ApprovedEducationLevels, SubmittedEducationLevels, RejectedEducationLevels, DraftEducationLevels } from "../features/Employee/SummaryTab/Education/EducationLevel/EducationLevelGrids";
+import {
+  ApprovedEmployees,
+  DraftEmployees,
+  RejectedEmployees,
+  SubmittedEmployees,
+} from "../features/Employee/EmployeeGrids";
 import { EducationLevelHome } from "../features/Employee/SummaryTab/Education/EducationLevel/EducationLevelHome";
-import { EmployeeEducation } from "../features/Employee/SummaryTab/Education/EmployeeEducation";
-import { ApprovedFieldOfStudies, SubmittedFieldOfStudies, RejectedFieldOfStudies, DraftFieldOfStudies } from "../features/Employee/SummaryTab/Education/FieldOfStudy/FieldOfStudyGrids";
+import { AwardHome } from "../features/Employee/SummaryTab/Education/Award/AwardHome";
 import { FieldOfStudyHome } from "../features/Employee/SummaryTab/Education/FieldOfStudy/FieldOfStudyHome";
-import { ApprovedInstitutionNames, SubmittedInstitutionNames, RejectedInstitutionNames, DraftInstitutionNames } from "../features/Employee/SummaryTab/Education/InstitutionName/InstitutionNameGrids";
 import { InstitutionNameHome } from "../features/Employee/SummaryTab/Education/InstitutionName/InstitutionNameHome";
-import { SummaryTab } from "../features/Employee/SummaryTab/SummaryTab";
-import { ApprovedJobs, JobApprovalRequests, JobRejectedApprovalRequest, DraftJobs } from "../features/Jobs/Job/JobGrids";
-import { JobHome } from "../features/Jobs/Job/JobHome";
-import { ApprovedJobCategories } from "../features/Jobs/JobCatagory/JobCatagoryGrids/ApprovedJobCategory";
-import { DraftJobCategory } from "../features/Jobs/JobCatagory/JobCatagoryGrids/DraftJobCatagory";
+import { RegionHome } from "../features/Address/Region/RegionHome";
+import {
+  ApprovedRegions,
+  DraftRegions,
+  RegionApprovalRequests,
+  RegionRejectedApprovalRequest,
+} from "../features/Address/Region/RegionGrids";
+import { SubCityHome } from "../features/Address/SubCity/SubCityHome";
+import {
+  ApprovedSubCities,
+  DraftSubCities,
+  SubCityApprovalRequests,
+  SubCityRejectedApprovalRequest,
+} from "../features/Address/SubCity/SubCityGrids";
+import { JobRoleCategoryHome } from "../features/Jobs/JobRoleCategory/JobRoleCategoryHome";
+import {
+  ApprovedJobRoleCategories,
+  DraftJobRoleCategories,
+  JobRoleCategoryApprovalRequests,
+  JobRoleCategoryRejected,
+} from "../features/Jobs/JobRoleCategory/JobRoleCategoryGrids";
+import { EmployeesIdManagementList } from "../features/EmployeeIdManagement/EmployeesIdManagementListList";
+import { DraftJobGrade } from "../features/Jobs/JobGrade/JobGradeGrids/DraftJobGrade";
+import {
+  ApprovedJobGrade,
+  JobGradeApprovalRequests,
+  JobGradeRejectedApprovalRequests,
+} from "../features/Jobs/JobGrade/JobGradeGrids";
+import { BranchGradeHome } from "../features/BranchGrade/BranchGradeHome";
+import {
+  ApprovedBranchGrades,
+  BranchGradeApprovalRequests,
+  BranchGradeRejectedApprovalRequest,
+  DraftBranchGrades,
+} from "../features/BranchGrade/BranchGradeGrids";
 import { JobCategoryApprovalRequests } from "../features/Jobs/JobCatagory/JobCatagoryGrids/JobCategoryApprovalRequests";
 import { JobCategoryRejectedApprovalRequests } from "../features/Jobs/JobCatagory/JobCatagoryGrids/JobCategoryRejectedApprovalRequests";
-import { JobCatagoryHome } from "../features/Jobs/JobCatagory/JobCatagoryHome";
-import { ApprovedJobGrade, JobGradeApprovalRequests, JobGradeRejectedApprovalRequests, DraftJobGrade } from "../features/Jobs/JobGrade/JobGradeGrids";
-import { JobGradeHome } from "../features/Jobs/JobGrade/JobGradeHome";
-import { ApprovedJobRole, JobRoleApprovalRequests, JobRoleRejectedApprovalRequests, DraftJobRole } from "../features/Jobs/JobRole/JobRoleGrids";
-import { JobRoleHome } from "../features/Jobs/JobRole/JobRoleHome";
-import { ApprovedJobRoleCategories, JobRoleCategoryApprovalRequests, JobRoleCategoryRejected, DraftJobRoleCategories } from "../features/Jobs/JobRoleCategory/JobRoleCategoryGrids";
-import { JobRoleCategoryHome } from "../features/Jobs/JobRoleCategory/JobRoleCategoryHome";
-import { DraftEmployeeID, RejectedEmployeeID, EmployeeIdApprovalRequests } from "../features/EmployeeIdManagement/EmployeeIDGrids";
-import { ReplaceableEmployeeID } from "../features/EmployeeIdManagement/EmployeeIDGrids/ReplaceableEmployeeID";
-import { EmployeeIDHome } from "../features/EmployeeIdManagement/EmployeeIDHome";
-import { EmployeesIdManagementList } from "../features/EmployeeIdManagement/EmployeesIdManagementListList";
-import { ProbationApprovalRequests, DraftProbation, RejectedProbation } from "../features/Probation/ProbationGrids";
-import { ProbationHome } from "../features/Probation/ProbationHome";
-import { ActingHome } from "../features/Employee/ActivityTab/Acting/ActingHome";
-import { DelegationHome } from "../features/Employee/ActivityTab/Delegation/DelegationHome";
-import { EmployeeActivity } from "../features/Employee/ActivityTab/EmployeeActivity";
+import { DraftJobCategory } from "../features/Jobs/JobCatagory/JobCatagoryGrids/DraftJobCatagory";
+import { ApprovedJobCategories } from "../features/Jobs/JobCatagory/JobCatagoryGrids/ApprovedJobCategory";
+import { BenefitUnitOfMeasurementHome } from "../features/Benefits/BenefitUnitOfMeasurement/BenefitUnitOfMeasurementHome";
+import {
+  ApprovedBenefitUnitOfMeasurements,
+  BenefitUnitOfMeasurementApprovalRequests,
+  BenefitUnitOfMeasurementRejectedApprovalRequest,
+  DraftBenefitUnitOfMeasurements,
+} from "../features/Benefits/BenefitUnitOfMeasurement/BenefitUnitOfMeasurementGrids";
+import { BenefitHome } from "../features/Benefits/Benefit/BenefitHome";
+import {
+  ApprovedBenefits,
+  BenefitApprovalRequests,
+  BenefitRejectedApprovalRequest,
+  DraftBenefits,
+} from "../features/Benefits/Benefit/BenefitGrids";
+import { BenefitUnitPriceHome } from "../features/Benefits/BenefitUnitPrice/BenefitUnitPriceHome";
+import {
+  ApprovedBenefitUnitPrices,
+  BenefitUnitPriceApprovalRequests,
+  BenefitUnitPriceRejectedApprovalRequest,
+  DraftBenefitUnitPrices,
+} from "../features/Benefits/BenefitUnitPrice/BenefitUnitPriceGrids";
+import { BenefitValueHome } from "../features/Benefits/BenefitValue/BenefitValueHome";
+import {
+  ApprovedBenefitValues,
+  BenefitValueApprovalRequests,
+  BenefitValueRejectedApprovalRequest,
+  DraftBenefitValues,
+} from "../features/Benefits/BenefitValue/BenefitValueGrids";
+import {
+  ApprovedAwards,
+  DraftAwards,
+  RejectedAwards,
+  SubmittedAwards,
+} from "../features/Employee/SummaryTab/Education/Award/AwardGrids";
+import {
+  ApprovedEducationLevels,
+  DraftEducationLevels,
+  RejectedEducationLevels,
+  SubmittedEducationLevels,
+} from "../features/Employee/SummaryTab/Education/EducationLevel/EducationLevelGrids";
+import {
+  ApprovedFieldOfStudies,
+  DraftFieldOfStudies,
+  RejectedFieldOfStudies,
+  SubmittedFieldOfStudies,
+} from "../features/Employee/SummaryTab/Education/FieldOfStudy/FieldOfStudyGrids";
+import {
+  ApprovedInstitutionNames,
+  DraftInstitutionNames,
+  RejectedInstitutionNames,
+  SubmittedInstitutionNames,
+} from "../features/Employee/SummaryTab/Education/InstitutionName/InstitutionNameGrids";
 
+import { ProbationHome } from "../features/Probation/ProbationHome";
+import { DraftProbation } from "../features/Probation/ProbationGrids";
+import { ProbationApprovalRequests } from "../features/Probation/ProbationGrids";
+import { RejectedProbation } from "../features/Probation/ProbationGrids/RejectedProbation";
+import { EmployeeIDHome } from "../features/EmployeeIdManagement/EmployeeIDHome";
+import {
+  DraftEmployeeID,
+  EmployeeIdApprovalRequests,
+  RejectedEmployeeID,
+} from "../features/EmployeeIdManagement/EmployeeIDGrids";
+import { ReplaceableEmployeeID } from "../features/EmployeeIdManagement/EmployeeIDGrids/ReplaceableEmployeeID";
+import Home from "../features/Dashboard/Home";
+import { EmployeeActivity } from "../features/Employee/ActivityTab/EmployeeActivity";
+import { DelegationHome } from "../features/Employee/ActivityTab/Delegation/DelegationHome";
+import { ActingHome } from "../features/Employee/ActivityTab/Acting/ActingHome";
+import { EmployeeWarningHome } from "../features/Employee/ActivityTab/EmployeeWarning/EmployeeWarningHome";
+import { EmployeePromotionHome } from "../features/Employee/ActivityTab/Promotion/EmployeePromotion/EmployeePromotionHome";
+import {
+  ApprovedPromotion,
+  DraftPromotion,
+  PromotionApprovalRequests,
+  RejectedPromotionApprovalRequests,
+} from "../features/Employee/ActivityTab/Promotion/EmployeePromotion/PromotionGrids";
+import {
+  ApprovedTransfers,
+  TransferApprovalRequests,
+  TransferRejectedApprovalRequest,
+  DraftTransfers,
+} from "../features/Employee/SummaryTab/EmployeeTransfer/EmployeeTransferGrids";
+import { TransferHome } from "../features/Employee/SummaryTab/EmployeeTransfer/TransferHome";
+import { SuspensionHome } from "../features/Employee/ActivityTab/Suspension/SuspensionHome";
+import { ResignationHome } from "../features/Employee/ActivityTab/Resignation/ResignationHome";
+import { ReemploymentHome } from "../features/Employee/SummaryTab/Reemployment/ReemploymentHome";
+import { ApprovedReemployments, ReemploymentApprovalRequests, ReemploymentRejectedApprovalRequest, DraftReemployments } from "../features/Employee/SummaryTab/Reemployment/EmployeeReemploymentGrids";
+import { RespondedLetters, ReceivedLetters, ArchivedLetters, PendingLetters } from "../features/Letter/LetterGrid";
+import { LetterHome } from "../features/Letter/LetterHome";
 const AppRoutes = () => {
   const navigate = useNavigate();
   const { loggedIn } = useAuth();
+
   const location = useLocation();
   const matches = matchRoutes([{ path: "/login" }], location);
 
@@ -106,21 +213,10 @@ const AppRoutes = () => {
       <Route path="login" element={<Login />} />
       <Route path="verify" element={<MFA />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
-      {/* AuthenticatedRoutes */}
       <Route element={<AuthenticatedRoutes />}>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/setup" element={<SetupMenu />} />
-        <Route path="/sys-admin" element={<SysAdminDashboard />}>
-          <Route index element={<Users />} />
-          <Route path="users" element={<Users />} />
-          <Route path="users/:id/:tab?" element={<UserDetail />} />
-          <Route path="new-user" element={<RegisterNewUser />} />
-          <Route path="roles" element={<Roles />} />
-          <Route path="roles/:id/:tab?" element={<RoleDetail />} />
-          <Route path="roles/new-role" element={<RegisterNewRole />} />
-        </Route>
-
+        <Route path="/setup" element={<SetupMenu />}></Route>
 
         {/*Branch Grade */}
         <Route path="branch-grade" element={<BranchGradeHome />}>
@@ -194,9 +290,43 @@ const AppRoutes = () => {
           <Route path="draft" element={<DraftBenefitValues />} />
         </Route>
 
-
-
-
+        {/* Business Unit  */}
+        <Route path="businessunit" element={<BusinessUnitsHome />}>
+          <Route index element={<ApprovedBusinessUnits />} />
+          <Route path="business-unit/:id" element={<BusinessUnitDetail />} />
+          <Route path="approval-requests" element={<ApprovalRequests />} />
+          <Route
+            path="rejected-approval-requests"
+            element={<RejectedApprovalRequests />}
+          />
+          <Route path="draft" element={<DraftBusinessUnits />} />
+        </Route>
+        {/* Region */}
+        <Route path="region" element={<RegionHome />}>
+          <Route index element={<ApprovedRegions />} />
+          <Route
+            path="approval-requests"
+            element={<RegionApprovalRequests />}
+          />
+          <Route
+            path="rejected-approval-requests"
+            element={<RegionRejectedApprovalRequest />}
+          />
+          <Route path="draft" element={<DraftRegions />} />
+        </Route>
+        {/* Region */}
+        <Route path="sub-city" element={<SubCityHome />}>
+          <Route index element={<ApprovedSubCities />} />
+          <Route
+            path="approval-requests"
+            element={<SubCityApprovalRequests />}
+          />
+          <Route
+            path="rejected-approval-requests"
+            element={<SubCityRejectedApprovalRequest />}
+          />
+          <Route path="draft" element={<DraftSubCities />} />
+        </Route>
         {/* Education Related */}
         <Route path="education-level" element={<EducationLevelHome />}>
           <Route index element={<ApprovedEducationLevels />} />
@@ -264,14 +394,45 @@ const AppRoutes = () => {
         <Route path="employees" element={<EmployeesHome />}>
           <Route index element={<ApprovedEmployees />} />
           <Route path="approval-requests" element={<SubmittedEmployees />} />
-          <Route path="rejected-approval-requests" element={<RejectedEmployees />} />
+          <Route
+            path="rejected-approval-requests"
+            element={<RejectedEmployees />}
+          />
+          <Route
+            path="rejected-approval-requests"
+            element={<RejectedEmployees />}
+          />
           <Route path="draft" element={<DraftEmployees />} />
         </Route>
         <Route path="/employee-detail/:id" element={<EmployeeDetail />}>
           <Route index element={<SummaryTab />} />
           <Route path="summary" element={<SummaryTab />} />
-          <Route path="promotion" element={<PromotionTab />} />
-                    <Route path="activities" element={<EmployeeActivity />}>
+
+          <Route path="activities" element={<EmployeeActivity />}>
+            {/* Transfer Routes */}
+            <Route path="transfer" element={<TransferHome />}>
+              <Route index element={<ApprovedTransfers />} />
+              <Route path="approval-requests" element={<TransferApprovalRequests />} />
+              <Route
+                path="rejected-approval-requests"
+                element={<TransferRejectedApprovalRequest />}
+              />
+              <Route path="draft" element={<DraftTransfers />} />
+            </Route>
+
+            {/* Reemployment Routes */}
+            <Route path="reemployment" element={<ReemploymentHome />}>
+              <Route index element={<ApprovedReemployments />} />
+              <Route path="approval-requests" element={<ReemploymentApprovalRequests />} />
+              <Route
+                path="rejected-approval-requests"
+                element={<ReemploymentRejectedApprovalRequest />}
+              />
+              <Route path="draft" element={<DraftReemployments />} />
+            </Route>
+
+
+
             <Route path="delegation">
               <Route index element={<Navigate to="approved" replace />} />
               <Route path=":status" element={<DelegationHome />} />
@@ -280,7 +441,21 @@ const AppRoutes = () => {
               <Route index element={<Navigate to="approved" replace />} />
               <Route path=":status" element={<ActingHome />} />
             </Route>
+            <Route path="warning">
+              <Route index element={<Navigate to="approved" replace />} />
+              <Route path=":status" element={<EmployeeWarningHome />} />
+            </Route>
+            <Route path="suspension">
+              <Route index element={<Navigate to="approved" replace />} />
+              <Route path=":status" element={<SuspensionHome />} />
+            </Route>
+            <Route path="resignation">
+              <Route index element={<Navigate to="approved" replace />} />
+              <Route path=":status" element={<ResignationHome />} />
+            </Route>
           </Route>
+
+          <Route path="activities" element={<EmployeeActivity />} />
           <Route path="other" element={<EmployeeEducation />} />
           <Route path="documents" element={<DocumentsTab />} />
         </Route>
@@ -333,7 +508,18 @@ const AppRoutes = () => {
           <Route path="draft" element={<DraftJobGrade />} />
         </Route>
         {/* */}
-
+        <Route path="/sys-admin" element={<SysAdminDashboard />}>
+          <Route index element={<Users />} />
+          <Route path="users" element={<Users />}>
+            {" "}
+          </Route>
+          <Route path="users/:id/:tab?" element={<UserDetail />}></Route>
+          <Route path="new-user" element={<RegisterNewUser />}></Route>
+          <Route index element={<Roles />}></Route>
+          <Route path="roles" element={<Roles />}></Route>
+          <Route path="roles/:id/:tab?" element={<RoleDetail />}></Route>
+          <Route path="roles/new-role" element={<RegisterNewRole />}></Route>
+        </Route>
         <Route path="/probation" element={<ProbationHome />}>
           <Route index element={<ProbationApprovalRequests />} />
           <Route
@@ -361,41 +547,13 @@ const AppRoutes = () => {
           />
         </Route>
 
-
-
-
-
-        {/* Business Unit  */}
-        <Route path="businessunit" element={<BusinessUnitsHome />}>
-          <Route index element={<ApprovedBusinessUnits />} />
-          <Route path="business-unit/:id" element={<BusinessUnitDetail />} />
-          <Route path="approval-requests" element={<ApprovalRequests />} />
-          <Route path="rejected-approval-requests" element={<RejectedApprovalRequests />} />
-          <Route path="draft" element={<DraftBusinessUnits />} />
-        </Route>
-        <Route path="region" element={<RegionHome />}>
-          <Route index element={<ApprovedRegions />} />
-          <Route path="approval-requests" element={<RegionApprovalRequests />} />
-          <Route path="rejected-approval-requests" element={<RegionRejectedApprovalRequest />} />
-          <Route path="draft" element={<DraftRegions />} />
-        </Route>
-        {/* Subcity */}
-        <Route path="sub-city" element={<SubCityHome />}>
-          <Route index element={<ApprovedSubCities />} />
-          <Route path="approval-requests" element={<SubCityApprovalRequests />} />
-          <Route path="rejected-approval-requests" element={<SubCityRejectedApprovalRequest />} />
-          <Route path="draft" element={<DraftSubCities />} />
-        </Route>
-
-        {/* Letters */}
+                {/* Letters */}
         <Route path="letters" element={<LetterHome />}>
           <Route index element={<RespondedLetters />} />
           <Route path="received" element={<ReceivedLetters />} />
           <Route path="archived" element={<ArchivedLetters />} />
           <Route path="pending" element={<PendingLetters />} />
         </Route>
-
-
       </Route>
     </Routes>
   );

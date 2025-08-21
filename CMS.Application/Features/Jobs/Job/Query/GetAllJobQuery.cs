@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CMS.Application.Features.Jobs.Job.Query
 {
-    public class GetAllJobQuery:IRequest<List<JobDto>>
+    public class GetAllJobQuery : IRequest<List<JobDto>>
     {
     }
 }

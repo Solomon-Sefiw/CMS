@@ -55,7 +55,6 @@ export const JobCategoryUpdateDialog = ({
   } = useGetJobCategoryByIdQuery({ id: Id ?? 0 }, { skip: Id === undefined });
 
   useEffect(() => {
-
     if (jobCategory && typeof jobCategory === "object") {
       setJobCategoryData(jobCategory);
     }
@@ -81,7 +80,6 @@ export const JobCategoryUpdateDialog = ({
           setAlertSeverity("info");
           showSuccessAlert("Job Category updated successfully!");
           onClose();
-          
         })
         .catch((err) => {
           setAlertSeverity("error");
@@ -109,7 +107,7 @@ export const JobCategoryUpdateDialog = ({
       .required("Probation period is required")
       .positive("Must be a positive number")
       .integer("Must be an integer")
-      .min(30,"Probation Date should be greater than or equal to 30 days"),
+      .min(30, "Probation Date should be greater than or equal to 30 days"),
   });
 
   return (

@@ -123,7 +123,7 @@ export const EmployeeEmergencyContactDialog = ({
           await updateContact({
             updateEmployeeEmergencyContactCommand: updateCommand,
           }).unwrap();
-               showSuccessAlert("Operation completed successfully!");
+          showSuccessAlert("Operation completed successfully!");
         } else {
           const addCommand: CreateEmployeeEmergencyContactCommand = {
             name: values.name,
@@ -136,14 +136,22 @@ export const EmployeeEmergencyContactDialog = ({
           await addContact({
             createEmployeeEmergencyContactCommand: addCommand,
           }).unwrap();
-        showSuccessAlert("Emergency Contact Added successfully!");
+          showSuccessAlert("Emergency Contact Added successfully!");
         }
-          onClose();
+        onClose();
       } catch (error) {
         showErrorAlert("An error occurred while saving contact.");
       }
     },
-    [addContact, updateContact, contact, employeeId, onClose, showErrorAlert, showSuccessAlert]
+    [
+      addContact,
+      updateContact,
+      contact,
+      employeeId,
+      onClose,
+      showErrorAlert,
+      showSuccessAlert,
+    ]
   );
 
   const errors =

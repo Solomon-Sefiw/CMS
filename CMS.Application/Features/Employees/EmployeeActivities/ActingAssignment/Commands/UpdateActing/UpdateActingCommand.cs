@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CMS.Application.Exceptions;
+﻿using CMS.Application.Exceptions;
+using CMS.Domain.Enum;
 using CMS.Services.DataService;
 using MediatR;
 
@@ -15,9 +11,12 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.ActingAssignment
         public int Id { get; set; }
         public int EmployeeId { get; set; }
         public int JobRoleId { get; set; }
+        public int PreviousJobRoleId { get; set; }
         public int? BusinessUnitId { get; set; }
+        public int? PreviousBusinessUnitId { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly? EndDate { get; set; }
+        public ActingType ActingType { get; set; }
     }
 
     public class UpdateActingCommandHandler : IRequestHandler<UpdateActingCommand, int>
@@ -39,9 +38,14 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.ActingAssignment
 
             delegation.EmployeeId = request.EmployeeId;
             delegation.JobRoleId = request.JobRoleId;
+            delegation.PreviousJobRoleId = request.PreviousJobRoleId;
             delegation.BusinessUnitId = request.BusinessUnitId;
+            delegation.PreviousBusinessUnitId = request.PreviousJobRoleId;
             delegation.StartDate = request.StartDate;
             delegation.EndDate = request.EndDate;
+            delegation.ActingType = request.ActingType;
+            delegation.ApprovalStatus = ApprovalStatus.Draft;
+            delegation.IsActive = true;
 
             await dataService.SaveAsync(cancellationToken);
 

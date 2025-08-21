@@ -19,6 +19,12 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.ActingAssignment
     BusinessUnit BusinessUnit,
     DateOnly StartDate,
     DateOnly? EndDate,
-    ApprovalStatus ApprovalStatus
+    ApprovalStatus ApprovalStatus,
+    ActingType ActingType,
+    int? PreviousJobRoleId,
+    JobRole? PreviousJobRole,
+    int? PreviousBusinessUnitId,
+    BusinessUnit? PreviousBusinessUnit,
+    bool IsActive
 );
 }

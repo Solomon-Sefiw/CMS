@@ -35,7 +35,7 @@ namespace CMS.Application.Features.Jobs.JobCatagories.Command.ApproveJobCatagory
                 throw new InvalidOperationException("This job category must be submitted before approval.");
 
             jobCategory.ApprovalStatus = ApprovalStatus.Approved;
-            jobCategory.LastModifiedAt = DateTime.UtcNow;
+            jobCategory.LastModifiedAt = DateTime.Now;
 
             await dataService.SaveAsync(cancellationToken);
 

@@ -86,6 +86,15 @@ namespace CMS.Persistance.SeedData
                 new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeId.Replace, ClaimCategory = ClaimCategory.EmployeeId },
 
             });
+            permissions.AddRange(new[]
+{
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeActivity.View, ClaimCategory = ClaimCategory.EmployeeActivity },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeActivity.Edit, ClaimCategory = ClaimCategory.EmployeeActivity  },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeActivity.Submit, ClaimCategory = ClaimCategory.EmployeeActivity },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeActivity.Approve, ClaimCategory = ClaimCategory.EmployeeActivity },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeActivity.Activate, ClaimCategory = ClaimCategory.EmployeeActivity },
+                new Permission {Id = Guid.NewGuid(),ClaimValue = UserPermissions.Employee.EmployeeActivity.Deactivate, ClaimCategory = ClaimCategory.EmployeeActivity },
+            });
 
 
             // Extract permissions for Probation

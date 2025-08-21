@@ -30,14 +30,14 @@ import {
 import dayjs from "dayjs";
 import { removeEmptyFields } from "../../../../utils";
 import { useParams } from "react-router-dom";
-import { FamilyType } from "../../../../app/api/enums";
+import { ExperienceType, FamilyType } from "../../../../app/api/enums";
 import * as Yup from "yup";
 import { useAlert } from "../../../notification";
 
-const emptyEmployeeExperience = {
+const emptyEmployeeExperience: UpdateEmployeeExperienceCommand = {
   firmName: "",
-  startDate: dayjs().format("YYYY-MM-DD"), // Initialize with formatted date
-  endDate: dayjs().format("YYYY-MM-DD"),
+  startDate: undefined, // ✅ valid
+  endDate: undefined, // ✅ valid
   jobTitle: "",
   city: "",
   lastSalary: 0,
@@ -48,16 +48,18 @@ const emptyEmployeeExperience = {
 interface EmployeeExperienceUpdateProps {
   onClose: () => void;
   Id?: number;
+  experienceType: ExperienceType;
 }
 
 export const EmployeeExperienceUpdate = ({
   onClose,
   Id,
+  experienceType,
 }: EmployeeExperienceUpdateProps) => {
-   const { showSuccessAlert, showErrorAlert } = useAlert();
-  const [EmployeeExpereince, setEmployeeExpereince] = useState<
-    UpdateEmployeeExperienceCommand | undefined
-  >(undefined);
+  const { showSuccessAlert, showErrorAlert } = useAlert();
+
+  const [EmployeeExpereince, setEmployeeExpereince] =
+    useState<UpdateEmployeeExperienceCommand>(emptyEmployeeExperience);
   const [UpateEmployeeExperience, { error: UpdateExperienceError }] =
     useUpdateEmployeeExperienceMutation();
   const { id } = useParams<{ id: string }>();
@@ -70,12 +72,21 @@ export const EmployeeExperienceUpdate = ({
 
   useEffect(() => {
     if (EmployeeExperienceInfo && typeof EmployeeExperienceInfo === "object") {
-      const data = EmployeeExperienceInfo["0"]
-        ? EmployeeExperienceInfo["0"]
+      const rawData = Array.isArray(EmployeeExperienceInfo)
+        ? EmployeeExperienceInfo[0]
         : EmployeeExperienceInfo;
+
       setEmployeeExpereince({
         ...emptyEmployeeExperience,
-        ...data,
+        id: rawData.id,
+        firmName: rawData.firmName ?? "",
+        startDate: rawData.startDate ?? undefined,
+        endDate: rawData.endDate ?? undefined,
+        jobTitle: rawData.jobTitle ?? "",
+        city: rawData.city ?? "",
+        lastSalary: rawData.lastSalary ?? 0,
+        reasonForResignation: rawData.reasonForResignation ?? "",
+        employeeId: rawData.employeeId ?? 0,
       });
     }
   }, [EmployeeExperienceInfo]);
@@ -130,15 +141,13 @@ export const EmployeeExperienceUpdate = ({
         updateEmployeeExperienceCommand: payload,
       })
         .unwrap()
-        .then(
-          (response: any) => {
-            showSuccessAlert("Employee Experience Updated Successfully");
-            setEmployeeExpereince(response);
-            onClose();
-          }
-        )
+        .then((response: any) => {
+          showSuccessAlert("Employee Experience Updated Successfully");
+          setEmployeeExpereince(response);
+          onClose();
+        })
         .catch((error: any) => {
-          showErrorAlert("Failed to Update Employee Experience");
+          // showErrorAlert("Failed to Update Employee Experience");
         });
     },
     [onClose, UpateEmployeeExperience]

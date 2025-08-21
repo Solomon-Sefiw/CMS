@@ -13,7 +13,9 @@ export const useBenefits = () => {
     );
 
     const benefitLookups: MultipleSelectOption[] = (data?.benefits || [])
-      .filter((b) => b.id != null&& b.approvalStatus==ApprovalStatus.Approved) // filter out only approved benefits
+      .filter(
+        (b) => b.id != null && b.approvalStatus == ApprovalStatus.Approved
+      ) // filter out only approved benefits
       .map(({ id, name }) => ({
         label: name ?? "",
         value: String(id), // or parseInt(id) if numeric

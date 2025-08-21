@@ -18,5 +18,6 @@ namespace CMS.Application.Features.Educations.Queries.GetEducationById
         public int FieldOfStudyId { get; set; } // Include FieldOfStudyId
         public string FieldOfStudyName { get; set; } // Include FieldOfStudy Name
         public int EmployeeId { get; set; }
+        public Decimal? CGPA {  get; set; }
     }
 }

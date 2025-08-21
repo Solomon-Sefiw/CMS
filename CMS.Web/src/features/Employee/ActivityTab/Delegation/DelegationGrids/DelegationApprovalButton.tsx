@@ -5,7 +5,6 @@ import { useSubmitDelegationMutation } from "../../../../../app/api";
 import { removeEmptyFields } from "../../../../../utils";
 import { WorkflowActionDialog } from "../../../../../components";
 
-
 export const DelegationApprovalButton = ({ id }: { id: number }) => {
   const permissions = usePermission();
   const [dialogOpened, setDialogOpened] = useState(false);
@@ -44,7 +43,7 @@ export const DelegationApprovalButton = ({ id }: { id: number }) => {
           setDialogOpened(true);
         }}
         size="small"
-        disabled={!permissions.canSubmitSetup}
+        disabled={!permissions.CanSubmitEmployeeActivity}
       >
         Submit
       </Button>

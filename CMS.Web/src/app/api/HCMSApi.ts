@@ -4,10 +4,11 @@ export const addTagTypes = [
   "Dashboard",
   "Account",
   "Acting",
-  "Address",
   "EmployeeProfile",
+  "Address",
   "BusinessUnit",
   "Admin",
+  "AuditEmployeeFileDocument",
   "Awards",
   "Benefit",
   "BenefitUnitPrice",
@@ -19,8 +20,11 @@ export const addTagTypes = [
   "Education",
   "EducationLevel",
   "EmployeeFamily",
+  "EmployeeFileDocuments",
+  "EmployeeTransaction",
+  "EmployeeTransfers",
+  "EmployeeWarning",
   "FieldOfStudy",
-  "Health",
   "InstitutionName",
   "Job",
   "JobCategory",
@@ -29,8 +33,11 @@ export const addTagTypes = [
   "LanguageSkill",
   "Letter",
   "Lookup",
+  "Reemployment",
   "Region",
+  "Resignation",
   "SubCity",
+  "Suspension",
   "Users",
 ] as const;
 const injectedRtkApi = api
@@ -136,7 +143,7 @@ const injectedRtkApi = api
           method: "PATCH",
           body: queryArg.approveActingCommand,
         }),
-        invalidatesTags: ["Acting"],
+        invalidatesTags: ["Acting", "EmployeeProfile"],
       }),
       getActingCountPerStatus: build.query<
         GetActingCountPerStatusApiResponse,
@@ -146,7 +153,7 @@ const injectedRtkApi = api
           url: `/api/Acting/count`,
           params: { id: queryArg.id },
         }),
-        providesTags: ["Acting"],
+        providesTags: ["Acting", "EmployeeProfile"],
       }),
       createActing: build.mutation<CreateActingApiResponse, CreateActingApiArg>(
         {
@@ -155,9 +162,19 @@ const injectedRtkApi = api
             method: "POST",
             body: queryArg.createActingCommand,
           }),
-          invalidatesTags: ["Acting"],
+          invalidatesTags: ["Acting", "EmployeeProfile"],
         }
       ),
+      getAllActiveActing: build.query<
+        GetAllActiveActingApiResponse,
+        GetAllActiveActingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Acting/GetAllActive`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Acting"],
+      }),
       getPaginatedActings: build.query<
         GetPaginatedActingsApiResponse,
         GetPaginatedActingsApiArg
@@ -171,7 +188,18 @@ const injectedRtkApi = api
             pageSize: queryArg.pageSize,
           },
         }),
-        providesTags: ["Acting"],
+        providesTags: ["Acting", "EmployeeProfile"],
+      }),
+      createReassignment: build.mutation<
+        CreateReassignmentApiResponse,
+        CreateReassignmentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Acting/Reassign`,
+          method: "POST",
+          body: queryArg.reAssignmentActingCommand,
+        }),
+        invalidatesTags: ["Acting", "EmployeeProfile"],
       }),
       rejectActing: build.mutation<RejectActingApiResponse, RejectActingApiArg>(
         {
@@ -180,7 +208,7 @@ const injectedRtkApi = api
             method: "PATCH",
             body: queryArg.rejectActingCommand,
           }),
-          invalidatesTags: ["Acting"],
+          invalidatesTags: ["Acting", "EmployeeProfile"],
         }
       ),
       submitActing: build.mutation<SubmitActingApiResponse, SubmitActingApiArg>(
@@ -190,7 +218,7 @@ const injectedRtkApi = api
             method: "PATCH",
             body: queryArg.submitActingCommand,
           }),
-          invalidatesTags: ["Acting"],
+          invalidatesTags: ["Acting", "EmployeeProfile"],
         }
       ),
       updateActing: build.mutation<UpdateActingApiResponse, UpdateActingApiArg>(
@@ -200,7 +228,7 @@ const injectedRtkApi = api
             method: "PUT",
             body: queryArg.updateActingCommand,
           }),
-          invalidatesTags: ["Acting"],
+          invalidatesTags: ["Acting", "EmployeeProfile"],
         }
       ),
       createAddress: build.mutation<
@@ -381,6 +409,24 @@ const injectedRtkApi = api
           params: { id: queryArg.id, role: queryArg.role },
         }),
         invalidatesTags: ["Admin"],
+      }),
+      getAuditEmployeeDocumentFileByEmployeeId: build.query<
+        GetAuditEmployeeDocumentFileByEmployeeIdApiResponse,
+        GetAuditEmployeeDocumentFileByEmployeeIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/AuditEmployeeFileDocument/getAuditEmployeeDocumentFileByEmployeeId/${queryArg.employeeId}`,
+        }),
+        providesTags: ["AuditEmployeeFileDocument"],
+      }),
+      getAuditEmployeeFileDocumentLogs: build.query<
+        GetAuditEmployeeFileDocumentLogsApiResponse,
+        GetAuditEmployeeFileDocumentLogsApiArg
+      >({
+        query: () => ({
+          url: `/api/AuditEmployeeFileDocument/getAuditEmployeeFileDocumentLogs`,
+        }),
+        providesTags: ["AuditEmployeeFileDocument"],
       }),
       approveAward: build.mutation<ApproveAwardApiResponse, ApproveAwardApiArg>(
         {
@@ -879,6 +925,16 @@ const injectedRtkApi = api
         query: () => ({ url: `/api/BusinessUnit/counts` }),
         providesTags: ["BusinessUnit"],
       }),
+      getEmployeeCountPerApprovalStatus: build.query<
+        GetEmployeeCountPerApprovalStatusApiResponse,
+        GetEmployeeCountPerApprovalStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/BusinessUnit/countsByBusinssUnitId`,
+          params: { businssUnitId: queryArg.businssUnitId },
+        }),
+        providesTags: ["BusinessUnit"],
+      }),
       createBusinessUnit: build.mutation<
         CreateBusinessUnitApiResponse,
         CreateBusinessUnitApiArg
@@ -1203,6 +1259,16 @@ const injectedRtkApi = api
         query: () => ({ url: `/api/Delegation/GetAll` }),
         providesTags: ["Delegation"],
       }),
+      getAllActiveDelegation: build.query<
+        GetAllActiveDelegationApiResponse,
+        GetAllActiveDelegationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/GetAllActive`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Delegation"],
+      }),
       getPaginatedDelegations: build.query<
         GetPaginatedDelegationsApiResponse,
         GetPaginatedDelegationsApiArg
@@ -1226,6 +1292,17 @@ const injectedRtkApi = api
           url: `/api/Delegation/Reject`,
           method: "PATCH",
           body: queryArg.rejectDelegationCommand,
+        }),
+        invalidatesTags: ["Delegation"],
+      }),
+      removeDelegation: build.mutation<
+        RemoveDelegationApiResponse,
+        RemoveDelegationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Delegation/Remove`,
+          method: "PATCH",
+          body: queryArg.removeDeligationCommand,
         }),
         invalidatesTags: ["Delegation"],
       }),
@@ -1570,6 +1647,56 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["EmployeeFamily"],
       }),
+      downloadEmployeeFileDocument: build.query<
+        DownloadEmployeeFileDocumentApiResponse,
+        DownloadEmployeeFileDocumentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeFileDocuments/DownloadEmployeeFileDocument/${queryArg.id}`,
+        }),
+        providesTags: ["EmployeeFileDocuments"],
+      }),
+      getById: build.query<GetByIdApiResponse, GetByIdApiArg>({
+        query: (queryArg) => ({
+          url: `/api/EmployeeFileDocuments/get/${queryArg.id}`,
+        }),
+        providesTags: ["EmployeeFileDocuments"],
+      }),
+      getEmployeeFileDocumentByEmployeeId: build.query<
+        GetEmployeeFileDocumentByEmployeeIdApiResponse,
+        GetEmployeeFileDocumentByEmployeeIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeFileDocuments/getDocumentByEmployeeId/${queryArg.employeeId}`,
+          params: {
+            resignationId: queryArg.resignationId,
+            suspensionId: queryArg.suspensionId,
+          },
+        }),
+        providesTags: ["EmployeeFileDocuments"],
+      }),
+      updateEmployeeFileDocument: build.mutation<
+        UpdateEmployeeFileDocumentApiResponse,
+        UpdateEmployeeFileDocumentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeFileDocuments/updateEmployeeFileDocument`,
+          method: "PUT",
+          body: queryArg.body,
+        }),
+        invalidatesTags: ["EmployeeFileDocuments"],
+      }),
+      uploadEmployeeFileDocument: build.mutation<
+        UploadEmployeeFileDocumentApiResponse,
+        UploadEmployeeFileDocumentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeFileDocuments/UploadEmployeeFileDocument`,
+          method: "POST",
+          body: queryArg.body,
+        }),
+        invalidatesTags: ["EmployeeFileDocuments"],
+      }),
       getEmployeeChangeLog: build.query<
         GetEmployeeChangeLogApiResponse,
         GetEmployeeChangeLogApiArg
@@ -1698,16 +1825,6 @@ const injectedRtkApi = api
           body: queryArg.changeWorkflowStatusEntityDto,
         }),
         invalidatesTags: ["EmployeeProfile", "Dashboard"],
-      }),
-      getEmployeeCountPerApprovalStatus: build.query<
-        GetEmployeeCountPerApprovalStatusApiResponse,
-        GetEmployeeCountPerApprovalStatusApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/api/EmployeeProfile/countsByBusinssUnitId`,
-          params: { businssUnitId: queryArg.businssUnitId },
-        }),
-        providesTags: ["EmployeeProfile"],
       }),
       createEmployeeEmergencyContact: build.mutation<
         CreateEmployeeEmergencyContactApiResponse,
@@ -2008,6 +2125,557 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["EmployeeProfile", "Dashboard"],
       }),
+      addEmployeeDemotion: build.mutation<
+        AddEmployeeDemotionApiResponse,
+        AddEmployeeDemotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/AddEmployeeDemotion`,
+          method: "POST",
+          body: queryArg.addEmployeeDemotionCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      addEmployeePromotion: build.mutation<
+        AddEmployeePromotionApiResponse,
+        AddEmployeePromotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/AddEmployeePromotionCommand`,
+          method: "POST",
+          body: queryArg.addEmployeePromotionCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      addEmployeeReClassification: build.mutation<
+        AddEmployeeReClassificationApiResponse,
+        AddEmployeeReClassificationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/AddEmployeeReClassification`,
+          method: "POST",
+          body: queryArg.addEmployeeReClassificationCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      addEmployeeSalaryIncrement: build.mutation<
+        AddEmployeeSalaryIncrementApiResponse,
+        AddEmployeeSalaryIncrementApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/AddEmployeeSalaryIncrement`,
+          method: "POST",
+          body: queryArg.addSalaryIncrementCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      getAllDemotions: build.query<
+        GetAllDemotionsApiResponse,
+        GetAllDemotionsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/allDemotions`,
+          params: {
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+            employeeId: queryArg.employeeId,
+          },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getAllPromotions: build.query<
+        GetAllPromotionsApiResponse,
+        GetAllPromotionsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/allPromotions`,
+          params: {
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+            employeeId: queryArg.employeeId,
+          },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getAllReClassifications: build.query<
+        GetAllReClassificationsApiResponse,
+        GetAllReClassificationsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/allReClassifications`,
+          params: {
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+            employeeId: queryArg.employeeId,
+          },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      approveEmployeeDemotion: build.mutation<
+        ApproveEmployeeDemotionApiResponse,
+        ApproveEmployeeDemotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/ApproveEmployeeDemotion`,
+          method: "PUT",
+          body: queryArg.approveEmployeeDemotion,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      approveEmployeePromotion: build.mutation<
+        ApproveEmployeePromotionApiResponse,
+        ApproveEmployeePromotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/ApproveEmployeePromotion`,
+          method: "PUT",
+          body: queryArg.approveEmployeePromotion,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      approveEmployeeReClassification: build.mutation<
+        ApproveEmployeeReClassificationApiResponse,
+        ApproveEmployeeReClassificationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/ApproveEmployeeReClassification`,
+          method: "PUT",
+          body: queryArg.approveEmployeeReClassification,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      approveSalaryIncrement: build.mutation<
+        ApproveSalaryIncrementApiResponse,
+        ApproveSalaryIncrementApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/ApproveSalaryIncrement`,
+          method: "PUT",
+          body: queryArg.approveSalaryIncrementCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      getPromotionCountPerApprovalStatus: build.query<
+        GetPromotionCountPerApprovalStatusApiResponse,
+        GetPromotionCountPerApprovalStatusApiArg
+      >({
+        query: () => ({ url: `/api/EmployeeTransaction/counts` }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getAllSalaryIncrementList: build.query<
+        GetAllSalaryIncrementListApiResponse,
+        GetAllSalaryIncrementListApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetAllSalaryIncrementList`,
+          params: {
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+            employeeId: queryArg.employeeId,
+          },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getEmployeeDemotionById: build.query<
+        GetEmployeeDemotionByIdApiResponse,
+        GetEmployeeDemotionByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetEmployeeDemotionById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getEmployeeDemotionList: build.query<
+        GetEmployeeDemotionListApiResponse,
+        GetEmployeeDemotionListApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetEmployeeDemotionList`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getEmployeePromotionById: build.query<
+        GetEmployeePromotionByIdApiResponse,
+        GetEmployeePromotionByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetEmployeePromotionById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getEmployeePromotionList: build.query<
+        GetEmployeePromotionListApiResponse,
+        GetEmployeePromotionListApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetEmployeePromotionList`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getEmployeeReClassificationById: build.query<
+        GetEmployeeReClassificationByIdApiResponse,
+        GetEmployeeReClassificationByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetEmployeeReClassificationById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getEmployeeReClassificationList: build.query<
+        GetEmployeeReClassificationListApiResponse,
+        GetEmployeeReClassificationListApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetEmployeeReClassificationList`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getSalaryIncrementById: build.query<
+        GetSalaryIncrementByIdApiResponse,
+        GetSalaryIncrementByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetSalaryIncrementById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      getSalaryIncrementList: build.query<
+        GetSalaryIncrementListApiResponse,
+        GetSalaryIncrementListApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/GetSalaryIncrementList`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      rejectEmployeeDemotion: build.mutation<
+        RejectEmployeeDemotionApiResponse,
+        RejectEmployeeDemotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/RejectEmployeeDemotion`,
+          method: "PUT",
+          body: queryArg.rejectEmployeeDemotion,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      rejectEmployeePromotion: build.mutation<
+        RejectEmployeePromotionApiResponse,
+        RejectEmployeePromotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/RejectEmployeePromotion`,
+          method: "PUT",
+          body: queryArg.rejectEmployeePromotion,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      rejectEmployeeReClassification: build.mutation<
+        RejectEmployeeReClassificationApiResponse,
+        RejectEmployeeReClassificationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/RejectEmployeeReClassification`,
+          method: "PUT",
+          body: queryArg.rejectEmployeeReClassification,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      rejectSalaryIncrement: build.mutation<
+        RejectSalaryIncrementApiResponse,
+        RejectSalaryIncrementApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/RejectSalaryIncrement`,
+          method: "PUT",
+          body: queryArg.rejectSalaryIncrementCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      submitEmployeeDemotion: build.mutation<
+        SubmitEmployeeDemotionApiResponse,
+        SubmitEmployeeDemotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/SubmitEmployeeDemotion`,
+          method: "PUT",
+          body: queryArg.submitEmployeeDemotion,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      submittEmployeePromotion: build.mutation<
+        SubmittEmployeePromotionApiResponse,
+        SubmittEmployeePromotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/submitEmployeePromotion`,
+          method: "PUT",
+          body: queryArg.submitEmployeePromotion,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      submitSalaryIncrement: build.mutation<
+        SubmitSalaryIncrementApiResponse,
+        SubmitSalaryIncrementApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/SubmitSalaryIncrement`,
+          method: "PUT",
+          body: queryArg.submitSalaryIncrementCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      submittEmployeeReClassification: build.mutation<
+        SubmittEmployeeReClassificationApiResponse,
+        SubmittEmployeeReClassificationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/SubmittEmployeeReClassification`,
+          method: "PUT",
+          body: queryArg.submitEmployeeReClassification,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      getDemotionCountPerApprovalStatus: build.query<
+        GetDemotionCountPerApprovalStatusApiResponse,
+        GetDemotionCountPerApprovalStatusApiArg
+      >({
+        query: () => ({ url: `/api/EmployeeTransaction/TotalDemotion` }),
+        providesTags: ["EmployeeTransaction"],
+      }),
+      updateEmployeeDemotion: build.mutation<
+        UpdateEmployeeDemotionApiResponse,
+        UpdateEmployeeDemotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/UpdateEmployeeDemotion`,
+          method: "POST",
+          body: queryArg.updateEmployeeDemotionCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      updateEmployeePromotion: build.mutation<
+        UpdateEmployeePromotionApiResponse,
+        UpdateEmployeePromotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/UpdateEmployeePromotionCommand`,
+          method: "POST",
+          body: queryArg.updateEmployeePromotionCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      updateEmployeeReClassification: build.mutation<
+        UpdateEmployeeReClassificationApiResponse,
+        UpdateEmployeeReClassificationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/UpdateEmployeeReClassification`,
+          method: "POST",
+          body: queryArg.updateEmployeeReClassificationCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      updateSalaryIncrement: build.mutation<
+        UpdateSalaryIncrementApiResponse,
+        UpdateSalaryIncrementApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransaction/UpdateSalaryIncrement`,
+          method: "POST",
+          body: queryArg.updateSalaryIncrementCommand,
+        }),
+        invalidatesTags: ["EmployeeTransaction"],
+      }),
+      createTransfer: build.mutation<
+        CreateTransferApiResponse,
+        CreateTransferApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/AddEmployeeTransfer`,
+          method: "POST",
+          body: queryArg.createTransferCommand,
+        }),
+        invalidatesTags: ["EmployeeTransfers"],
+      }),
+      approveTransfer: build.mutation<
+        ApproveTransferApiResponse,
+        ApproveTransferApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/ApproveEmployeeTransfer`,
+          method: "POST",
+          body: queryArg.approveTransferCommand,
+        }),
+        invalidatesTags: ["EmployeeTransfers"],
+      }),
+      getAllTransfersList: build.query<
+        GetAllTransfersListApiResponse,
+        GetAllTransfersListApiArg
+      >({
+        query: () => ({ url: `/api/EmployeeTransfers/GetAllTransfersList` }),
+        providesTags: ["EmployeeTransfers"],
+      }),
+      getEmployeeWithDetails: build.query<
+        GetEmployeeWithDetailsApiResponse,
+        GetEmployeeWithDetailsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/GetEmployeeWithDetails`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["EmployeeTransfers"],
+      }),
+      getTransferCountPerStatus: build.query<
+        GetTransferCountPerStatusApiResponse,
+        GetTransferCountPerStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/GetTransferCountPerStatus`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["EmployeeTransfers"],
+      }),
+      getTransferListForPagination: build.query<
+        GetTransferListForPaginationApiResponse,
+        GetTransferListForPaginationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/GetTransferListForPagination`,
+          params: {
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+            employeeId: queryArg.employeeId,
+          },
+        }),
+        providesTags: ["EmployeeTransfers"],
+      }),
+      rejectTransfer: build.mutation<
+        RejectTransferApiResponse,
+        RejectTransferApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/RejectEmployeeTransfer`,
+          method: "POST",
+          body: queryArg.rejectTransferCommand,
+        }),
+        invalidatesTags: ["EmployeeTransfers"],
+      }),
+      submitTransfer: build.mutation<
+        SubmitTransferApiResponse,
+        SubmitTransferApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/SubmitEmployeeTransfer`,
+          method: "POST",
+          body: queryArg.submitTransferCommand,
+        }),
+        invalidatesTags: ["EmployeeTransfers"],
+      }),
+      updateTransfer: build.mutation<
+        UpdateTransferApiResponse,
+        UpdateTransferApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeTransfers/UpdateEmployeeTransfer`,
+          method: "PUT",
+          body: queryArg.updateTransferCommand,
+        }),
+        invalidatesTags: ["EmployeeTransfers"],
+      }),
+      approveEmployeeWarning: build.mutation<
+        ApproveEmployeeWarningApiResponse,
+        ApproveEmployeeWarningApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeWarning/approve`,
+          method: "PATCH",
+          body: queryArg.approveEmployeeWarningCommand,
+        }),
+        invalidatesTags: ["EmployeeWarning"],
+      }),
+      getEmployeeWarningCountPerStatus: build.query<
+        GetEmployeeWarningCountPerStatusApiResponse,
+        GetEmployeeWarningCountPerStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeWarning/count`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["EmployeeWarning"],
+      }),
+      createEmployeeWarning: build.mutation<
+        CreateEmployeeWarningApiResponse,
+        CreateEmployeeWarningApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeWarning/Create`,
+          method: "POST",
+          body: queryArg.createEmployeeWarningCommand,
+        }),
+        invalidatesTags: ["EmployeeWarning"],
+      }),
+      getPaginatedEmployeeWarnings: build.query<
+        GetPaginatedEmployeeWarningsApiResponse,
+        GetPaginatedEmployeeWarningsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeWarning/GetPaginatedEmployeeWarnings`,
+          params: {
+            id: queryArg.id,
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["EmployeeWarning"],
+      }),
+      rejectEmployeeWarning: build.mutation<
+        RejectEmployeeWarningApiResponse,
+        RejectEmployeeWarningApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeWarning/Reject`,
+          method: "PATCH",
+          body: queryArg.rejectEmployeeWarningCommand,
+        }),
+        invalidatesTags: ["EmployeeWarning"],
+      }),
+      submitEmployeeWarning: build.mutation<
+        SubmitEmployeeWarningApiResponse,
+        SubmitEmployeeWarningApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeWarning/submit`,
+          method: "PATCH",
+          body: queryArg.submitEmployeeWarningCommand,
+        }),
+        invalidatesTags: ["EmployeeWarning"],
+      }),
+      updateEmployeeWarning: build.mutation<
+        UpdateEmployeeWarningApiResponse,
+        UpdateEmployeeWarningApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/EmployeeWarning/Update`,
+          method: "PUT",
+          body: queryArg.updateEmployeeWarningCommand,
+        }),
+        invalidatesTags: ["EmployeeWarning"],
+      }),
       approveFieldOfStudy: build.mutation<
         ApproveFieldOfStudyApiResponse,
         ApproveFieldOfStudyApiArg
@@ -2097,10 +2765,6 @@ const injectedRtkApi = api
           body: queryArg.updateFieldOfStudyCommand,
         }),
         invalidatesTags: ["FieldOfStudy"],
-      }),
-      getApiHealth: build.query<GetApiHealthApiResponse, GetApiHealthApiArg>({
-        query: () => ({ url: `/api/Health` }),
-        providesTags: ["Health"],
       }),
       approveInstitutionName: build.mutation<
         ApproveInstitutionNameApiResponse,
@@ -2347,6 +3011,16 @@ const injectedRtkApi = api
         }),
         providesTags: ["Job"],
       }),
+      getJobRoleforPromotion: build.query<
+        GetJobRoleforPromotionApiResponse,
+        GetJobRoleforPromotionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Job/GetJobRoleforPromotion`,
+          params: { rolename: queryArg.rolename },
+        }),
+        providesTags: ["Job"],
+      }),
       getJobCountPerStatus: build.query<
         GetJobCountPerStatusApiResponse,
         GetJobCountPerStatusApiArg
@@ -2573,6 +3247,16 @@ const injectedRtkApi = api
         query: () => ({ url: `/api/JobGrade/counts` }),
         providesTags: ["JobGrade"],
       }),
+      getJobGradeOfJobRole: build.query<
+        GetJobGradeOfJobRoleApiResponse,
+        GetJobGradeOfJobRoleApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/JobGrade/GetJobGradeOfJobRole`,
+          params: { roleid: queryArg.roleid },
+        }),
+        providesTags: ["JobGrade"],
+      }),
       getJobGradesList: build.query<
         GetJobGradesListApiResponse,
         GetJobGradesListApiArg
@@ -2583,6 +3267,21 @@ const injectedRtkApi = api
             status: queryArg.status,
             pageNumber: queryArg.pageNumber,
             pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["JobGrade"],
+      }),
+      getSalaryOfEmployeeByRole: build.query<
+        GetSalaryOfEmployeeByRoleApiResponse,
+        GetSalaryOfEmployeeByRoleApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/JobGrade/GetSalaryOfEmployeeByRole`,
+          params: {
+            gradeId: queryArg.gradeId,
+            salarytype: queryArg.salarytype,
+            step: queryArg.step,
+            stepId: queryArg.stepId,
           },
         }),
         providesTags: ["JobGrade"],
@@ -2868,6 +3567,103 @@ const injectedRtkApi = api
           providesTags: ["Lookup"],
         }
       ),
+      approveReemployment: build.mutation<
+        ApproveReemploymentApiResponse,
+        ApproveReemploymentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/ApproveReemployment`,
+          method: "POST",
+          body: queryArg.approveReemploymentCommand,
+        }),
+        invalidatesTags: ["Reemployment"],
+      }),
+      createReemployment: build.mutation<
+        CreateReemploymentApiResponse,
+        CreateReemploymentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/CreateReemployment`,
+          method: "POST",
+          body: queryArg.createReemploymentCommand,
+        }),
+        invalidatesTags: ["Reemployment"],
+      }),
+      getAllReemploymentsList: build.query<
+        GetAllReemploymentsListApiResponse,
+        GetAllReemploymentsListApiArg
+      >({
+        query: () => ({ url: `/api/Reemployment/GetAllReemploymentsList` }),
+        providesTags: ["Reemployment"],
+      }),
+      getReemploymentById: build.query<
+        GetReemploymentByIdApiResponse,
+        GetReemploymentByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/GetReemploymentById`,
+          params: { reemploymentId: queryArg.reemploymentId },
+        }),
+        providesTags: ["Reemployment"],
+      }),
+      getReemploymentCountPerStatus: build.query<
+        GetReemploymentCountPerStatusApiResponse,
+        GetReemploymentCountPerStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/GetReemploymentCountPerStatus`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["Reemployment"],
+      }),
+      getReemploymentListForPagination: build.query<
+        GetReemploymentListForPaginationApiResponse,
+        GetReemploymentListForPaginationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/GetReemploymentListForPagination`,
+          params: {
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+            employeeId: queryArg.employeeId,
+          },
+        }),
+        providesTags: ["Reemployment"],
+      }),
+      rejectReemployment: build.mutation<
+        RejectReemploymentApiResponse,
+        RejectReemploymentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/RejectReemployment`,
+          method: "POST",
+          body: queryArg.rejectReemploymentCommand,
+        }),
+        invalidatesTags: ["Reemployment"],
+      }),
+      submitReemployment: build.mutation<
+        SubmitReemploymentApiResponse,
+        SubmitReemploymentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/SubmitReemployment`,
+          method: "POST",
+          body: queryArg.submitReemploymentCommand,
+        }),
+        invalidatesTags: ["Reemployment"],
+      }),
+      updateReemployment: build.mutation<
+        UpdateReemploymentApiResponse,
+        UpdateReemploymentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Reemployment/UpdateReemployment`,
+          method: "POST",
+          body: queryArg.updateReemploymentCommand,
+        }),
+        invalidatesTags: ["Reemployment"],
+      }),
       approveRegion: build.mutation<
         ApproveRegionApiResponse,
         ApproveRegionApiArg
@@ -2951,6 +3747,96 @@ const injectedRtkApi = api
           invalidatesTags: ["Region"],
         }
       ),
+      approveResignation: build.mutation<
+        ApproveResignationApiResponse,
+        ApproveResignationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/Approve`,
+          method: "PATCH",
+          body: queryArg.approveResignationCommand,
+        }),
+        invalidatesTags: ["Resignation"],
+      }),
+      getResignationCountPerStatus: build.query<
+        GetResignationCountPerStatusApiResponse,
+        GetResignationCountPerStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/Count`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["Resignation"],
+      }),
+      createResignation: build.mutation<
+        CreateResignationApiResponse,
+        CreateResignationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/Create`,
+          method: "POST",
+          body: queryArg.createResignationCommand,
+        }),
+        invalidatesTags: ["Resignation"],
+      }),
+      getActiveResignation: build.query<
+        GetActiveResignationApiResponse,
+        GetActiveResignationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/GetAllActive`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Resignation"],
+      }),
+      getPaginatedResignations: build.query<
+        GetPaginatedResignationsApiResponse,
+        GetPaginatedResignationsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/GetPaginatedResignations`,
+          params: {
+            employeeId: queryArg.employeeId,
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["Resignation"],
+      }),
+      rejectResignation: build.mutation<
+        RejectResignationApiResponse,
+        RejectResignationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/Reject`,
+          method: "PATCH",
+          body: queryArg.rejectResignationCommand,
+        }),
+        invalidatesTags: ["Resignation"],
+      }),
+      submitResignation: build.mutation<
+        SubmitResignationApiResponse,
+        SubmitResignationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/Submit`,
+          method: "PATCH",
+          body: queryArg.submitResignationCommand,
+        }),
+        invalidatesTags: ["Resignation"],
+      }),
+      updateResignation: build.mutation<
+        UpdateResignationApiResponse,
+        UpdateResignationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Resignation/Update`,
+          method: "PUT",
+          body: queryArg.updateResignationCommand,
+        }),
+        invalidatesTags: ["Resignation"],
+      }),
       approveSubCity: build.mutation<
         ApproveSubCityApiResponse,
         ApproveSubCityApiArg
@@ -3039,6 +3925,96 @@ const injectedRtkApi = api
           body: queryArg.updateSubCityCommand,
         }),
         invalidatesTags: ["SubCity"],
+      }),
+      approveSuspension: build.mutation<
+        ApproveSuspensionApiResponse,
+        ApproveSuspensionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/Approve`,
+          method: "PATCH",
+          body: queryArg.approveSuspensionCommand,
+        }),
+        invalidatesTags: ["Suspension"],
+      }),
+      getSuspensionCountPerStatus: build.query<
+        GetSuspensionCountPerStatusApiResponse,
+        GetSuspensionCountPerStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/Count`,
+          params: { employeeId: queryArg.employeeId },
+        }),
+        providesTags: ["Suspension"],
+      }),
+      createSuspension: build.mutation<
+        CreateSuspensionApiResponse,
+        CreateSuspensionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/Create`,
+          method: "POST",
+          body: queryArg.createSuspensionCommand,
+        }),
+        invalidatesTags: ["Suspension"],
+      }),
+      getActiveSuspention: build.query<
+        GetActiveSuspentionApiResponse,
+        GetActiveSuspentionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/GetActive`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Suspension"],
+      }),
+      getPaginatedSuspensions: build.query<
+        GetPaginatedSuspensionsApiResponse,
+        GetPaginatedSuspensionsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/GetPaginatedSuspensions`,
+          params: {
+            employeeId: queryArg.employeeId,
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["Suspension"],
+      }),
+      rejectSuspension: build.mutation<
+        RejectSuspensionApiResponse,
+        RejectSuspensionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/Reject`,
+          method: "PATCH",
+          body: queryArg.rejectSuspensionCommand,
+        }),
+        invalidatesTags: ["Suspension"],
+      }),
+      submitSuspension: build.mutation<
+        SubmitSuspensionApiResponse,
+        SubmitSuspensionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/Submit`,
+          method: "PATCH",
+          body: queryArg.submitSuspensionCommand,
+        }),
+        invalidatesTags: ["Suspension"],
+      }),
+      updateSuspension: build.mutation<
+        UpdateSuspensionApiResponse,
+        UpdateSuspensionApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Suspension/Update`,
+          method: "PUT",
+          body: queryArg.updateSuspensionCommand,
+        }),
+        invalidatesTags: ["Suspension"],
       }),
       addUserPhoto: build.mutation<AddUserPhotoApiResponse, AddUserPhotoApiArg>(
         {
@@ -3201,6 +4177,11 @@ export type CreateActingApiResponse = /** status 200 Success */ number;
 export type CreateActingApiArg = {
   createActingCommand: CreateActingCommand;
 };
+export type GetAllActiveActingApiResponse =
+  /** status 200 Success */ ActingDtoRead;
+export type GetAllActiveActingApiArg = {
+  id?: number;
+};
 export type GetPaginatedActingsApiResponse =
   /** status 200 Success */ PaginatedActinglistRead;
 export type GetPaginatedActingsApiArg = {
@@ -3208,6 +4189,10 @@ export type GetPaginatedActingsApiArg = {
   status?: ApprovalStatus;
   pageNumber?: number;
   pageSize?: number;
+};
+export type CreateReassignmentApiResponse = /** status 200 Success */ number;
+export type CreateReassignmentApiArg = {
+  reAssignmentActingCommand: ReAssignmentActingCommand;
 };
 export type RejectActingApiResponse = /** status 200 Success */ number;
 export type RejectActingApiArg = {
@@ -3311,6 +4296,13 @@ export type RemoveUserRoleApiArg = {
   id?: string;
   role?: string;
 };
+export type GetAuditEmployeeDocumentFileByEmployeeIdApiResponse =
+  /** status 200 Success */ AuditEmployeeFileDocumentDto[];
+export type GetAuditEmployeeDocumentFileByEmployeeIdApiArg = {
+  employeeId: number;
+};
+export type GetAuditEmployeeFileDocumentLogsApiResponse = unknown;
+export type GetAuditEmployeeFileDocumentLogsApiArg = void;
 export type ApproveAwardApiResponse = /** status 200 Success */ number;
 export type ApproveAwardApiArg = {
   approveAwardCommand: ApproveAwardCommand;
@@ -3523,6 +4515,11 @@ export type ApproveBusinessUnitApiArg = {
 export type GetBusinessUnitCountPerApprovalStatusApiResponse =
   /** status 200 Success */ BusinessUnitCountsByStatus;
 export type GetBusinessUnitCountPerApprovalStatusApiArg = void;
+export type GetEmployeeCountPerApprovalStatusApiResponse =
+  /** status 200 Success */ EmployeeCountsByStatus;
+export type GetEmployeeCountPerApprovalStatusApiArg = {
+  businssUnitId?: number;
+};
 export type CreateBusinessUnitApiResponse = /** status 200 Success */ number;
 export type CreateBusinessUnitApiArg = {
   createBusinessUnitCommand: CreateBusinessUnitCommand;
@@ -3649,6 +4646,11 @@ export type CreateDelegationApiArg = {
 export type GetAllDelegationApiResponse =
   /** status 200 Success */ DelegationListsRead;
 export type GetAllDelegationApiArg = void;
+export type GetAllActiveDelegationApiResponse =
+  /** status 200 Success */ DelegationDtoRead;
+export type GetAllActiveDelegationApiArg = {
+  id?: number;
+};
 export type GetPaginatedDelegationsApiResponse =
   /** status 200 Success */ PaginatedDelegationlistRead;
 export type GetPaginatedDelegationsApiArg = {
@@ -3660,6 +4662,10 @@ export type GetPaginatedDelegationsApiArg = {
 export type RejectDelegationApiResponse = /** status 200 Success */ number;
 export type RejectDelegationApiArg = {
   rejectDelegationCommand: RejectDelegationCommand;
+};
+export type RemoveDelegationApiResponse = /** status 200 Success */ number;
+export type RemoveDelegationApiArg = {
+  removeDeligationCommand: RemoveDeligationCommand;
 };
 export type SubmitDelegationApiResponse = /** status 200 Success */ number;
 export type SubmitDelegationApiArg = {
@@ -3808,6 +4814,44 @@ export type UpdateEmployeeGurantersApiResponse =
 export type UpdateEmployeeGurantersApiArg = {
   updateEmployeeGurantersCommand: UpdateEmployeeGurantersCommand;
 };
+export type DownloadEmployeeFileDocumentApiResponse =
+  /** status 200 Success */ void;
+export type DownloadEmployeeFileDocumentApiArg = {
+  id: string;
+};
+export type GetByIdApiResponse =
+  /** status 200 Success */ EmployeeFileDocumentDto;
+export type GetByIdApiArg = {
+  id: string;
+};
+export type GetEmployeeFileDocumentByEmployeeIdApiResponse =
+  /** status 200 Success */ EmployeeFileDocumentDto[];
+export type GetEmployeeFileDocumentByEmployeeIdApiArg = {
+  employeeId: number;
+  resignationId?: number;
+  suspensionId?: number;
+};
+export type UpdateEmployeeFileDocumentApiResponse =
+  /** status 200 Success */ string;
+export type UpdateEmployeeFileDocumentApiArg = {
+  body: {
+    id?: string;
+    file?: Blob;
+    documentType?: string;
+    remark?: string;
+  };
+};
+export type UploadEmployeeFileDocumentApiResponse = unknown;
+export type UploadEmployeeFileDocumentApiArg = {
+  body: {
+    employeeId?: number;
+    suspensionId?: number;
+    resignationId?: number;
+    documentType?: DocumentType;
+    file?: Blob;
+    remark?: string;
+  };
+};
 export type GetEmployeeChangeLogApiResponse =
   /** status 200 Success */ EmployeeChangeLogDto[];
 export type GetEmployeeChangeLogApiArg = {
@@ -3874,11 +4918,6 @@ export type GetAllEmployeetListsApiArg = {
 export type ApproveEmployeeApiResponse = unknown;
 export type ApproveEmployeeApiArg = {
   changeWorkflowStatusEntityDto: ChangeWorkflowStatusEntityDto;
-};
-export type GetEmployeeCountPerApprovalStatusApiResponse =
-  /** status 200 Success */ EmployeeCountsByStatus;
-export type GetEmployeeCountPerApprovalStatusApiArg = {
-  businssUnitId?: number;
 };
 export type CreateEmployeeEmergencyContactApiResponse =
   /** status 200 Success */ number;
@@ -4001,6 +5040,254 @@ export type UpdateEmployeeEmergencyContactCommandApiResponse =
 export type UpdateEmployeeEmergencyContactCommandApiArg = {
   updateEmployeeEmergencyContactCommand: UpdateEmployeeEmergencyContactCommand;
 };
+export type AddEmployeeDemotionApiResponse = /** status 200 Success */ number;
+export type AddEmployeeDemotionApiArg = {
+  addEmployeeDemotionCommand: AddEmployeeDemotionCommand;
+};
+export type AddEmployeePromotionApiResponse = /** status 200 Success */ number;
+export type AddEmployeePromotionApiArg = {
+  addEmployeePromotionCommand: AddEmployeePromotionCommand;
+};
+export type AddEmployeeReClassificationApiResponse =
+  /** status 200 Success */ number;
+export type AddEmployeeReClassificationApiArg = {
+  addEmployeeReClassificationCommand: AddEmployeeReClassificationCommand;
+};
+export type AddEmployeeSalaryIncrementApiResponse =
+  /** status 200 Success */ number;
+export type AddEmployeeSalaryIncrementApiArg = {
+  addSalaryIncrementCommand: AddSalaryIncrementCommand;
+};
+export type GetAllDemotionsApiResponse =
+  /** status 200 Success */ EmployeeDemotionSearchResult;
+export type GetAllDemotionsApiArg = {
+  status?: EmployeeTransactionStatus;
+  pageNumber?: number;
+  pageSize?: number;
+  employeeId?: number;
+};
+export type GetAllPromotionsApiResponse =
+  /** status 200 Success */ EmployeePromotionSearchResult;
+export type GetAllPromotionsApiArg = {
+  status?: EmployeeTransactionStatus;
+  pageNumber?: number;
+  pageSize?: number;
+  employeeId?: number;
+};
+export type GetAllReClassificationsApiResponse =
+  /** status 200 Success */ EmployeeReClassificationSearchResult;
+export type GetAllReClassificationsApiArg = {
+  status?: EmployeeTransactionStatus;
+  pageNumber?: number;
+  pageSize?: number;
+  employeeId?: number;
+};
+export type ApproveEmployeeDemotionApiResponse =
+  /** status 200 Success */ number;
+export type ApproveEmployeeDemotionApiArg = {
+  approveEmployeeDemotion: ApproveEmployeeDemotion;
+};
+export type ApproveEmployeePromotionApiResponse =
+  /** status 200 Success */ number;
+export type ApproveEmployeePromotionApiArg = {
+  approveEmployeePromotion: ApproveEmployeePromotion;
+};
+export type ApproveEmployeeReClassificationApiResponse =
+  /** status 200 Success */ number;
+export type ApproveEmployeeReClassificationApiArg = {
+  approveEmployeeReClassification: ApproveEmployeeReClassification;
+};
+export type ApproveSalaryIncrementApiResponse =
+  /** status 200 Success */ number;
+export type ApproveSalaryIncrementApiArg = {
+  approveSalaryIncrementCommand: ApproveSalaryIncrementCommand;
+};
+export type GetPromotionCountPerApprovalStatusApiResponse =
+  /** status 200 Success */ PromotionCountsByStatus;
+export type GetPromotionCountPerApprovalStatusApiArg = void;
+export type GetAllSalaryIncrementListApiResponse =
+  /** status 200 Success */ EmployeeSalaryIncrementSearchResult;
+export type GetAllSalaryIncrementListApiArg = {
+  status?: EmployeeTransactionStatus;
+  pageNumber?: number;
+  pageSize?: number;
+  employeeId?: number;
+};
+export type GetEmployeeDemotionByIdApiResponse =
+  /** status 200 Success */ EmployeeDemotionRead;
+export type GetEmployeeDemotionByIdApiArg = {
+  id?: number;
+};
+export type GetEmployeeDemotionListApiResponse =
+  /** status 200 Success */ EmployeeDemotionDto[];
+export type GetEmployeeDemotionListApiArg = {
+  employeeId?: number;
+};
+export type GetEmployeePromotionByIdApiResponse =
+  /** status 200 Success */ EmployeePromotionRead;
+export type GetEmployeePromotionByIdApiArg = {
+  id?: number;
+};
+export type GetEmployeePromotionListApiResponse =
+  /** status 200 Success */ EmployeePromotionDto[];
+export type GetEmployeePromotionListApiArg = {
+  employeeId?: number;
+};
+export type GetEmployeeReClassificationByIdApiResponse =
+  /** status 200 Success */ EmployeeReClassificationRead;
+export type GetEmployeeReClassificationByIdApiArg = {
+  id?: number;
+};
+export type GetEmployeeReClassificationListApiResponse =
+  /** status 200 Success */ EmployeeReClassificationDto[];
+export type GetEmployeeReClassificationListApiArg = {
+  employeeId?: number;
+};
+export type GetSalaryIncrementByIdApiResponse =
+  /** status 200 Success */ EmployeeSalaryIncrement;
+export type GetSalaryIncrementByIdApiArg = {
+  id?: number;
+};
+export type GetSalaryIncrementListApiResponse =
+  /** status 200 Success */ EmployeeSalaryIncrementDto[];
+export type GetSalaryIncrementListApiArg = {
+  employeeId?: number;
+};
+export type RejectEmployeeDemotionApiResponse =
+  /** status 200 Success */ number;
+export type RejectEmployeeDemotionApiArg = {
+  rejectEmployeeDemotion: RejectEmployeeDemotion;
+};
+export type RejectEmployeePromotionApiResponse =
+  /** status 200 Success */ number;
+export type RejectEmployeePromotionApiArg = {
+  rejectEmployeePromotion: RejectEmployeePromotion;
+};
+export type RejectEmployeeReClassificationApiResponse =
+  /** status 200 Success */ number;
+export type RejectEmployeeReClassificationApiArg = {
+  rejectEmployeeReClassification: RejectEmployeeReClassification;
+};
+export type RejectSalaryIncrementApiResponse = /** status 200 Success */ number;
+export type RejectSalaryIncrementApiArg = {
+  rejectSalaryIncrementCommand: RejectSalaryIncrementCommand;
+};
+export type SubmitEmployeeDemotionApiResponse =
+  /** status 200 Success */ number;
+export type SubmitEmployeeDemotionApiArg = {
+  submitEmployeeDemotion: SubmitEmployeeDemotion;
+};
+export type SubmittEmployeePromotionApiResponse =
+  /** status 200 Success */ number;
+export type SubmittEmployeePromotionApiArg = {
+  submitEmployeePromotion: SubmitEmployeePromotion;
+};
+export type SubmitSalaryIncrementApiResponse = /** status 200 Success */ number;
+export type SubmitSalaryIncrementApiArg = {
+  submitSalaryIncrementCommand: SubmitSalaryIncrementCommand;
+};
+export type SubmittEmployeeReClassificationApiResponse =
+  /** status 200 Success */ number;
+export type SubmittEmployeeReClassificationApiArg = {
+  submitEmployeeReClassification: SubmitEmployeeReClassification;
+};
+export type GetDemotionCountPerApprovalStatusApiResponse =
+  /** status 200 Success */ DemotionCountsByStatus;
+export type GetDemotionCountPerApprovalStatusApiArg = void;
+export type UpdateEmployeeDemotionApiResponse =
+  /** status 200 Success */ number;
+export type UpdateEmployeeDemotionApiArg = {
+  updateEmployeeDemotionCommand: UpdateEmployeeDemotionCommand;
+};
+export type UpdateEmployeePromotionApiResponse =
+  /** status 200 Success */ number;
+export type UpdateEmployeePromotionApiArg = {
+  updateEmployeePromotionCommand: UpdateEmployeePromotionCommand;
+};
+export type UpdateEmployeeReClassificationApiResponse =
+  /** status 200 Success */ number;
+export type UpdateEmployeeReClassificationApiArg = {
+  updateEmployeeReClassificationCommand: UpdateEmployeeReClassificationCommand;
+};
+export type UpdateSalaryIncrementApiResponse = /** status 200 Success */ number;
+export type UpdateSalaryIncrementApiArg = {
+  updateSalaryIncrementCommand: UpdateSalaryIncrementCommand;
+};
+export type CreateTransferApiResponse = unknown;
+export type CreateTransferApiArg = {
+  createTransferCommand: CreateTransferCommand;
+};
+export type ApproveTransferApiResponse = unknown;
+export type ApproveTransferApiArg = {
+  approveTransferCommand: ApproveTransferCommand;
+};
+export type GetAllTransfersListApiResponse =
+  /** status 200 Success */ EmployeeTransferDto[];
+export type GetAllTransfersListApiArg = void;
+export type GetEmployeeWithDetailsApiResponse =
+  /** status 200 Success */ EmployeeBasicInfoDto;
+export type GetEmployeeWithDetailsApiArg = {
+  id?: number;
+};
+export type GetTransferCountPerStatusApiResponse =
+  /** status 200 Success */ TransferCountsByStatus;
+export type GetTransferCountPerStatusApiArg = {
+  employeeId?: number;
+};
+export type GetTransferListForPaginationApiResponse =
+  /** status 200 Success */ TransferSearchResult;
+export type GetTransferListForPaginationApiArg = {
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+  employeeId?: number;
+};
+export type RejectTransferApiResponse = unknown;
+export type RejectTransferApiArg = {
+  rejectTransferCommand: RejectTransferCommand;
+};
+export type SubmitTransferApiResponse = unknown;
+export type SubmitTransferApiArg = {
+  submitTransferCommand: SubmitTransferCommand;
+};
+export type UpdateTransferApiResponse = /** status 200 Success */ void;
+export type UpdateTransferApiArg = {
+  updateTransferCommand: UpdateTransferCommand;
+};
+export type ApproveEmployeeWarningApiResponse =
+  /** status 200 Success */ number;
+export type ApproveEmployeeWarningApiArg = {
+  approveEmployeeWarningCommand: ApproveEmployeeWarningCommand;
+};
+export type GetEmployeeWarningCountPerStatusApiResponse =
+  /** status 200 Success */ EmployeeWarningCountsByStatus;
+export type GetEmployeeWarningCountPerStatusApiArg = {
+  id?: number;
+};
+export type CreateEmployeeWarningApiResponse = /** status 200 Success */ number;
+export type CreateEmployeeWarningApiArg = {
+  createEmployeeWarningCommand: CreateEmployeeWarningCommand;
+};
+export type GetPaginatedEmployeeWarningsApiResponse =
+  /** status 200 Success */ PaginatedEmployeeWarninglistRead;
+export type GetPaginatedEmployeeWarningsApiArg = {
+  id?: number;
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+};
+export type RejectEmployeeWarningApiResponse = /** status 200 Success */ number;
+export type RejectEmployeeWarningApiArg = {
+  rejectEmployeeWarningCommand: RejectEmployeeWarningCommand;
+};
+export type SubmitEmployeeWarningApiResponse = /** status 200 Success */ number;
+export type SubmitEmployeeWarningApiArg = {
+  submitEmployeeWarningCommand: SubmitEmployeeWarningCommand;
+};
+export type UpdateEmployeeWarningApiResponse = /** status 200 Success */ number;
+export type UpdateEmployeeWarningApiArg = {
+  updateEmployeeWarningCommand: UpdateEmployeeWarningCommand;
+};
 export type ApproveFieldOfStudyApiResponse = /** status 200 Success */ number;
 export type ApproveFieldOfStudyApiArg = {
   approveFieldOfStudyCommand: ApproveFieldOfStudyCommand;
@@ -4037,8 +5324,6 @@ export type UpdateFieldOfStudyApiResponse = /** status 204 No Content */ void;
 export type UpdateFieldOfStudyApiArg = {
   updateFieldOfStudyCommand: UpdateFieldOfStudyCommand;
 };
-export type GetApiHealthApiResponse = unknown;
-export type GetApiHealthApiArg = void;
 export type ApproveInstitutionNameApiResponse =
   /** status 200 Success */ number;
 export type ApproveInstitutionNameApiArg = {
@@ -4148,6 +5433,11 @@ export type GetJobRoleByIdApiResponse = /** status 200 Success */ number;
 export type GetJobRoleByIdApiArg = {
   id?: number;
 };
+export type GetJobRoleforPromotionApiResponse =
+  /** status 200 Success */ JobRoleDtoRead[];
+export type GetJobRoleforPromotionApiArg = {
+  rolename?: string;
+};
 export type GetJobCountPerStatusApiResponse =
   /** status 200 Success */ JobCountsByStatus;
 export type GetJobCountPerStatusApiArg = void;
@@ -4240,12 +5530,24 @@ export type ApproveJobGradeApiArg = {
 export type GetJobGradesCountPerApprovalStatusApiResponse =
   /** status 200 Success */ JobGradesCountsByStatus;
 export type GetJobGradesCountPerApprovalStatusApiArg = void;
+export type GetJobGradeOfJobRoleApiResponse = /** status 200 Success */ JobRole;
+export type GetJobGradeOfJobRoleApiArg = {
+  roleid?: number;
+};
 export type GetJobGradesListApiResponse =
   /** status 200 Success */ JobGradesSearchResult;
 export type GetJobGradesListApiArg = {
   status?: ApprovalStatus;
   pageNumber?: number;
   pageSize?: number;
+};
+export type GetSalaryOfEmployeeByRoleApiResponse =
+  /** status 200 Success */ number;
+export type GetSalaryOfEmployeeByRoleApiArg = {
+  gradeId?: number;
+  salarytype?: number;
+  step?: number;
+  stepId?: number;
 };
 export type RejectJobGradeApiResponse = /** status 200 Success */ number;
 export type RejectJobGradeApiArg = {
@@ -4366,6 +5668,47 @@ export type SubmitLetterApiArg = {
 };
 export type GetAllLookupsApiResponse = /** status 200 Success */ LookupDtoRead;
 export type GetAllLookupsApiArg = void;
+export type ApproveReemploymentApiResponse = /** status 200 Success */ number;
+export type ApproveReemploymentApiArg = {
+  approveReemploymentCommand: ApproveReemploymentCommand;
+};
+export type CreateReemploymentApiResponse = /** status 200 Success */ number;
+export type CreateReemploymentApiArg = {
+  createReemploymentCommand: CreateReemploymentCommand;
+};
+export type GetAllReemploymentsListApiResponse =
+  /** status 200 Success */ ReemploymentDto[];
+export type GetAllReemploymentsListApiArg = void;
+export type GetReemploymentByIdApiResponse =
+  /** status 200 Success */ ReemploymentDto;
+export type GetReemploymentByIdApiArg = {
+  reemploymentId?: number;
+};
+export type GetReemploymentCountPerStatusApiResponse =
+  /** status 200 Success */ ReemploymentCountsByStatus;
+export type GetReemploymentCountPerStatusApiArg = {
+  employeeId?: number;
+};
+export type GetReemploymentListForPaginationApiResponse =
+  /** status 200 Success */ ReemploymentSearchResult;
+export type GetReemploymentListForPaginationApiArg = {
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+  employeeId?: number;
+};
+export type RejectReemploymentApiResponse = /** status 200 Success */ number;
+export type RejectReemploymentApiArg = {
+  rejectReemploymentCommand: RejectReemploymentCommand;
+};
+export type SubmitReemploymentApiResponse = /** status 200 Success */ number;
+export type SubmitReemploymentApiArg = {
+  submitReemploymentCommand: SubmitReemploymentCommand;
+};
+export type UpdateReemploymentApiResponse = /** status 200 Success */ number;
+export type UpdateReemploymentApiArg = {
+  updateReemploymentCommand: UpdateReemploymentCommand;
+};
 export type ApproveRegionApiResponse = /** status 200 Success */ number;
 export type ApproveRegionApiArg = {
   approveRegionCommand: ApproveRegionCommand;
@@ -4399,6 +5742,44 @@ export type SubmitRegionApiArg = {
 export type UpdateRegionApiResponse = /** status 200 Success */ number;
 export type UpdateRegionApiArg = {
   updateRegionCommand: UpdateRegionCommand;
+};
+export type ApproveResignationApiResponse = /** status 200 Success */ number;
+export type ApproveResignationApiArg = {
+  approveResignationCommand: ApproveResignationCommand;
+};
+export type GetResignationCountPerStatusApiResponse =
+  /** status 200 Success */ ResignationCountsByStatus;
+export type GetResignationCountPerStatusApiArg = {
+  employeeId?: number;
+};
+export type CreateResignationApiResponse = /** status 200 Success */ number;
+export type CreateResignationApiArg = {
+  createResignationCommand: CreateResignationCommand;
+};
+export type GetActiveResignationApiResponse =
+  /** status 200 Success */ ActingDtoRead;
+export type GetActiveResignationApiArg = {
+  id?: number;
+};
+export type GetPaginatedResignationsApiResponse =
+  /** status 200 Success */ PaginatedResignationListRead;
+export type GetPaginatedResignationsApiArg = {
+  employeeId?: number;
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+};
+export type RejectResignationApiResponse = /** status 200 Success */ number;
+export type RejectResignationApiArg = {
+  rejectResignationCommand: RejectResignationCommand;
+};
+export type SubmitResignationApiResponse = /** status 200 Success */ number;
+export type SubmitResignationApiArg = {
+  submitResignationCommand: SubmitResignationCommand;
+};
+export type UpdateResignationApiResponse = /** status 200 Success */ number;
+export type UpdateResignationApiArg = {
+  updateResignationCommand: UpdateResignationCommand;
 };
 export type ApproveSubCityApiResponse = /** status 200 Success */ number;
 export type ApproveSubCityApiArg = {
@@ -4434,6 +5815,44 @@ export type SubmitSubCityApiArg = {
 export type UpdateSubCityApiResponse = /** status 200 Success */ number;
 export type UpdateSubCityApiArg = {
   updateSubCityCommand: UpdateSubCityCommand;
+};
+export type ApproveSuspensionApiResponse = /** status 200 Success */ number;
+export type ApproveSuspensionApiArg = {
+  approveSuspensionCommand: ApproveSuspensionCommand;
+};
+export type GetSuspensionCountPerStatusApiResponse =
+  /** status 200 Success */ SuspensionCountsByStatus;
+export type GetSuspensionCountPerStatusApiArg = {
+  employeeId?: number;
+};
+export type CreateSuspensionApiResponse = /** status 200 Success */ number;
+export type CreateSuspensionApiArg = {
+  createSuspensionCommand: CreateSuspensionCommand;
+};
+export type GetActiveSuspentionApiResponse =
+  /** status 200 Success */ ActingDtoRead;
+export type GetActiveSuspentionApiArg = {
+  id?: number;
+};
+export type GetPaginatedSuspensionsApiResponse =
+  /** status 200 Success */ PaginatedSuspensionListRead;
+export type GetPaginatedSuspensionsApiArg = {
+  employeeId?: number;
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+};
+export type RejectSuspensionApiResponse = /** status 200 Success */ number;
+export type RejectSuspensionApiArg = {
+  rejectSuspensionCommand: RejectSuspensionCommand;
+};
+export type SubmitSuspensionApiResponse = /** status 200 Success */ number;
+export type SubmitSuspensionApiArg = {
+  submitSuspensionCommand: SubmitSuspensionCommand;
+};
+export type UpdateSuspensionApiResponse = /** status 200 Success */ number;
+export type UpdateSuspensionApiArg = {
+  updateSuspensionCommand: UpdateSuspensionCommand;
 };
 export type AddUserPhotoApiResponse =
   /** status 200 Success */ DocumentMetadataDto;
@@ -4536,14 +5955,19 @@ export type ActingCountsByStatus = {
   rejected?: number;
   draft?: number;
 };
+export type ActingType = 1 | 2 | 3;
 export type CreateActingCommand = {
   employeeId?: number;
   jobRoleId?: number;
+  previousJobRoleId?: number;
   businessUnitId?: number | null;
+  previousBusinessUnitId?: number | null;
   startDate?: string;
   endDate?: string | null;
+  actingType?: ActingType;
 };
 export type ApprovalStatus = 1 | 2 | 3 | 4;
+export type EmploymentType = 1 | 2 | 3;
 export type Gender = 0 | 1 | 2;
 export type MartialStatus = 1 | 2 | 3 | 4;
 export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
@@ -4726,11 +6150,41 @@ export type Job = {
   jobRole?: JobRole;
   remark?: string | null;
 };
-export type EmployeeStatusEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+export type EmployeeStatusEnum =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12;
 export type ProbationResult = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type EmployeeIdCardStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export type EmployeeIdCardReplaceReason = 1 | 2 | 3 | 4 | 5;
-export type DocumentType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type DocumentType =
+  | 0
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18;
 export type EmployeeDocument = {
   isDeleted?: boolean | null;
   deletedBy?: string | null;
@@ -4805,6 +6259,7 @@ export type Education = {
   fieldOfStudy?: FieldOfStudy;
   employeeId?: number | null;
   employee?: Employee;
+  cgpa?: number | null;
 };
 export type EducationRead = {
   id?: number;
@@ -4821,6 +6276,7 @@ export type EducationRead = {
   fieldOfStudy?: FieldOfStudy;
   employeeId?: number | null;
   employee?: Employee;
+  cgpa?: number | null;
 };
 export type LanguageEnum =
   | 1
@@ -4982,7 +6438,8 @@ export type EmployeeFamilyRead = {
   isActive?: ActivationEnum;
   comment?: string | null;
 };
-export type Employee = {
+export type SuspensionReason = 1 | 2 | 3 | 4 | 99;
+export type Suspension = {
   createdAt?: string | null;
   modifiedAt?: string | null;
   createdBy?: string | null;
@@ -4999,38 +6456,18 @@ export type Employee = {
   skipStateTransitionCheck?: boolean;
   id?: number;
   employeeId?: number;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  displayName?: string | null;
-  amharicFirstName?: string | null;
-  amharicMiddleName?: string | null;
-  amharicLastName?: string | null;
-  amharicDisplayName?: string | null;
-  businessUnitID?: number;
-  jobId?: number;
-  birthDate?: string;
-  employementDate?: string;
-  gender?: Gender;
-  martialStatus?: MartialStatus;
-  businessUnits?: BusinessUnit;
-  job?: Job;
-  isNew?: boolean;
-  employeeStatus?: EmployeeStatusEnum;
-  probationResult?: ProbationResult;
-  probationRemark?: string | null;
-  employeeIDCardStatus?: EmployeeIdCardStatus;
-  idReplaceReason?: EmployeeIdCardReplaceReason;
-  employeeDocuments?: EmployeeDocument[] | null;
-  employeeComments?: EmployeeComment[] | null;
-  educations?: Education[] | null;
-  languageSkills?: LanguageSkill[] | null;
-  employeeEmergencyContacts?: EmployeeEmergencyContact[] | null;
-  employeeFamilies?: EmployeeFamily[] | null;
-  employeeIdCardStatusRemark?: string | null;
+  employee?: Employee;
+  startDate?: string;
+  endDate?: string | null;
+  salary?: number;
+  reason?: SuspensionReason;
+  description?: string | null;
+  conditionsForReinstatement?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocument[] | null;
 };
 export type IDomainEvent = object;
-export type EmployeeRead = {
+export type SuspensionRead = {
   createdAt?: string | null;
   modifiedAt?: string | null;
   createdBy?: string | null;
@@ -5048,6 +6485,216 @@ export type EmployeeRead = {
   domainEvents?: IDomainEvent[] | null;
   id?: number;
   employeeId?: number;
+  employee?: Employee;
+  startDate?: string;
+  endDate?: string | null;
+  salary?: number;
+  reason?: SuspensionReason;
+  description?: string | null;
+  conditionsForReinstatement?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocument[] | null;
+};
+export type ResignationType = 1 | 2 | 3 | 4;
+export type Resignation = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  salary?: number;
+  workUnit?: string | null;
+  resignationDate?: string;
+  resignationType?: ResignationType;
+  reasonForResignation?: string | null;
+  finalSettlementDetails?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocument[] | null;
+};
+export type ResignationRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  domainEvents?: IDomainEvent[] | null;
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  salary?: number;
+  workUnit?: string | null;
+  resignationDate?: string;
+  resignationType?: ResignationType;
+  reasonForResignation?: string | null;
+  finalSettlementDetails?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocument[] | null;
+};
+export type EmployeeFileDocument = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: string;
+  employeeId?: number;
+  employee?: Employee;
+  suspensionId?: number | null;
+  suspension?: Suspension;
+  resignationId?: number | null;
+  resignation?: Resignation;
+  documentType?: DocumentType;
+  fileName?: string | null;
+  filePath?: string | null;
+  contentType?: string | null;
+  remark?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type EmployeeFileDocumentRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: string;
+  employeeId?: number;
+  employee?: Employee;
+  suspensionId?: number | null;
+  suspension?: SuspensionRead;
+  resignationId?: number | null;
+  resignation?: ResignationRead;
+  documentType?: DocumentType;
+  fileName?: string | null;
+  filePath?: string | null;
+  contentType?: string | null;
+  remark?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type Acting = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  actingType?: ActingType;
+  previousJobRoleId?: number | null;
+  previousJobRole?: JobRole;
+  previousBusinessUnitId?: number | null;
+  isActive?: boolean;
+  previousBusinessUnit?: BusinessUnit;
+  approvalStatus?: ApprovalStatus;
+};
+export type ActingRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  actingType?: ActingType;
+  previousJobRoleId?: number | null;
+  previousJobRole?: JobRole;
+  previousBusinessUnitId?: number | null;
+  isActive?: boolean;
+  previousBusinessUnit?: BusinessUnit;
+  approvalStatus?: ApprovalStatus;
+};
+export type Delegation = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  isActive?: boolean;
+};
+export type DelegationRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  domainEvents?: IDomainEvent[] | null;
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  startDate?: string;
+  endDate?: string | null;
+  isActive?: boolean;
+};
+export type Employee = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  id?: number;
+  previousEmployeeId?: number | null;
   firstName?: string | null;
   middleName?: string | null;
   lastName?: string | null;
@@ -5056,6 +6703,9 @@ export type EmployeeRead = {
   amharicMiddleName?: string | null;
   amharicLastName?: string | null;
   amharicDisplayName?: string | null;
+  tinNumber?: string | null;
+  pensionID?: string | null;
+  employmentType?: EmploymentType;
   businessUnitID?: number;
   jobId?: number;
   birthDate?: string;
@@ -5063,6 +6713,62 @@ export type EmployeeRead = {
   gender?: Gender;
   martialStatus?: MartialStatus;
   businessUnits?: BusinessUnit;
+  salaryOnGradeStepId?: number | null;
+  job?: Job;
+  isNew?: boolean;
+  employeeStatus?: EmployeeStatusEnum;
+  probationResult?: ProbationResult;
+  probationRemark?: string | null;
+  employeeIDCardStatus?: EmployeeIdCardStatus;
+  idReplaceReason?: EmployeeIdCardReplaceReason;
+  employeeDocuments?: EmployeeDocument[] | null;
+  employeeComments?: EmployeeComment[] | null;
+  educations?: Education[] | null;
+  languageSkills?: LanguageSkill[] | null;
+  employeeEmergencyContacts?: EmployeeEmergencyContact[] | null;
+  employeeFamilies?: EmployeeFamily[] | null;
+  employeeFileDocuments?: EmployeeFileDocument[] | null;
+  employeeIdCardStatusRemark?: string | null;
+  actings?: Acting[] | null;
+  delegations?: Delegation[] | null;
+};
+export type EmployeeRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  domainEvents?: IDomainEvent[] | null;
+  id?: number;
+  previousEmployeeId?: number | null;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  amharicFirstName?: string | null;
+  amharicMiddleName?: string | null;
+  amharicLastName?: string | null;
+  amharicDisplayName?: string | null;
+  tinNumber?: string | null;
+  pensionID?: string | null;
+  employmentType?: EmploymentType;
+  businessUnitID?: number;
+  jobId?: number;
+  birthDate?: string;
+  employementDate?: string;
+  gender?: Gender;
+  martialStatus?: MartialStatus;
+  businessUnits?: BusinessUnit;
+  salaryOnGradeStepId?: number | null;
   job?: Job;
   isNew?: boolean;
   employeeStatus?: EmployeeStatusEnum;
@@ -5076,7 +6782,10 @@ export type EmployeeRead = {
   languageSkills?: LanguageSkillRead[] | null;
   employeeEmergencyContacts?: EmployeeEmergencyContactRead[] | null;
   employeeFamilies?: EmployeeFamilyRead[] | null;
+  employeeFileDocuments?: EmployeeFileDocumentRead[] | null;
   employeeIdCardStatusRemark?: string | null;
+  actings?: ActingRead[] | null;
+  delegations?: DelegationRead[] | null;
 };
 export type ActingDto = {
   id?: number;
@@ -5089,6 +6798,12 @@ export type ActingDto = {
   startDate?: string;
   endDate?: string | null;
   approvalStatus?: ApprovalStatus;
+  actingType?: ActingType;
+  previousJobRoleId?: number | null;
+  previousJobRole?: JobRole;
+  previousBusinessUnitId?: number | null;
+  previousBusinessUnit?: BusinessUnit;
+  isActive?: boolean;
 };
 export type ActingDtoRead = {
   id?: number;
@@ -5101,6 +6816,12 @@ export type ActingDtoRead = {
   startDate?: string;
   endDate?: string | null;
   approvalStatus?: ApprovalStatus;
+  actingType?: ActingType;
+  previousJobRoleId?: number | null;
+  previousJobRole?: JobRole;
+  previousBusinessUnitId?: number | null;
+  previousBusinessUnit?: BusinessUnit;
+  isActive?: boolean;
 };
 export type PaginatedActinglist = {
   items?: ActingDto[] | null;
@@ -5109,6 +6830,16 @@ export type PaginatedActinglist = {
 export type PaginatedActinglistRead = {
   items?: ActingDtoRead[] | null;
   totalCount?: number;
+};
+export type ReAssignmentActingCommand = {
+  employeeId?: number;
+  jobRoleId?: number;
+  previousJobRoleId?: number;
+  businessUnitId?: number | null;
+  previousBusinessUnitId?: number | null;
+  startDate?: string;
+  endDate?: string | null;
+  actingType?: ActingType;
 };
 export type RejectActingCommand = {
   id?: number;
@@ -5120,9 +6851,12 @@ export type UpdateActingCommand = {
   id?: number;
   employeeId?: number;
   jobRoleId?: number;
+  previousJobRoleId?: number;
   businessUnitId?: number | null;
+  previousBusinessUnitId?: number | null;
   startDate?: string;
   endDate?: string | null;
+  actingType?: ActingType;
 };
 export type AddressTypeEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type CountryEnum = 1;
@@ -5183,7 +6917,7 @@ export type CreateRoleDto = {
   role?: HrRole;
   permissionNames?: string[] | null;
 };
-export type ClaimCategory = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export type ClaimCategory = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type PermissionClaim = {
   id?: string;
   claimValue?: string | null;
@@ -5449,6 +7183,19 @@ export type UserDetail = {
   roles?: Role[] | null;
   claims?: Claim[] | null;
   isDeactivated?: boolean;
+};
+export type AuditEmployeeFileDocumentDto = {
+  entityName?: string | null;
+  actionType?: string | null;
+  performedBy?: string | null;
+  performedByUserId?: string | null;
+  affectedEmployeeName?: string | null;
+  oldFileName?: string | null;
+  newFileName?: string | null;
+  affectedEmployeeId?: number | null;
+  details?: string | null;
+  remark?: string | null;
+  performedAt?: string;
 };
 export type ApproveAwardCommand = {
   id?: number;
@@ -5733,6 +7480,12 @@ export type BusinessUnitCountsByStatus = {
   rejected?: number;
   drafts?: number;
 };
+export type EmployeeCountsByStatus = {
+  approved?: number;
+  approvalRequests?: number;
+  rejected?: number;
+  drafts?: number;
+};
 export type CreateBusinessUnitCommand = {
   name?: string | null;
   parentId?: number;
@@ -5845,6 +7598,7 @@ export type DelegationDto = {
   startDate?: string;
   endDate?: string | null;
   approvalStatus?: ApprovalStatus;
+  isActive?: boolean;
 };
 export type DelegationDtoRead = {
   id?: number;
@@ -5857,6 +7611,7 @@ export type DelegationDtoRead = {
   startDate?: string;
   endDate?: string | null;
   approvalStatus?: ApprovalStatus;
+  isActive?: boolean;
 };
 export type DelegationLists = {
   approved?: DelegationDto[] | null;
@@ -5879,6 +7634,9 @@ export type PaginatedDelegationlistRead = {
   totalCount?: number;
 };
 export type RejectDelegationCommand = {
+  id?: number;
+};
+export type RemoveDeligationCommand = {
   id?: number;
 };
 export type SubmitDelegationCommand = {
@@ -5904,6 +7662,7 @@ export type CreateEducationCommand = {
   awardId?: number;
   fieldOfStudyId?: number;
   employeeId?: number;
+  cgpa?: number | null;
 };
 export type EducationDto = {
   id?: number;
@@ -5919,6 +7678,7 @@ export type EducationDto = {
   fieldOfStudyId?: number;
   fieldOfStudyName?: string | null;
   employeeId?: number;
+  cgpa?: number | null;
 };
 export type UpdateEducationCommand = {
   id?: number;
@@ -5930,6 +7690,7 @@ export type UpdateEducationCommand = {
   awardId?: number;
   fieldOfStudyId?: number;
   employeeId?: number;
+  cgpa?: number | null;
 };
 export type ApproveEducationLevelCommand = {
   id?: number;
@@ -5980,7 +7741,7 @@ export type ActivateEmployeeGurantersCommand = {
   employeeId?: number;
   comment?: string | null;
 };
-export type ExperienceType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type ExperienceType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type AddEmployeeExperienceCommand = {
   id?: number;
   firmName?: string | null;
@@ -6139,6 +7900,26 @@ export type UpdateEmployeeGurantersCommand = {
   toDate?: string | null;
   comment?: string | null;
 };
+export type EmployeeFileDocumentDto = {
+  id?: string;
+  employeeId?: number;
+  suspensionId?: number | null;
+  resignationId?: number | null;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  documentType?: DocumentType;
+  fileName?: string | null;
+  contentType?: string | null;
+  fileContent?: string | null;
+  createdAt?: string | null;
+  filePath?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  remark?: string | null;
+};
 export type EmployeeChangeLogEntityType =
   | 1
   | 2
@@ -6178,7 +7959,6 @@ export type EmployeeDetailsDto = {
   periodStart?: string;
   periodEnd?: string;
   id?: number;
-  employeeId?: number;
   firstName?: string | null;
   middleName?: string | null;
   lastName?: string | null;
@@ -6199,6 +7979,7 @@ export type EmployeeDetailsDto = {
   martialStatus?: MartialStatus;
   isCurrent?: boolean;
   approvalStatus?: ApprovalStatus;
+  salaryOnGradeStepId?: number | null;
   employeeDocuments?: EmployeeDocument[] | null;
   businessUnits?: BusinessUnit;
   job?: Job;
@@ -6216,6 +7997,9 @@ export type EmployeeDetailsDto = {
   hasEmployeeFamilyInfo?: boolean;
   hasEmergencyContactInfo?: boolean;
   hasLanguageSkillInfo?: boolean;
+  tinNumber?: string | null;
+  pensionID?: string | null;
+  employmentType?: EmploymentType;
 };
 export type DocumentMetadataDto = {
   id?: string | null;
@@ -6232,7 +8016,6 @@ export type EmployeeDto = {
   periodStart?: string;
   periodEnd?: string;
   id?: number;
-  employeeId?: number;
   firstName?: string | null;
   middleName?: string | null;
   lastName?: string | null;
@@ -6253,6 +8036,7 @@ export type EmployeeDto = {
   martialStatus?: MartialStatus;
   isCurrent?: boolean;
   approvalStatus?: ApprovalStatus;
+  salaryOnGradeStepId?: number | null;
   employeeDocuments?: EmployeeDocument[] | null;
   businessUnits?: BusinessUnit;
   job?: Job;
@@ -6270,6 +8054,9 @@ export type EmployeeDto = {
   hasEmployeeFamilyInfo?: boolean;
   hasEmergencyContactInfo?: boolean;
   hasLanguageSkillInfo?: boolean;
+  tinNumber?: string | null;
+  pensionID?: string | null;
+  employmentType?: EmploymentType;
 };
 export type Note = {
   text?: string | null;
@@ -6298,6 +8085,11 @@ export type CreateEmployeeProfileCommand = {
   employementDate?: string;
   gender?: Gender;
   martialStatus?: MartialStatus;
+  salaryOnGradeStepId?: number | null;
+  tinNumber?: string | null;
+  pensionID?: string | null;
+  employmentType?: EmploymentType;
+  previousEmployeeId?: number | null;
 };
 export type EmployeeList = {
   approved?: EmployeeDto[] | null;
@@ -6315,12 +8107,6 @@ export type EmployeeSearchResult = {
 export type ChangeWorkflowStatusEntityDto = {
   id?: number;
   note?: string | null;
-};
-export type EmployeeCountsByStatus = {
-  approved?: number;
-  approvalRequests?: number;
-  rejected?: number;
-  drafts?: number;
 };
 export type CreateEmployeeEmergencyContactCommand = {
   name?: string | null;
@@ -6456,6 +8242,10 @@ export type UpdateEmployeeCommand = {
   employementDate?: string;
   gender?: Gender;
   martialStatus?: MartialStatus;
+  salaryOnGradeStepId?: number | null;
+  tinNumber?: string | null;
+  pensionID?: string | null;
+  employmentType?: EmploymentType;
 };
 export type UpdateEmployeeEmergencyContactCommand = {
   id?: number;
@@ -6465,6 +8255,518 @@ export type UpdateEmployeeEmergencyContactCommand = {
   isWorking?: boolean;
   workingFirmName?: string | null;
   employeeId?: number;
+};
+export type DemotionType = 1 | 2 | 3 | 4 | 5 | 6;
+export type EmployeeTransactionStatus = 1 | 2 | 3 | 4;
+export type AddEmployeeDemotionCommand = {
+  employeeId?: number;
+  demotionDate?: string;
+  demotionEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleAfterId?: number;
+  demotionType?: DemotionType;
+  businessUnitBeforeId?: number;
+  businessUnitAfterId?: number;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type PromotionType = 1 | 2;
+export type AddEmployeePromotionCommand = {
+  employeeId?: number;
+  promotionDate?: string;
+  promotionEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleAfterId?: number;
+  promotionType?: PromotionType;
+  businessUnitBeforeId?: number;
+  businessUnitAfterId?: number;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type ReClassificationType = 1 | 2;
+export type AddEmployeeReClassificationCommand = {
+  employeeId?: number;
+  reClassificationDate?: string;
+  reClassificationEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleAfterId?: number;
+  reClassificationType?: ReClassificationType;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type AddSalaryIncrementCommand = {
+  id?: number;
+  employeeId?: number;
+  jobRoleId?: number;
+  salaryIncrementDate?: string;
+  salaryIncrementEndDate?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeDemotionDto = {
+  id?: number;
+  employeeId?: number;
+  demotionDate?: string;
+  demotionEndDate?: string | null;
+  jobRoleBefore?: string | null;
+  jobRoleAfter?: string | null;
+  salaryAfter?: number | null;
+  salaryBefore?: number | null;
+  demotionType?: DemotionType;
+  businessUnitBefore?: string | null;
+  businessUnitAfter?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeDemotionSearchResult = {
+  items?: EmployeeDemotionDto[] | null;
+  totalCount?: number;
+};
+export type EmployeePromotionDto = {
+  id?: number;
+  employeeId?: number;
+  promotionDate?: string;
+  promotionEndDate?: string | null;
+  jobRoleBefore?: string | null;
+  jobRoleAfter?: string | null;
+  promotionType?: PromotionType;
+  businessUnitBefore?: string | null;
+  businessUnitAfter?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeePromotionSearchResult = {
+  items?: EmployeePromotionDto[] | null;
+  totalCount?: number;
+};
+export type EmployeeReClassificationDto = {
+  id?: number;
+  employeeId?: number;
+  reClassificationDate?: string;
+  reClassificationEndDate?: string | null;
+  jobRoleBefore?: string | null;
+  jobRoleAfter?: string | null;
+  reClassificationType?: ReClassificationType;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeReClassificationSearchResult = {
+  items?: EmployeeReClassificationDto[] | null;
+  totalCount?: number;
+};
+export type ApproveEmployeeDemotion = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type ApproveEmployeePromotion = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type ApproveEmployeeReClassification = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type ApproveSalaryIncrementCommand = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type PromotionCountsByStatus = {
+  approved?: number;
+  approvalRequests?: number;
+  rejected?: number;
+  drafts?: number;
+};
+export type EmployeeSalaryIncrementDto = {
+  id?: number;
+  employeeId?: number;
+  jobRole?: string | null;
+  grade?: JobGradeRomanId;
+  salaryIncrementDate?: string;
+  salaryIncrementEndDate?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeSalaryIncrementSearchResult = {
+  items?: EmployeeSalaryIncrementDto[] | null;
+  totalCount?: number;
+};
+export type EmployeeDemotion = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  demotionDate?: string | null;
+  demotionEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleBefore?: JobRole;
+  jobRoleAfterId?: number;
+  jobRoleAfter?: JobRole;
+  demotionType?: DemotionType;
+  businessUnitBeforeId?: number;
+  businessUnitBefore?: BusinessUnit;
+  businessUnitAfterId?: number;
+  businessUnitAfter?: BusinessUnit;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeDemotionRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  demotionDate?: string | null;
+  demotionEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleBefore?: JobRole;
+  jobRoleAfterId?: number;
+  jobRoleAfter?: JobRole;
+  demotionType?: DemotionType;
+  businessUnitBeforeId?: number;
+  businessUnitBefore?: BusinessUnit;
+  businessUnitAfterId?: number;
+  businessUnitAfter?: BusinessUnit;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeePromotion = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  promotionDate?: string | null;
+  promotionEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleBefore?: JobRole;
+  jobRoleAfterId?: number;
+  jobRoleAfter?: JobRole;
+  promotionType?: PromotionType;
+  businessUnitBeforeId?: number;
+  businessUnitBefore?: BusinessUnit;
+  businessUnitAfterId?: number;
+  businessUnitAfter?: BusinessUnit;
+  salaryAfter?: number | null;
+  salaryBefore?: number | null;
+  remark?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeePromotionRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  promotionDate?: string | null;
+  promotionEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleBefore?: JobRole;
+  jobRoleAfterId?: number;
+  jobRoleAfter?: JobRole;
+  promotionType?: PromotionType;
+  businessUnitBeforeId?: number;
+  businessUnitBefore?: BusinessUnit;
+  businessUnitAfterId?: number;
+  businessUnitAfter?: BusinessUnit;
+  salaryAfter?: number | null;
+  salaryBefore?: number | null;
+  remark?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeReClassification = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  reClassificationDate?: string | null;
+  reClassificationEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleBefore?: JobRole;
+  jobRoleAfterId?: number;
+  jobRoleAfter?: JobRole;
+  reClassificationType?: ReClassificationType;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeReClassificationRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  reClassificationDate?: string | null;
+  reClassificationEndDate?: string | null;
+  jobRoleBeforeId?: number;
+  jobRoleBefore?: JobRole;
+  jobRoleAfterId?: number;
+  jobRoleAfter?: JobRole;
+  reClassificationType?: ReClassificationType;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type EmployeeSalaryIncrement = {
+  id?: number;
+  employeeId?: number;
+  jobRoleId?: number;
+  jobRole?: JobRole;
+  salaryIncrementDate?: string;
+  salaryIncrementEndDate?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type RejectEmployeeDemotion = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type RejectEmployeePromotion = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type RejectEmployeeReClassification = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type RejectSalaryIncrementCommand = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type SubmitEmployeeDemotion = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type SubmitEmployeePromotion = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type SubmitSalaryIncrementCommand = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type SubmitEmployeeReClassification = {
+  id?: number;
+  employeeId?: number;
+  remark?: string | null;
+};
+export type DemotionCountsByStatus = {
+  approved?: number;
+  approvalRequests?: number;
+  rejected?: number;
+  drafts?: number;
+};
+export type UpdateEmployeeDemotionCommand = {
+  id?: number;
+  employeeId?: number;
+  demotionDate?: string | null;
+  demotionEndDate?: string | null;
+  jobRoleBeforeId?: number | null;
+  jobRoleAfterId?: number | null;
+  demotionType?: DemotionType;
+  businessUnitBeforeId?: number | null;
+  businessUnitAfterId?: number | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type UpdateEmployeePromotionCommand = {
+  id?: number;
+  employeeId?: number;
+  promotionDate?: string | null;
+  promotionEndDate?: string | null;
+  jobRoleBeforeId?: number | null;
+  jobRoleAfterId?: number | null;
+  promotionType?: PromotionType;
+  businessUnitBeforeId?: number | null;
+  businessUnitAfterId?: number | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  isBusinessUnitChange?: boolean;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type UpdateEmployeeReClassificationCommand = {
+  id?: number;
+  employeeId?: number;
+  reClassificationDate?: string | null;
+  reClassificationEndDate?: string | null;
+  jobRoleBeforeId?: number | null;
+  jobRoleAfterId?: number | null;
+  reClassificationType?: ReClassificationType;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type UpdateSalaryIncrementCommand = {
+  id?: number;
+  employeeId?: number;
+  jobRoleId?: number;
+  salaryIncrementDate?: string | null;
+  salaryIncrementEndDate?: string | null;
+  beforeGradeSalaryStepId?: number;
+  afterGradeSalaryStepId?: number;
+  remark?: string | null;
+  transactionStatus?: EmployeeTransactionStatus;
+};
+export type LateralTransferType = 1 | 2 | 3;
+export type CreateTransferCommand = {
+  employeeId?: number;
+  toBusinessUnitId?: number;
+  toJobRoleId?: number;
+  transferType?: LateralTransferType;
+  transferDate?: string;
+  transferReason?: string | null;
+};
+export type ApproveTransferCommand = {
+  id?: number;
+  comment?: string | null;
+};
+export type EmployeeTransferDto = {
+  id?: number;
+  employeeId?: number;
+  employeeName?: string | null;
+  fromBusinessUnitId?: number;
+  fromBusinessUnitName?: string | null;
+  toBusinessUnitId?: number;
+  toBusinessUnitName?: string | null;
+  fromJobRoleId?: number;
+  fromJobRoleName?: string | null;
+  toJobRoleId?: number;
+  toJobRoleName?: string | null;
+  transferType?: LateralTransferType;
+  transferDate?: string;
+  transferReason?: string | null;
+  approvalStatus?: ApprovalStatus;
+  remark?: string | null;
+};
+export type EmployeeBasicInfoDto = {
+  id?: number;
+  displayName?: string | null;
+  businessUnitId?: number | null;
+  businessUnitName?: string | null;
+  jobRoleId?: number | null;
+  jobRoleName?: string | null;
+};
+export type TransferCountsByStatus = {
+  approved?: number;
+  approvalRequests?: number;
+  rejected?: number;
+  drafts?: number;
+};
+export type TransferSearchResult = {
+  items?: EmployeeTransferDto[] | null;
+  totalCount?: number;
+};
+export type RejectTransferCommand = {
+  id?: number;
+  comment?: string | null;
+};
+export type SubmitTransferCommand = {
+  id?: number;
+  comment?: string | null;
+};
+export type UpdateTransferCommand = {
+  id?: number;
+  employeeId?: number;
+  toBusinessUnitId?: number;
+  toJobRoleId?: number;
+  transferType?: LateralTransferType;
+  transferDate?: string;
+  transferReason?: string | null;
+};
+export type ApproveEmployeeWarningCommand = {
+  id?: number;
+};
+export type EmployeeWarningCountsByStatus = {
+  approved?: number;
+  submitted?: number;
+  rejected?: number;
+  draft?: number;
+};
+export type ViolationType = 1 | 2 | 3 | 4;
+export type WarningStatus = 1 | 2 | 3;
+export type CreateEmployeeWarningCommand = {
+  employeeId?: number;
+  percentage?: number;
+  warningDate?: string;
+  violationType?: ViolationType;
+  warningStatus?: WarningStatus;
+  remark?: string | null;
+};
+export type EmployeeWarningDto = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  percentage?: number;
+  warningDate?: string;
+  warningStatus?: WarningStatus;
+  violationType?: ViolationType;
+  remark?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type EmployeeWarningDtoRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  percentage?: number;
+  warningDate?: string;
+  warningStatus?: WarningStatus;
+  violationType?: ViolationType;
+  remark?: string | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type PaginatedEmployeeWarninglist = {
+  items?: EmployeeWarningDto[] | null;
+  totalCount?: number;
+};
+export type PaginatedEmployeeWarninglistRead = {
+  items?: EmployeeWarningDtoRead[] | null;
+  totalCount?: number;
+};
+export type RejectEmployeeWarningCommand = {
+  id?: number;
+};
+export type SubmitEmployeeWarningCommand = {
+  id?: number;
+};
+export type UpdateEmployeeWarningCommand = {
+  id?: number;
+  employeeId?: number;
+  percentage?: number;
+  warningDate?: string;
+  warningStatus?: WarningStatus;
+  violationType?: ViolationType;
+  remark?: string | null;
 };
 export type ApproveFieldOfStudyCommand = {
   id?: number;
@@ -6556,10 +8858,12 @@ export type ActivateJobCommand = {
 export type JobCreationResponse = {
   jobId?: number;
   jobCountExceeded?: boolean;
+  jobIds?: number[] | null;
 };
 export type AddJobCommand = {
   jobRoleId?: number;
   businessunitId?: number;
+  requiredNumber?: number;
 };
 export type JobRoleBenefitDto = {
   id?: number;
@@ -6623,6 +8927,7 @@ export type JobDto = {
   isLocked?: boolean;
   isJobCountExceed?: boolean;
   locked?: string | null;
+  requiredNumber?: number | null;
 };
 export type JobRoleDto = {
   id?: number;
@@ -6982,6 +9287,68 @@ export type LookupDtoRead = {
   unitPricedBenefits?: BenefitDto[] | null;
   benefitUnitOfMeasurements?: BenefitUnitOfMeasurementDto[] | null;
 };
+export type ApproveReemploymentCommand = {
+  reemploymentId?: number;
+  remark?: string | null;
+  newEmployeeProfile?: CreateEmployeeProfileCommand;
+};
+export type ReemploymentType = 1 | 2;
+export type CreateReemploymentCommand = {
+  employeeId?: number;
+  reemploymentType?: ReemploymentType;
+  reemploymentDate?: string;
+  reasonForReemployment?: string | null;
+  remark?: string | null;
+};
+export type ReemploymentDto = {
+  id?: number;
+  employeeId?: number;
+  employeeName?: string | null;
+  employeeFirstName?: string | null;
+  employeeMiddleName?: string | null;
+  employeeLastName?: string | null;
+  amharicFirstName?: string | null;
+  amharicMiddleName?: string | null;
+  amharicLastName?: string | null;
+  birthDate?: string | null;
+  employementDate?: string | null;
+  gender?: Gender;
+  martialStatus?: MartialStatus;
+  businessUnitName?: string | null;
+  jobRoleName?: string | null;
+  businessUnitId?: number;
+  jobId?: number;
+  reemploymentType?: ReemploymentType;
+  approvalStatus?: ApprovalStatus;
+  reemploymentDate?: string;
+  reasonForReemployment?: string | null;
+  remark?: string | null;
+};
+export type ReemploymentCountsByStatus = {
+  approved?: number;
+  approvalRequests?: number;
+  rejected?: number;
+  drafts?: number;
+};
+export type ReemploymentSearchResult = {
+  items?: ReemploymentDto[] | null;
+  totalCount?: number;
+};
+export type RejectReemploymentCommand = {
+  reemploymentId?: number;
+  remark?: string | null;
+};
+export type SubmitReemploymentCommand = {
+  reemploymentId?: number;
+  remark?: string | null;
+};
+export type UpdateReemploymentCommand = {
+  reemploymentId?: number;
+  reemploymentDate?: string;
+  reasonForReemployment?: string | null;
+  remark?: string | null;
+  reemploymentType?: ReemploymentType;
+};
 export type ApproveRegionCommand = {
   id?: number;
 };
@@ -7021,6 +9388,78 @@ export type UpdateRegionCommand = {
   id?: number;
   name?: string | null;
   description?: string | null;
+};
+export type ApproveResignationCommand = {
+  id?: number;
+};
+export type ResignationCountsByStatus = {
+  approved?: number;
+  submitted?: number;
+  rejected?: number;
+  draft?: number;
+};
+export type CreateResignationCommand = {
+  employeeId?: number;
+  salary?: number;
+  workUnit?: string | null;
+  resignationDate?: string;
+  resignationType?: ResignationType;
+  reasonForResignation?: string | null;
+  finalSettlementDetails?: string | null;
+  isActive?: boolean;
+};
+export type ResignationDto = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  salary?: number;
+  workUnit?: string | null;
+  resignationDate?: string;
+  resignationType?: ResignationType;
+  reasonForResignation?: string | null;
+  finalSettlementDetails?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocument[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type ResignationDtoRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  salary?: number;
+  workUnit?: string | null;
+  resignationDate?: string;
+  resignationType?: ResignationType;
+  reasonForResignation?: string | null;
+  finalSettlementDetails?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocumentRead[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type PaginatedResignationList = {
+  items?: ResignationDto[] | null;
+  totalCount?: number;
+};
+export type PaginatedResignationListRead = {
+  items?: ResignationDtoRead[] | null;
+  totalCount?: number;
+};
+export type RejectResignationCommand = {
+  id?: number;
+};
+export type SubmitResignationCommand = {
+  id?: number;
+};
+export type UpdateResignationCommand = {
+  id?: number;
+  employeeId?: number;
+  salary?: number;
+  workUnit?: string | null;
+  resignationDate?: string;
+  resignationType?: ResignationType;
+  reasonForResignation?: string | null;
+  finalSettlementDetails?: string | null;
+  isActive?: boolean;
 };
 export type ApproveSubCityCommand = {
   id?: number;
@@ -7066,6 +9505,78 @@ export type UpdateSubCityCommand = {
   description?: string | null;
   regionId?: number;
   approvalStatus?: ApprovalStatus;
+};
+export type ApproveSuspensionCommand = {
+  id?: number;
+};
+export type SuspensionCountsByStatus = {
+  approved?: number;
+  submitted?: number;
+  rejected?: number;
+  draft?: number;
+};
+export type CreateSuspensionCommand = {
+  employeeId?: number;
+  startDate?: string;
+  endDate?: string | null;
+  salary?: number;
+  reason?: SuspensionReason;
+  description?: string | null;
+  conditionsForReinstatement?: string | null;
+  isActive?: boolean;
+};
+export type SuspensionDto = {
+  id?: number;
+  employeeId?: number;
+  employee?: Employee;
+  startDate?: string;
+  endDate?: string | null;
+  salary?: number;
+  reason?: SuspensionReason;
+  description?: string | null;
+  conditionsForReinstatement?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocument[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type SuspensionDtoRead = {
+  id?: number;
+  employeeId?: number;
+  employee?: EmployeeRead;
+  startDate?: string;
+  endDate?: string | null;
+  salary?: number;
+  reason?: SuspensionReason;
+  description?: string | null;
+  conditionsForReinstatement?: string | null;
+  isActive?: boolean;
+  employeeFileDocuments?: EmployeeFileDocumentRead[] | null;
+  approvalStatus?: ApprovalStatus;
+};
+export type PaginatedSuspensionList = {
+  items?: SuspensionDto[] | null;
+  totalCount?: number;
+};
+export type PaginatedSuspensionListRead = {
+  items?: SuspensionDtoRead[] | null;
+  totalCount?: number;
+};
+export type RejectSuspensionCommand = {
+  id?: number;
+};
+export type SubmitSuspensionCommand = {
+  id?: number;
+};
+export type UpdateSuspensionCommand = {
+  id?: number;
+  employeeId?: number;
+  startDate?: string;
+  endDate?: string | null;
+  salary?: number;
+  reason?: SuspensionReason;
+  description?: string | null;
+  conditionsForReinstatement?: string | null;
+  isActive?: boolean;
 };
 export type ApproveBranchGradeCommand = {
   id?: number;
@@ -7117,8 +9628,11 @@ export const {
   useGetActingCountPerStatusQuery,
   useLazyGetActingCountPerStatusQuery,
   useCreateActingMutation,
+  useGetAllActiveActingQuery,
+  useLazyGetAllActiveActingQuery,
   useGetPaginatedActingsQuery,
   useLazyGetPaginatedActingsQuery,
+  useCreateReassignmentMutation,
   useRejectActingMutation,
   useSubmitActingMutation,
   useUpdateActingMutation,
@@ -7153,6 +9667,10 @@ export const {
   useLazyGetUserDetailQuery,
   useAddUserRoleMutation,
   useRemoveUserRoleMutation,
+  useGetAuditEmployeeDocumentFileByEmployeeIdQuery,
+  useLazyGetAuditEmployeeDocumentFileByEmployeeIdQuery,
+  useGetAuditEmployeeFileDocumentLogsQuery,
+  useLazyGetAuditEmployeeFileDocumentLogsQuery,
   useApproveAwardMutation,
   useGetAwardCountPerStatusQuery,
   useLazyGetAwardCountPerStatusQuery,
@@ -7226,6 +9744,8 @@ export const {
   useApproveBusinessUnitMutation,
   useGetBusinessUnitCountPerApprovalStatusQuery,
   useLazyGetBusinessUnitCountPerApprovalStatusQuery,
+  useGetEmployeeCountPerApprovalStatusQuery,
+  useLazyGetEmployeeCountPerApprovalStatusQuery,
   useCreateBusinessUnitMutation,
   useDeactivateBusinessUnitMutation,
   useRejectBusinessUnitMutation,
@@ -7285,9 +9805,12 @@ export const {
   useCreateDelegationMutation,
   useGetAllDelegationQuery,
   useLazyGetAllDelegationQuery,
+  useGetAllActiveDelegationQuery,
+  useLazyGetAllActiveDelegationQuery,
   useGetPaginatedDelegationsQuery,
   useLazyGetPaginatedDelegationsQuery,
   useRejectDelegationMutation,
+  useRemoveDelegationMutation,
   useSubmitDelegationMutation,
   useUpdateDelegationMutation,
   useGetApiDocumentsByIdQuery,
@@ -7337,6 +9860,14 @@ export const {
   useUpdateEmployeeExperienceMutation,
   useUpdateEmployeeFamilyMutation,
   useUpdateEmployeeGurantersMutation,
+  useDownloadEmployeeFileDocumentQuery,
+  useLazyDownloadEmployeeFileDocumentQuery,
+  useGetByIdQuery,
+  useLazyGetByIdQuery,
+  useGetEmployeeFileDocumentByEmployeeIdQuery,
+  useLazyGetEmployeeFileDocumentByEmployeeIdQuery,
+  useUpdateEmployeeFileDocumentMutation,
+  useUploadEmployeeFileDocumentMutation,
   useGetEmployeeChangeLogQuery,
   useLazyGetEmployeeChangeLogQuery,
   useGetEmployeeByIdQuery,
@@ -7358,8 +9889,6 @@ export const {
   useGetAllEmployeetListsQuery,
   useLazyGetAllEmployeetListsQuery,
   useApproveEmployeeMutation,
-  useGetEmployeeCountPerApprovalStatusQuery,
-  useLazyGetEmployeeCountPerApprovalStatusQuery,
   useCreateEmployeeEmergencyContactMutation,
   useEmployeeIdCardApprovalApprovalMutation,
   useEmployeeIdCardApprovalRejectedMutation,
@@ -7398,6 +9927,76 @@ export const {
   useSubmitForApprovalMutation,
   useUpdateEmployeeMutation,
   useUpdateEmployeeEmergencyContactCommandMutation,
+  useAddEmployeeDemotionMutation,
+  useAddEmployeePromotionMutation,
+  useAddEmployeeReClassificationMutation,
+  useAddEmployeeSalaryIncrementMutation,
+  useGetAllDemotionsQuery,
+  useLazyGetAllDemotionsQuery,
+  useGetAllPromotionsQuery,
+  useLazyGetAllPromotionsQuery,
+  useGetAllReClassificationsQuery,
+  useLazyGetAllReClassificationsQuery,
+  useApproveEmployeeDemotionMutation,
+  useApproveEmployeePromotionMutation,
+  useApproveEmployeeReClassificationMutation,
+  useApproveSalaryIncrementMutation,
+  useGetPromotionCountPerApprovalStatusQuery,
+  useLazyGetPromotionCountPerApprovalStatusQuery,
+  useGetAllSalaryIncrementListQuery,
+  useLazyGetAllSalaryIncrementListQuery,
+  useGetEmployeeDemotionByIdQuery,
+  useLazyGetEmployeeDemotionByIdQuery,
+  useGetEmployeeDemotionListQuery,
+  useLazyGetEmployeeDemotionListQuery,
+  useGetEmployeePromotionByIdQuery,
+  useLazyGetEmployeePromotionByIdQuery,
+  useGetEmployeePromotionListQuery,
+  useLazyGetEmployeePromotionListQuery,
+  useGetEmployeeReClassificationByIdQuery,
+  useLazyGetEmployeeReClassificationByIdQuery,
+  useGetEmployeeReClassificationListQuery,
+  useLazyGetEmployeeReClassificationListQuery,
+  useGetSalaryIncrementByIdQuery,
+  useLazyGetSalaryIncrementByIdQuery,
+  useGetSalaryIncrementListQuery,
+  useLazyGetSalaryIncrementListQuery,
+  useRejectEmployeeDemotionMutation,
+  useRejectEmployeePromotionMutation,
+  useRejectEmployeeReClassificationMutation,
+  useRejectSalaryIncrementMutation,
+  useSubmitEmployeeDemotionMutation,
+  useSubmittEmployeePromotionMutation,
+  useSubmitSalaryIncrementMutation,
+  useSubmittEmployeeReClassificationMutation,
+  useGetDemotionCountPerApprovalStatusQuery,
+  useLazyGetDemotionCountPerApprovalStatusQuery,
+  useUpdateEmployeeDemotionMutation,
+  useUpdateEmployeePromotionMutation,
+  useUpdateEmployeeReClassificationMutation,
+  useUpdateSalaryIncrementMutation,
+  useCreateTransferMutation,
+  useApproveTransferMutation,
+  useGetAllTransfersListQuery,
+  useLazyGetAllTransfersListQuery,
+  useGetEmployeeWithDetailsQuery,
+  useLazyGetEmployeeWithDetailsQuery,
+  useGetTransferCountPerStatusQuery,
+  useLazyGetTransferCountPerStatusQuery,
+  useGetTransferListForPaginationQuery,
+  useLazyGetTransferListForPaginationQuery,
+  useRejectTransferMutation,
+  useSubmitTransferMutation,
+  useUpdateTransferMutation,
+  useApproveEmployeeWarningMutation,
+  useGetEmployeeWarningCountPerStatusQuery,
+  useLazyGetEmployeeWarningCountPerStatusQuery,
+  useCreateEmployeeWarningMutation,
+  useGetPaginatedEmployeeWarningsQuery,
+  useLazyGetPaginatedEmployeeWarningsQuery,
+  useRejectEmployeeWarningMutation,
+  useSubmitEmployeeWarningMutation,
+  useUpdateEmployeeWarningMutation,
   useApproveFieldOfStudyMutation,
   useGetFieldOfStudyCountPerStatusQuery,
   useLazyGetFieldOfStudyCountPerStatusQuery,
@@ -7411,8 +10010,6 @@ export const {
   useLazySearchAllFieldOfStudiesQuery,
   useSubmitFieldOfStudyMutation,
   useUpdateFieldOfStudyMutation,
-  useGetApiHealthQuery,
-  useLazyGetApiHealthQuery,
   useApproveInstitutionNameMutation,
   useGetInstitutionNameCountPerStatusQuery,
   useLazyGetInstitutionNameCountPerStatusQuery,
@@ -7450,6 +10047,8 @@ export const {
   useLazyGetJobListByBusinessUnitAndJobRoleQuery,
   useGetJobRoleByIdQuery,
   useLazyGetJobRoleByIdQuery,
+  useGetJobRoleforPromotionQuery,
+  useLazyGetJobRoleforPromotionQuery,
   useGetJobCountPerStatusQuery,
   useLazyGetJobCountPerStatusQuery,
   useRejectJobMutation,
@@ -7482,8 +10081,12 @@ export const {
   useApproveJobGradeMutation,
   useGetJobGradesCountPerApprovalStatusQuery,
   useLazyGetJobGradesCountPerApprovalStatusQuery,
+  useGetJobGradeOfJobRoleQuery,
+  useLazyGetJobGradeOfJobRoleQuery,
   useGetJobGradesListQuery,
   useLazyGetJobGradesListQuery,
+  useGetSalaryOfEmployeeByRoleQuery,
+  useLazyGetSalaryOfEmployeeByRoleQuery,
   useRejectJobGradeMutation,
   useSubmitJobGradeMutation,
   useUpdateJobGradeMutation,
@@ -7520,6 +10123,19 @@ export const {
   useSubmitLetterMutation,
   useGetAllLookupsQuery,
   useLazyGetAllLookupsQuery,
+  useApproveReemploymentMutation,
+  useCreateReemploymentMutation,
+  useGetAllReemploymentsListQuery,
+  useLazyGetAllReemploymentsListQuery,
+  useGetReemploymentByIdQuery,
+  useLazyGetReemploymentByIdQuery,
+  useGetReemploymentCountPerStatusQuery,
+  useLazyGetReemploymentCountPerStatusQuery,
+  useGetReemploymentListForPaginationQuery,
+  useLazyGetReemploymentListForPaginationQuery,
+  useRejectReemploymentMutation,
+  useSubmitReemploymentMutation,
+  useUpdateReemploymentMutation,
   useApproveRegionMutation,
   useGetRegionCountPerStatusQuery,
   useLazyGetRegionCountPerStatusQuery,
@@ -7533,6 +10149,17 @@ export const {
   useLazySearchAllRegionsQuery,
   useSubmitRegionMutation,
   useUpdateRegionMutation,
+  useApproveResignationMutation,
+  useGetResignationCountPerStatusQuery,
+  useLazyGetResignationCountPerStatusQuery,
+  useCreateResignationMutation,
+  useGetActiveResignationQuery,
+  useLazyGetActiveResignationQuery,
+  useGetPaginatedResignationsQuery,
+  useLazyGetPaginatedResignationsQuery,
+  useRejectResignationMutation,
+  useSubmitResignationMutation,
+  useUpdateResignationMutation,
   useApproveSubCityMutation,
   useGetSubCityCountPerStatusQuery,
   useLazyGetSubCityCountPerStatusQuery,
@@ -7546,6 +10173,17 @@ export const {
   useLazySearchAllSubCitiesQuery,
   useSubmitSubCityMutation,
   useUpdateSubCityMutation,
+  useApproveSuspensionMutation,
+  useGetSuspensionCountPerStatusQuery,
+  useLazyGetSuspensionCountPerStatusQuery,
+  useCreateSuspensionMutation,
+  useGetActiveSuspentionQuery,
+  useLazyGetActiveSuspentionQuery,
+  useGetPaginatedSuspensionsQuery,
+  useLazyGetPaginatedSuspensionsQuery,
+  useRejectSuspensionMutation,
+  useSubmitSuspensionMutation,
+  useUpdateSuspensionMutation,
   useAddUserPhotoMutation,
   useAddUserSignatureMutation,
   useCurrentUserInfoQuery,

@@ -24,7 +24,8 @@ public class GetEmployeeDetailQueryHandler : IRequestHandler<GetEmployeeDetailQu
     public async Task<EmployeeDetailsDto> Handle(GetEmployeeDetailQuery request, CancellationToken cancellationToken)
     {
         var employee = await dataservice
-            .Employees
+            .Employees.Include(a => a.Job).ThenInclude(a => a.JobRole)
+                .Include(a => a.BusinessUnits)
             .Include(s => s.EmployeeDocuments)
             .AsSplitQuery()
             .FirstOrDefaultAsync(sh => sh.Id == request.Id);

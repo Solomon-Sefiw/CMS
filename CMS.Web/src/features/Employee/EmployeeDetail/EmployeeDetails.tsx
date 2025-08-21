@@ -2,9 +2,7 @@ import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useEmployeeId } from "./useEmployeeId";
-import {
-  useGetEmployeeInfoQuery,
-} from "../../../app/api/HCMSApi";
+import { useGetEmployeeInfoQuery } from "../../../app/api/HCMSApi";
 import { EmployeeDetailHeader } from "./EmployeeDetailHeader";
 import { EmployeeDetailTabs } from "./EmployeeDetailTabs";
 import { EmployeeChangeLog, useEmployeeChangeLogs } from "./employeeChangeLog";
@@ -69,7 +67,6 @@ export const EmployeeDetail = () => {
             >
               Notes & Comments
             </Typography>
-
           </Grid>
           <Grid
             item

@@ -7,10 +7,14 @@ type DelegationContextType = {
 
 const DelegationContext = createContext<DelegationContextType | null>(null);
 
-export const DelegationProvider = ({ children }: { children: React.ReactNode }) => {
+export const DelegationProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { id } = useParams();
   const employeeId = Number(id);
-  
+
   return (
     <DelegationContext.Provider value={{ employeeId }}>
       {children}
@@ -21,7 +25,9 @@ export const DelegationProvider = ({ children }: { children: React.ReactNode }) 
 export const useDelegationContext = () => {
   const context = useContext(DelegationContext);
   if (!context) {
-    throw new Error("useDelegationContext must be used within a DelegationProvider");
+    throw new Error(
+      "useDelegationContext must be used within a DelegationProvider"
+    );
   }
   return context;
 };

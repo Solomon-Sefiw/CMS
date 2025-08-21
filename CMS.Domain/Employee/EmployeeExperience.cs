@@ -1,14 +1,4 @@
 ﻿using CMS.Domain.Enum;
-using CMS.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Net.Cache;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace CMS.Domain.Employee
 {
@@ -25,6 +15,6 @@ namespace CMS.Domain.Employee
         public ExperienceType ExperienceType { get; set; } = ExperienceType.NewHire;
         public int EmployeeId { get; set; }
         public Employee Employee { get; set; }
-
+        public bool IsCurrentExperiance { get; set; }
     }
 }

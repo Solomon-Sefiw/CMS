@@ -10,5 +10,6 @@ namespace CMS.Application.Features.Jobs.Job.JobCreationCustomResponse
     {
         public int JobId { get; set; }
         public bool JobCountExceeded { get; set; }
+        public List<int> JobIds { get; set; }
     }
 }

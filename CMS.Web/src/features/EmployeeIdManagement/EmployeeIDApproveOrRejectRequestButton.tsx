@@ -109,13 +109,13 @@ const permissions = usePermission();
           onClose={onDialogClose}
           onSubmit={(remark) =>
             handleWorkflowSubmit({
-              employeeId: employee.employeeId,
+              employeeId: employee.id,
               remark,
               action: selectedAction!,
             })
           }
           errors={errors}
-          employeeId={employee?.employeeId}
+          employeeId={employee?.id}
         />
       )}
     </>

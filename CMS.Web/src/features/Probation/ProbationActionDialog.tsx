@@ -75,7 +75,7 @@ export const ProbationActionDialog = ({
     if (employee) {
       setFormData({
         ...emptyEmployeeData,
-        employeeId: employee.employeeId ?? 0,
+        id: employee.id ?? 0,
         firstName: employee.firstName ?? "",
         middleName: employee.middleName ?? "",
         lastName: employee.lastName ?? "",
@@ -93,7 +93,7 @@ export const ProbationActionDialog = ({
         if (actionType === "Approve") {
           const command = {
             employeeProbationApproveCommand: {
-              employeeId: values?.employeeId,
+              employeeId: values?.id,
               probationResult: values?.probationResult,
               probationRemark: values?.probationRemark,
             },
@@ -103,7 +103,7 @@ export const ProbationActionDialog = ({
         } else if (actionType === "Terminate") {
           const Command = {
             employeeProbationTerminationCommand: {
-              employeeId: values?.employeeId,
+              employeeId: values?.id,
               probationResult: values?.probationResult,
               probationRemark: values?.probationRemark,
             },
@@ -113,7 +113,7 @@ export const ProbationActionDialog = ({
         } else if (actionType === "Active") {
           const Command = {
             rejectedProbationActivateCommand: {
-              employeeId: values?.employeeId,
+              employeeId: values?.id,
               probationResult: values?.probationResult,
               probationRemark: values?.probationRemark,
               employeeStatus: enums.EmployeeStatusEnum.UnderProbation,

@@ -25,6 +25,7 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.ActingAssignment
             var delegation = dataService.Actings.Where(r => r.Id == command.Id).FirstOrDefault();
 
             delegation.ApprovalStatus = ApprovalStatus.Rejected;
+            delegation.IsActive = false;
             await dataService.SaveAsync(cancellationToken);
             return delegation.Id;
         }

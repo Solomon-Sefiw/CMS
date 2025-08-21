@@ -10,6 +10,7 @@
         EmployeeId = 6,
         Dashboard = 7,
         Letter = 8,
+        EmployeeActivity = 9,
 
     }
 }

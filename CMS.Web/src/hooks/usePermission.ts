@@ -78,7 +78,25 @@ export const usePermission = () => {
     const CanApproveRejectLetter = hasPermission(Permission.canApproveRejectLetter);
     const CanActivateLetter = hasPermission(Permission.canActivateLetter);
     const CanDeactivateLetter = hasPermission(Permission.canDeactivateLetter);
-
+    //Employee Activity
+    const CanViewEmployeeActivity = hasPermission(
+      Permission.canViewEmployeeActivity
+    );
+    const CanCreateUpdateEmployeeActivity = hasPermission(
+      Permission.canCreateUpdateEmployeeActivity
+    );
+    const CanApproveRejectEmployeeActivity = hasPermission(
+      Permission.canApproveRejectEmployeeActivity
+    );
+    const CanSubmitEmployeeActivity = hasPermission(
+      Permission.canSubmitEmployeeActivity
+    );
+    const CanActivateEmployeeActivity = hasPermission(
+      Permission.canActivateEmployeeActivity
+    );
+    const CanDeactivateEmployeeActivity = hasPermission(
+      Permission.canDeactivateEmployeeActivity
+    );
 
 
     return {
@@ -144,7 +162,14 @@ export const usePermission = () => {
       CanCreateUpdateLetter,
       CanApproveRejectLetter,
       CanActivateLetter,
-      CanDeactivateLetter
+      CanDeactivateLetter,
+            //Employee Activity
+      CanViewEmployeeActivity,
+      CanCreateUpdateEmployeeActivity,
+      CanApproveRejectEmployeeActivity,
+      CanSubmitEmployeeActivity,
+      CanActivateEmployeeActivity,
+      CanDeactivateEmployeeActivity,
     };
   }, [hasPermission]);
 

@@ -1,28 +1,31 @@
 ﻿
-using CMS.Domain.EmailTemplet;
 using CMS.Domain;
+using CMS.Domain.Acting;
+using CMS.Domain.Adress;
+using CMS.Domain.Benefit;
+using CMS.Domain.BranchGrade;
+using CMS.Domain.Contacts;
+using CMS.Domain.Delegations;
+using CMS.Domain.Document;
+using CMS.Domain.Education;
+using CMS.Domain.Education.awards;
+using CMS.Domain.EmailTemplet;
+using CMS.Domain.Employee;
+using CMS.Domain.Employee.EmployeeActivities;
+using CMS.Domain.EmployeeDocument;
+using CMS.Domain.Jobs;
+using CMS.Domain.Language;
+using CMS.Domain.LetterDocument;
+using CMS.Domain.letters;
+using CMS.Domain.Transfer;
 using CMS.Domain.User;
+using CMS.Persistence;
 using CMS.Services.DataService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using CMS.Domain.Document;
-using CMS.Persistence;
-using SMS.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore.Storage;
-using CMS.Domain.letters;
-using CMS.Domain.Adress;
-using CMS.Domain.Contacts;
-using CMS.Domain.LetterDocument;
-using CMS.Domain.Benefit;
-using CMS.Domain.BranchGrade;
-using CMS.Domain.Education.awards;
-using CMS.Domain.Education;
-using CMS.Domain.Employee;
-using CMS.Domain.Jobs;
-using CMS.Domain.Language;
-using CMS.Domain.Acting;
-using CMS.Domain.Delegations;
+using SMS.Persistence.Interceptors;
 
 namespace CMS.Persistance.DBContext
 {
@@ -30,7 +33,7 @@ namespace CMS.Persistance.DBContext
     {
         private readonly AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor;
         private readonly PublishDomainEventsInterceptor publishDomainEventsInterceptor;
-        public CMSDBContext(DbContextOptions<CMSDBContext> options, 
+        public CMSDBContext(DbContextOptions<CMSDBContext> options,
             AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor,
             PublishDomainEventsInterceptor publishDomainEventsInterceptor) : base(options)
         {
@@ -43,7 +46,26 @@ namespace CMS.Persistance.DBContext
             modelBuilder.Ignore<IDomainEvent>();
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CMSDBContext).Assembly);
-            modelBuilder.HasSequence<int>("EmployeeId");
+           // modelBuilder.Entity<ChiefGroupRaw>().HasNoKey();
+            modelBuilder.Entity<EmployeeFileDocument>()
+           .HasOne(d => d.Employee)
+           .WithMany(e => e.EmployeeFileDocuments)
+           .HasForeignKey(d => d.EmployeeId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<EmployeeFileDocument>()
+           .HasOne(e => e.Employee)
+           .WithMany()
+           .HasForeignKey(e => e.EmployeeId)
+           .OnDelete(DeleteBehavior.Restrict); // Or Cascade
+
+            modelBuilder.Entity<AuditEmployeeFileDocumentLog>()
+                  .HasOne(a => a.Employee)
+                  .WithMany()
+                  .HasForeignKey(a => a.AffectedEmployeeId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
         }
 
 
@@ -98,6 +120,25 @@ namespace CMS.Persistance.DBContext
         public DbSet<BenefitValue> BenefitValues { get; set; }
         public DbSet<BenefitUnitPrice> BenefitUnitPrices { get; set; }
         public DbSet<JobGradeStepsValue> JobGradeStepsValues { get; set; }
+
+        public DbSet<Reemployment> Reemployments { get; set; }
+        public DbSet<Suspension> Suspensions { get; set; }
+        public DbSet<Resignation> Resignations { get; set; }
+
+        public DbSet<EmployeeWarning> EmployeeWarnings { get; set; }
+        public DbSet<EmployeeTransfer> EmployeeTransfers { get; set; }
+        public DbSet<EmployeeTransferSnapshot> EmployeeTransferSnapshots { get; set; }
+        //Transaction  on it 
+        public DbSet<EmployeePromotion> EmployeePromotions { get; set; }
+        public DbSet<EmployeeDemotion> EmployeeDemotions { get; set; }
+        public DbSet<EmployeeReClassification> EmployeeReClassifications { get; set; }
+        public DbSet<EmployeeSalaryIncrement> EmployeeSalaryIncrements { get; set; }
+
+        public DbSet<EmployeeFileDocument> EmployeeFileDocuments { get; set; }
+
+        public DbSet<AuditEmployeeFileDocumentLog> AuditEmployeeFileDocumentLogs { get; set; }
+
+
         public DbSet<T> Set<T>() where T : class
         {
             return base.Set<T>();

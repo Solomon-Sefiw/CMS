@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Mvc;
 using CMS.Application.Features.Employees.EmployeeID.Queries;
 using CMS.Application.Features.Employees.EmployeeID;
 using CMS.API.Attributes;
-using SMS.Application;
 
 namespace CMS.API.Controllers.EmployeeController
 {
@@ -419,14 +418,6 @@ namespace CMS.API.Controllers.EmployeeController
         public async Task<ActionResult<int>> EmployeeIDCardUpdate([FromBody] EmployeeIDCardUpdateCommand command)
         {
             return await mediator.Send(command);
-        }
-
-        [HttpGet("countsByBusinssUnitId", Name = "GetEmployeeCountPerApprovalStatus")]
-        [Authorize(Policy = AuthPolicy.Setup.canViewSetup)]
-        [ProducesResponseType(200)]
-        public async Task<EmployeeCountsByStatus> GetEmployeeCountPerApprovalStatus(int? businssUnitId)
-        {
-            return await mediator.Send(new GetEmployeeCountQuery(businssUnitId));
         }
     }
 }

@@ -23,8 +23,8 @@ import { JobRoleUpdateDialog } from "../JobRoleUpdateDialog";
 import { JobRoleDeactivateButton } from "../JobRoleDeactivateButton";
 import { Pagination } from "../../../../components/Pagination";
 import { JobRoleActivateButton } from "../JobRoleActivateButton";
-import { JobRoleDetail } from "../JobRoleDetail"; 
-import VisibilityIcon from "@mui/icons-material/Visibility"; 
+import { JobRoleDetail } from "../JobRoleDetail";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { JobGradeRomanId } from "../../../../app/api/enums";
 export const ApprovedJobRole = () => {
   const [pagination, setPagination] = useState({

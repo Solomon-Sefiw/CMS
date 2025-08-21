@@ -5,13 +5,11 @@ import { EmployeeInfo } from "./EmployeeBasicInfo";
 import { JobCatagoryListTest } from "./JobCategoryListTest";
 import { useGetJobCatagoryListQueryQuery } from "../../../app/api";
 import { EmployeeFamily } from "./EmployeeFamily/EmployeeFamily";
-import { useGetFamilyOfAnEmployeeQuery } from "../../../app/api";
 import { LanguageSkill } from "./LanguageSkill/LanguageSkill";
 
 export const SummaryTab = () => {
   const params = useParams();
   const employeeId = useMemo(() => +(params?.id || 0), [params?.id]);
-
 
   return (
     <Box

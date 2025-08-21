@@ -23,6 +23,7 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.Delegation.Comma
         }
         public async Task<int> Handle(CreateDelegationCommand request, CancellationToken cancellationToken)
         {
+            
             var delegation = new Domain.Delegations.Delegation
             {
                 EmployeeId = request.EmployeeId,

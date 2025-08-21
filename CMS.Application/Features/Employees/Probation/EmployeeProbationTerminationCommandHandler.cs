@@ -33,7 +33,7 @@ namespace CMS.Application.Features.Employees.Probation
             employee.ApprovalStatus = ApprovalStatus.Approved;
             employee.SkipStateTransitionCheck=true;
             await dataService.SaveAsync(cancellationToken);
-            return employee.EmployeeId;
+            return employee.Id;
         }
     }
 }

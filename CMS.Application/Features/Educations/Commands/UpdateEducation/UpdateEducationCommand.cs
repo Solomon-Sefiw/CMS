@@ -22,6 +22,7 @@
         public int AwardId { get; set; }
         public int FieldOfStudyId { get; set; } // New FieldOfStudyId
         public int EmployeeId { get; set; }
+        public Decimal? CGPA {  get; set; }
     }
     public class UpdateEducationCommandHandler : IRequestHandler<UpdateEducationCommand, int>
     {
@@ -50,6 +51,7 @@
             educationToUpdate.AwardId = request.AwardId;
             educationToUpdate.FieldOfStudyId = request.FieldOfStudyId; // Update FieldOfStudyId
             educationToUpdate.EmployeeId = request.EmployeeId;
+            educationToUpdate.CGPA = request.CGPA;
 
             await _dataService.SaveAsync(cancellationToken);
 

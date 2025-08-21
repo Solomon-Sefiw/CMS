@@ -28,7 +28,7 @@ namespace CMS.Application.Features.Employees.Queries
                 var jobTitle = jobTitleList.Where(j => j.Id == job.JobRoleId).FirstOrDefault();
                 var employee = new EmployeeDto()
                 {
-                    Id=emp.Id,
+                    Id = emp.Id,
                     FirstName = emp.FirstName,
                     MiddleName = emp.MiddleName,
                     LastName = emp.LastName,
@@ -37,7 +37,6 @@ namespace CMS.Application.Features.Employees.Queries
                     AmharicMiddleName = emp.AmharicMiddleName,
                     AmharicLastName = emp.AmharicLastName,
                     AmharicDisplayName = emp.AmharicDisplayName,
-                    EmployeeId = emp.EmployeeId,
                     BusinessUnit = businessUnit.Name,
                     BusinessUnitID = businessUnit.Id,
                     JobTitle = jobTitle.RoleName,
@@ -52,8 +51,14 @@ namespace CMS.Application.Features.Employees.Queries
                     EmployeeDocuments = emp.EmployeeDocuments,
                     EmployeeStatus = emp.EmployeeStatus,
                     Job = emp.Job,
-                    WorkflowComment = emp.WorkflowComment
+                    WorkflowComment = emp.WorkflowComment,
+                    SalaryOnGradeStepId = emp.SalaryOnGradeStepId,
+                    EmploymentType = emp.EmploymentType,
+                    PensionID = emp.PensionID,  
+                    TinNumber = emp.TinNumber,
+
                 };
+
                 newemployeeList.Add(employee);
             }
             return newemployeeList;

@@ -24,6 +24,7 @@ import { RequestApprovalButton } from "../RequestApprovalButton";
 import { ApproveOrRejectRequestButton } from "../ApproveOrRejectRequestButton";
 import { Pagination } from "../../../../components/Pagination";
 import { ActivateOrDeActivateButton } from "../ActivateOrDeActivateButton";
+
 import WarningIcon from "@mui/icons-material/Warning";
 export const ApprovedJobs = () => {
   const [pagination, setPagination] = useState({

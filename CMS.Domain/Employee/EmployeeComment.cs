@@ -10,7 +10,7 @@ namespace CMS.Domain.Employee
 
         public string CommentedBy { get; set; }
         public string Text { get; set; }
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime Date { get; set; } = DateTime.Now;
 
         public Employee Employee { get; set; }
     }

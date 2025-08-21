@@ -18,5 +18,6 @@ namespace CMS.Application.Features.Employees.Experience.Commands
         public string ReasonForResignation { get; set; }
         public ExperienceType ExperienceType { get; set; }
         public int EmployeeId { get; set; }
+
     }
 }

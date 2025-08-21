@@ -5,6 +5,7 @@ export enum Tag {
   Users = "Users",
   UserDto = "UserDto",
   Letter = "Letter",
-  LetterDto = "LetterDto"
+  LetterDto = "LetterDto",
+    EmployeeFileDocuments = "EmployeeFileDocuments",
 
 }

@@ -195,7 +195,7 @@ export const DraftProbation = () => {
                   );
                   return (
                     <TableRow hover key={employee.id}>
-                      <TableCell>{employee.employeeId}</TableCell>
+                      <TableCell>{employee.id}</TableCell>
                       <TableCell>{employee.displayName}</TableCell>
                       <TableCell>
                         {employee.job?.jobRole?.roleName || "-"}
@@ -250,14 +250,16 @@ export const DraftProbation = () => {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <MenuItem onClick={() => handleTakeAction(menuEmployee, "Approve")}
-         disabled={!permissions.CanSubmitEmployeeProbation}
+        <MenuItem
+          onClick={() => handleTakeAction(menuEmployee, "Approve")}
+          disabled={!permissions.CanSubmitEmployeeProbation}
         >
           <CheckCircleOutline color="success" sx={{ mr: 1 }} />
           Approve Probation
         </MenuItem>
-        <MenuItem onClick={() => handleTakeAction(menuEmployee, "Terminate")}
-        disabled={!permissions.CanTerminateEmployeeProbation}
+        <MenuItem
+          onClick={() => handleTakeAction(menuEmployee, "Terminate")}
+          disabled={!permissions.CanTerminateEmployeeProbation}
         >
           <HighlightOff color="warning" sx={{ mr: 1 }} />
           Terminate Probation

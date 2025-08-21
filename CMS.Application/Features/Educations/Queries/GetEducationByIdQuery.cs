@@ -38,7 +38,8 @@ namespace CMS.Application.Features.Educations.Queries.ListEducationsByEmployee
                     AwardName = e.Award.Name,
                     FieldOfStudyId = e.FieldOfStudyId,
                     FieldOfStudyName = e.FieldOfStudy.Name, // Get FieldOfStudy Name
-                    EmployeeId = e.EmployeeId.Value
+                    EmployeeId = e.EmployeeId.Value,
+                    CGPA=e.CGPA,
                 })
                 .ToListAsync(cancellationToken);
 

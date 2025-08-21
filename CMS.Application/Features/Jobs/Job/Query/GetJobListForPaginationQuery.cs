@@ -12,5 +12,5 @@ namespace CMS.Application.Features.Jobs.Job.Query
 {
 
     public record JobSearchResult(List<JobDto> Items, int TotalCount);
-    public record GetJobListForPaginationQuery(ApprovalStatus Status, int PageNumber, int PageSize):IRequest<JobSearchResult>;
+    public record GetJobListForPaginationQuery(ApprovalStatus Status, int PageNumber, int PageSize) : IRequest<JobSearchResult>;
 }

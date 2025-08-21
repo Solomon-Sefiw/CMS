@@ -30,6 +30,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Stack from "@mui/material/Stack";
 import * as Yup from "yup";
 import { BenefitSelector } from "./BenefitSelector";
+import { FormAutocompleteField } from "./FormAutocompleteField";
 const emptyjobRoleData = {
   roleName: "",
   jobCatagoryId: "",
@@ -47,7 +48,9 @@ export const JobRoleUpdateDialog = ({
   Id,
 }: JobRoleUpdateDialogProps) => {
   const [message, setMessage] = useState<string | null>(null);
-  const [alertSeverity, setAlertSeverity] = useState<"success"|"info" | "error">();
+  const [alertSeverity, setAlertSeverity] = useState<
+    "success" | "info" | "error"
+  >();
   const [jobRoleData, setJobRoleData] = useState<JobRole>();
   const { showSuccessAlert, showErrorAlert } = useAlert();
   const {
@@ -56,13 +59,21 @@ export const JobRoleUpdateDialog = ({
     error,
   } = useGetJobRoleByIdQuery({ id: Id });
 
+  const stripHtml = (html: string) => {
+  const temp = document.createElement("div");
+               temp.innerHTML = html;
+               return temp.textContent || temp.innerText || "";
+               };
+
   useEffect(() => {
     if (jobRole && typeof jobRole === "object") {
       setJobRoleData({
         ...emptyjobRoleData,
         ...(jobRole as JobRole),
+        description: stripHtml((jobRole as JobRole).description ?? ""),
       });
-    }
+    };
+     
   }, [jobRole]);
 
   const { jobCategoriesLookups } = useJobCategory();
@@ -82,9 +93,7 @@ export const JobRoleUpdateDialog = ({
       "Job Role ,Role Catagory is needed"
     ),
     jobGradeId: Yup.number().required("Job Role Grade is Required"),
-    description: Yup.string() 
-                    .required("The Job Description is Required")
-                    .max(200,"Job Role description exceeds 200 characters"),
+    description: Yup.string().required("The Job Description is Required"),
     benefits: Yup.array().of(
       Yup.object().shape({
         benefitId: Yup.number().required("Benefit is required"),
@@ -102,8 +111,7 @@ export const JobRoleUpdateDialog = ({
         .then(() => {
           setAlertSeverity("info");
           showSuccessAlert("JobRole updated successfully!");
-           onClose();
-         
+          onClose();
         })
         .catch((error) => {});
     },
@@ -157,33 +165,54 @@ export const JobRoleUpdateDialog = ({
                 </Grid>
                 <Grid item xs={6}>
                   <Box sx={{ display: "flex", gap: 2 }}>
-                    <FormSelectField
-                      name="jobCatagoryId"
-                      label="Job Catagory"
-                      type="number"
-                      options={jobCategoriesLookups}
-                    />
+                   
+                     <FormAutocompleteField
+                    name="jobCatagoryId"
+                    label="Job Catagory"
+                    options={jobCategoriesLookups
+                      .map((c) => ({
+                        id: Number(c.value), 
+                        name: String(c.label),
+                      }))
+                      .filter((c) => !isNaN(c.id))} 
+                      sx={{ width: "100%" }}
+                      
+                  />
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
-                  <Box sx={{ display: "flex", gap: 2 }}>
-                    <FormSelectField
-                      name="jobRoleCategoryId"
-                      label="Job Role Catagory"
-                      type="number"
-                      options={jobRoleCatagoriesLookups}
-                    />
+                  <Box sx={{ display: "flex", gap: 2, width:"100%" }}>
+                    
+                   <FormAutocompleteField
+                    name="jobRoleCategoryId"
+                    label="Job Role Category"
+                    options={jobRoleCatagoriesLookups
+                      .map((c) => ({
+                        id: Number(c.value), 
+                        name: String(c.label),
+                      }))
+                      .filter((c) => !isNaN(c.id))} 
+                      sx={{ width: "100%" }}
+                      
+                  />
                   </Box>
                 </Grid>
 
                 <Grid item xs={6}>
                   <Box sx={{ display: "flex", gap: 2 }}>
-                    <FormSelectField
-                      name="jobGradeId"
-                      label="Job Grade"
-                      type="number"
-                      options={JobGradesLookups}
-                    />
+                   
+                     <FormAutocompleteField
+                    name="jobGradeId"
+                    label="Job Grade"
+                    options={JobGradesLookups
+                      .map((c) => ({
+                        id: Number(c.value), 
+                        name: String(c.label),
+                      }))
+                      .filter((c) => !isNaN(c.id))} 
+                      sx={{ width: "100%" }}
+                      
+                  />
                   </Box>
                 </Grid>
                 <Grid item xs={6}>
@@ -191,7 +220,13 @@ export const JobRoleUpdateDialog = ({
                 </Grid>
                 <Grid item xs={12}>
                   <Box sx={{ display: "flex", gap: 2 }}>
-                    <FormRichTextField name="description" />
+                    <FormTextField
+                       name="description"
+                       label="Description"
+                       multiline
+                       minRows={4}
+                       fullWidth
+                        />
                   </Box>
                 </Grid>
               </Grid>

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using AutoMapper;
-using CMS.Application.Features.Addresses.Setups.Models;
 using CMS.Application.Features.Employees.EmployeeActivities.DelegationAssignment.Models;
 using CMS.Domain.Enum;
 using CMS.Services.DataService;

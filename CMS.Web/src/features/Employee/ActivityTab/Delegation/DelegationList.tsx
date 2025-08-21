@@ -13,12 +13,17 @@ import {
 } from "@mui/material";
 import { useDelegationContext } from "./DelegationProvider";
 import { ApprovalStatus } from "../../../../app/api/enums";
-import { DelegationDto, useGetPaginatedDelegationsQuery } from "../../../../app/store";
+import {
+  DelegationDto,
+  useGetPaginatedDelegationsQuery,
+} from "../../../../app/store";
 import { Pagination } from "../../../../components/Pagination";
 import { DelegationApprovalButton } from "./DelegationGrids/DelegationApprovalButton";
 import { ApproveOrRejectRequestDelegation } from "./DelegationGrids/ApproveOrRejectRequestDelegation";
 import { usePermission } from "../../../../hooks";
 import { DelegationDialog } from "./DelegationDialog";
+import { Remove } from "@mui/icons-material";
+import { DelegationRemoveButton } from "./DelegationGrids/DelegationRemoveButton";
 
 interface PaginationState {
   pageNumber: number;
@@ -34,12 +39,13 @@ export const DelegationList = ({ status }: { status: ApprovalStatus }) => {
   const [selectedDelegation, setSelectedDelegation] = useState<DelegationDto>();
   const permissions = usePermission();
 
-  const { data, isLoading, isFetching, refetch } = useGetPaginatedDelegationsQuery({
-    id :employeeId,
-    status,
-    pageNumber: pagination.pageNumber + 1,
-    pageSize: pagination.pageSize,
-  });
+  const { data, isLoading, isFetching, refetch } =
+    useGetPaginatedDelegationsQuery({
+      id: employeeId,
+      status,
+      pageNumber: pagination.pageNumber + 1,
+      pageSize: pagination.pageSize,
+    });
 
   const handlePaginationChange = useCallback(
     (newPagination: PaginationState) => {
@@ -75,36 +81,44 @@ export const DelegationList = ({ status }: { status: ApprovalStatus }) => {
                 {data.items.map((delegation: DelegationDto) => (
                   <TableRow key={delegation.id}>
                     <TableCell>{delegation.jobRole?.roleName || "-"}</TableCell>
-                    <TableCell>{delegation.businessUnit?.name || "-"}</TableCell>
+                    <TableCell>
+                      {delegation.businessUnit?.name || "-"}
+                    </TableCell>
                     <TableCell>{delegation.startDate}</TableCell>
                     <TableCell>{delegation.endDate || "N/A"}</TableCell>
-                    <TableCell>
-                      {ApprovalStatus[delegation.approvalStatus ? delegation.approvalStatus : 0]}
-                    </TableCell>
+                   <TableCell>{delegation.endDate ? "Removed" : ApprovalStatus[delegation.approvalStatus ? delegation.approvalStatus : 0]}</TableCell>
                     <TableCell align="center">
                       <Box display="flex" gap={1} justifyContent="center">
                         {delegation.approvalStatus === ApprovalStatus.Draft && (
-                          <DelegationApprovalButton 
+                          <DelegationApprovalButton
                             id={delegation.id || 0}
                             //onSuccess={refetch}
                           />
                         )}
-                        {delegation.approvalStatus === ApprovalStatus.Submitted && (
+                        {delegation.approvalStatus ===
+                          ApprovalStatus.Submitted && (
                           <ApproveOrRejectRequestDelegation
                             id={delegation.id || 0}
-                           // onSuccess={refetch}
+                            // onSuccess={refetch}
                           />
                         )}
                         {(delegation.approvalStatus === ApprovalStatus.Draft ||
-                          delegation.approvalStatus === ApprovalStatus.Rejected) && (
+                          delegation.approvalStatus ===
+                            ApprovalStatus.Rejected) && (
                           <Button
                             size="small"
                             variant="outlined"
                             onClick={() => setSelectedDelegation(delegation)}
-                            disabled={!permissions.canCreateUpdateSetup}
+                            disabled={!permissions.CanCreateUpdateEmployeeActivity}
                           >
                             Edit
                           </Button>
+                        )}
+                      {(delegation.approvalStatus === ApprovalStatus.Approved) && (
+                         !delegation.endDate ? <DelegationRemoveButton
+                            id={delegation.id || 0}
+                            //onSuccess={refetch}
+                          /> : ""
                         )}
                       </Box>
                     </TableCell>
@@ -113,7 +127,7 @@ export const DelegationList = ({ status }: { status: ApprovalStatus }) => {
               </TableBody>
             </Table>
           </TableContainer>
-          
+
           <Pagination
             pageNumber={pagination.pageNumber}
             pageSize={pagination.pageSize}

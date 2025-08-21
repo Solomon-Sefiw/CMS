@@ -17,12 +17,12 @@ export const EmployeePhoto = ({ employee }: EmployeePhotoProps) => {
   // Callback to handle profile picture upload
   const onProfilePictureAdd = useCallback(
     (files: any[]) => {
-      if (employee?.employeeId && files.length) {
+      if (employee?.id && files.length) {
         const formData = new FormData();
         formData.append("file", files[0]); // Append the first file
 
         savePhoto({
-          id: employee.employeeId, // Use the correct employeeId
+          id: employee.id, // Use the correct employeeId
           body: {
             file: files[0],
           },
@@ -38,8 +38,8 @@ export const EmployeePhoto = ({ employee }: EmployeePhotoProps) => {
     },
     [
       savePhoto,
-      employee?.employeeId,
-      employee?.employeeId,
+      employee?.id,
+      employee?.id,
       showErrorAlert,
       showSuccessAlert,
     ]

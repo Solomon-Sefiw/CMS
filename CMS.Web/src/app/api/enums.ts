@@ -3,52 +3,73 @@ export enum Gender {
   Female = 2,
   Unspecified = 0, // Default/empty value
 }
-    export enum LetterType
-    {
-        Incoming = 1,
-        Outgoing,
-        InternalMemo
-    }
+export enum WarningStatus {
+  FirstLevel = 1,
+  SecondLevel = 2,
+  ThirdLevel = 3
+}
+export enum ViolationType {
+  Attendance = 1,
+  Behavior = 2,
+  Performance = 3,
+  Other = 4
+}
+export enum LetterType {
+  Incoming = 1,
+  Outgoing,
+  InternalMemo
+}
 export enum MartialStatus {
   Single = 1,
   Married = 2,
   Divorced = 3,
   Widowed = 4,
 }
-    export enum ExperienceType
-    {
-        External = 1,
-        NewHire = 2,
-        Delegation = 3,
-        Acting = 4,
-        Promotion = 5,
-        Demotion = 6,
-        Transfer = 7,
-    }
-export enum ClaimCategory {
-        User = 1,
-        Setup = 2,
-        EmployeePersonalInfo = 3,
-        EmployeeProbation = 4,
-        AddressAndContact = 5,
-        EmployeeId = 6,
-        Dashboard = 7,
-        Letter = 8,
+export enum ExperienceType {
+  External = 1,
+  NewHire = 2,
+  Delegation = 3,
+  Acting = 4,
+  Promotion = 5,
+  Demotion = 6,
+  Transfer = 7,
 }
-
+export enum ClaimCategory {
+  User = 1,
+  Setup = 2,
+  EmployeePersonalInfo = 3,
+  EmployeeProbation = 4,
+  AddressAndContact = 5,
+  EmployeeId = 6,
+  Dashboard = 7,
+  Letter = 8,
+   EmployeeActivity = 9,
+}
+export enum ResignationType {
+  Voluntary = 1,
+  Dismissal = 2,
+  Retirement = 3,
+  Decease = 4
+}
+export enum SuspensionReason {
+  Investigation = 1,
+  PolicyViolation = 2,
+  Misconduct = 3,
+  PerformanceIssues = 4,
+  Other = 99
+}
 export enum ApprovalStatus {
   Draft = 1,
   Submitted = 2,
   Rejected = 3,
   Approved = 4,
 }
-    export enum LetterStatus
-    {
-         pending = 1 ,
-        received,
-        responded,
-        archived
-    }
+export enum LetterStatus {
+  pending = 1,
+  received,
+  responded,
+  archived
+}
 export enum EmployeeStatusEnum {
   Active = 1,
   Inactive = 2,
@@ -89,6 +110,28 @@ export enum ProbationResult {
   ReturnedFromApproval = 8,
   ActivateRejectedProbation = 9,
 }
+export enum PromotionType {
+  Promotion = 1,
+  Other = 2,
+}
+export enum ReClassificationType {
+  JobRoleChange = 1,
+  Other = 2
+}
+export enum DemotionType {
+  PoorPerformance = 1,
+  DisciplinaryAction = 2,
+  Restructuring = 3,
+  VoluntaryRequest = 4,
+  LackofRequiredSkills = 5,
+  Other = 6
+}
+export enum EmployeeTransactionStatus {
+  Draft = 1,
+  Submitted = 2,
+  Rejected = 3,
+  Approved = 4
+}
 export enum JobCatagoryEnum {
   Clerical = 1,
   Non_Clerical = 2,
@@ -96,18 +139,23 @@ export enum JobCatagoryEnum {
   Managerial = 4,
 }
 export enum AddressType {
-      BusinessUnitAddress = 1,
-      BirthPlaceAddress = 2,
-      CurrentAddress = 3,
-      EmergencyContactAddress = 4,
-      SpouseAddress = 5,
-      EmployeeGuaranterAddress = 6,
-      WorkingFirmAddress = 7,
-            ParentAddress = 8, 
-      GuaranterWorkingFirmAddress = 9,
+  BusinessUnitAddress = 1,
+  BirthPlaceAddress = 2,
+  CurrentAddress = 3,
+  EmergencyContactAddress = 4,
+  SpouseAddress = 5,
+  EmployeeGuaranterAddress = 6,
+  WorkingFirmAddress = 7,
+  ParentAddress = 8,
+  GuaranterWorkingFirmAddress = 9,
 }
 export enum Country {
   Ethiopia = 1,
+}
+export enum ActingType {
+  Permanent = 1,
+  Temporary = 2,
+  Reassignment = 3,
 }
 
 export enum ContactType {
@@ -322,7 +370,7 @@ export enum Permission {
   canActivateEmployeePersonalInfo = "canActivateEmployeePersonalInfo",
   canDeactivateEmployeePersonalInfo = "canDeactivateEmployeePersonalInfo",
 
-//AddressContact 
+  //AddressContact 
   canViewAddressAndContact = "canViewAddressAndContact",
   canCreateUpdateAddressAndContact = "canCreateUpdateAddressAndContact",
   canActivateAddressAndContact = "canActivateAddressAndContact",
@@ -340,7 +388,7 @@ export enum Permission {
   canDeactivateSetup = "canDeactivateSetup",
   canActivateSetup = "canActivateSetup",
   // Dashboard
-          // Cards
+  // Cards
   canViewAllActiveEmployees = "canViewAllActiveEmployees",
   canViewAllVacantJobs = "canViewAllVacantJobs",
   canViewAllResignedEmployees = "canViewAllResignedEmployees",
@@ -349,26 +397,32 @@ export enum Permission {
   canViewAllPositions = "canViewAllPositions",
   canViewTurnoverRates = "canViewTurnoverRates",
   canViewRetentionRates = "canViewRetentionRates",
-           //Chart And Graph
+  //Chart And Graph
   canViewEmployeeDistributionByStatusDoughnutChart = "canViewEmployeeDistributionByStatusDoughnutChart",
   canViewMonthlyNewEmployeesOfFiscalYearBarChart = "canViewMonthlyNewEmployeesOfFiscalYearBarChart",
   canViewEmployeeDistributionByJobCategoryPieChart = "canViewEmployeeDistributionByJobCategoryPieChart",
   canViewMonthlyHRMetricsLineGraph = "canViewMonthlyHRMetricsLineGraph",
 
-         //Approval
+  //Approval
   canViewAllApprovalSummaries = "canViewAllApprovalSummaries",
   canViewAllApprovalRequestGrid = "canViewAllApprovalRequestGrid",
   // Dashboard
   canViewLetterCountBoard = "canViewLetterCountBoard",
   canViewRecentLettersBoard = "canViewRecentLettersBoard",
-    // letter 
+  // letter 
   canViewLetter = "canViewLetter",
   canCreateUpdateLetter = "canCreateUpdateLetter",
   canApproveRejectLetter = "canApproveRejectLetter",
   canSubmitLetter = "canSubmitLetter",
   canActivateLetter = "canActivateLetter",
   canDeactivateLetter = "canDeactivateLetter",
-
+  //Employee Activity
+  canViewEmployeeActivity = "canViewEmployeeActivity",
+  canCreateUpdateEmployeeActivity = "canCreateUpdateEmployeeActivity",
+  canApproveRejectEmployeeActivity = "canApproveRejectEmployeeActivity",
+  canSubmitEmployeeActivity = "canSubmitEmployeeActivity",
+  canActivateEmployeeActivity = "canActivateEmployeeActivity",
+  canDeactivateEmployeeActivity = "canDeactivateEmployeeActivity",
 }
 export enum Guarantee {
   InWard = 1,
@@ -416,12 +470,56 @@ export enum JobGradeRomanId {
   XXXIX = 39,
   XL = 40,
 }
+
 export enum DocumentType {
-        Other = 0,
-        UserPhoto = 1,
-        UserSignature = 2,
-        LetterDocument = 3,
-        DepartmentBluePrint = 4,
-        EmployeePicture,
-        BirthCertificate,
+  Other = 0,
+  UserPhoto = 1,
+  UserSignature = 2,
+  LetterDocument = 3,
+  DepartmentBluePrint = 4,
+  EmployeePicture = 5,
+  BirthCertificate = 6,
+  EmployeeSignature = 8,
+  EducationalDocument = 9,
+  ExperienceDocument = 10,
+  Certificate = 11,
+  OperationalAgreement = 12,
+  PhotoIdentification = 13,
+  DrivingLicense = 14,
+  Passport = 15,
+  MarriageCertificate = 16,
+  Suspension = 17,
+  Resignation = 18,
 }
+export enum ReemploymentType {
+  Reinstate = 1,
+  Rehire = 2,
+}
+
+// Human-readable labels
+export const DocumentTypeLabels: Record<DocumentType, string> = {
+  [DocumentType.Other]: "Other",
+  [DocumentType.UserPhoto]: "UserPhoto",
+  [DocumentType.UserSignature]: "UserSignature",
+  [DocumentType.LetterDocument]: "LetterDocument",
+  [DocumentType.DepartmentBluePrint]: "DepartmentBluePrint",
+  [DocumentType.EmployeePicture]: "Employee Picture",
+  [DocumentType.EmployeeSignature]: "Employee Signature",
+  [DocumentType.EducationalDocument]: "Educational Document",
+  [DocumentType.ExperienceDocument]: "Experience Document",
+  [DocumentType.Certificate]: "Certificate",
+  [DocumentType.OperationalAgreement]: "Operational Agreement",
+  [DocumentType.PhotoIdentification]: "Photo Identification",
+  [DocumentType.DrivingLicense]: "Driving License",
+  [DocumentType.Passport]: "Passport",
+  [DocumentType.BirthCertificate]: "Birth Certificate",
+  [DocumentType.MarriageCertificate]: "Marriage Certificate",
+  [DocumentType.Suspension]: "Suspension",
+  [DocumentType.Resignation]: "Resignation",
+};
+
+export enum EmploymentType {
+  Permanent = 1,
+  Contract = 2,
+
+};

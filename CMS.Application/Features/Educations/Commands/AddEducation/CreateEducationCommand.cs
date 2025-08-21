@@ -14,6 +14,7 @@ namespace CMS.Application.Features.Educations.Commands.CreateEducation
         public int AwardId { get; set; }
         public int FieldOfStudyId { get; set; } // New FieldOfStudyId
         public int EmployeeId { get; set; }
+        public Decimal? CGPA { get; set; }
     }
 
     public class CreateEducationCommandHandler : IRequestHandler<CreateEducationCommand, int>
@@ -36,7 +37,8 @@ namespace CMS.Application.Features.Educations.Commands.CreateEducation
                 EducationLevelId = request.EducationLevelId,
                 AwardId = request.AwardId,
                 FieldOfStudyId = request.FieldOfStudyId, 
-                EmployeeId = request.EmployeeId
+                EmployeeId = request.EmployeeId,
+                CGPA=request.CGPA,
             };
 
             await _dataService.Educations.AddAsync(newEducation, cancellationToken);

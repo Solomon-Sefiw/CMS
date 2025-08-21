@@ -125,29 +125,26 @@ export const JobGradeRejectedApprovalRequests = () => {
                         {item.description}
                       </TableCell>
                       <TableCell>
-                            <Box
+                        <Box
                           sx={{
                             display: "flex",
                             justifyContent: "center",
                             gap: 1,
                             alignItems: "flex-start",
-                         
                           }}
                         >
-                        <Button
-                        size="small" 
-                        onClick={() => ViewDetail(item)}>
-                          View Detail
-                        </Button>
-                        {item.approvalStatus === ApprovalStatus.Rejected && (
-                          <Button
-                            size="small"
-                            onClick={() => UpdateJobGrade(item)}
-                            disabled={!permissions.canCreateUpdateSetup}
-                          >
-                            Edit
+                          <Button size="small" onClick={() => ViewDetail(item)}>
+                            View Detail
                           </Button>
-                        )}
+                          {item.approvalStatus === ApprovalStatus.Rejected && (
+                            <Button
+                              size="small"
+                              onClick={() => UpdateJobGrade(item)}
+                              disabled={!permissions.canCreateUpdateSetup}
+                            >
+                              Edit
+                            </Button>
+                          )}
                         </Box>
                       </TableCell>
                     </TableRow>

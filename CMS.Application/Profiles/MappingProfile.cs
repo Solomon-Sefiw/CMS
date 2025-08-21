@@ -13,6 +13,9 @@ using CMS.Application.Features.Educations.Setups.InstitutionName.Queries;
 using CMS.Application.Features.Employees;
 using CMS.Application.Features.Employees.EmployeeActivities.ActingAssignment.Models;
 using CMS.Application.Features.Employees.EmployeeActivities.DelegationAssignment.Models;
+using CMS.Application.Features.Employees.EmployeeActivities.EmployeeWarning.Models;
+using CMS.Application.Features.Employees.EmployeeActivities.Resignations.Models;
+using CMS.Application.Features.Employees.EmployeeActivities.Suspensions.Models;
 using CMS.Application.Features.Employees.Family.Model;
 using CMS.Application.Features.Employees.Queries;
 using CMS.Application.Features.Jobs.JobRoles.Setups.JobRoleCatagory.Models;
@@ -26,6 +29,7 @@ using CMS.Domain.Delegations;
 using CMS.Domain.Education;
 using CMS.Domain.Education.awards;
 using CMS.Domain.Employee;
+using CMS.Domain.Employee.EmployeeActivities;
 using CMS.Domain.Enum;
 using CMS.Domain.letters;
 using CMS.Domain.User;
@@ -47,10 +51,14 @@ namespace CMS.Application.Profiles
             CreateMap<BusinessUnit, BusinessUnitDto>();
             CreateMap<CreateBusinessUnitCommand, UpdateBusinessUnitCommand>().ReverseMap();
             CreateMap<EmployeeDto, Employee>().ReverseMap();
+            CreateMap<Employee, EmployeeDetailsDto>().ReverseMap();
             CreateMap<HRRole, ApplicationRole>();
             CreateMap<EmployeeChangeLog, EmployeeChangeLogDto>();
             CreateMap<Region, RegionDto>();
             CreateMap<Delegation, DelegationDto>();
+            CreateMap<EmployeeWarning, EmployeeWarningDto>();
+            CreateMap<Suspension, SuspensionDto>();
+            CreateMap<Resignation, ResignationDto>();
             CreateMap<Acting, ActingDto>();
             CreateMap<JobRoleCategory, JobRoleCatagoryDto>();
             CreateMap<SubCity, SubCityDto>(); 
@@ -62,6 +70,7 @@ namespace CMS.Application.Profiles
             CreateMap<WorkflowEnabledEntity, WorkflowEnabledEntityDto>()
        .ForMember(dest => dest.PeriodStart, opt => opt.MapFrom(src => EF.Property<DateTime>(src, "PeriodStart")))
            .ForMember(dest => dest.PeriodEnd, opt => opt.MapFrom(src => EF.Property<DateTime>(src, "PeriodEnd")));
+
         }
     }
 }

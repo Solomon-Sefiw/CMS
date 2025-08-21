@@ -231,8 +231,8 @@ export const EmployeesHome = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [autoCompleteOpen, setAutoCompleteOpen] = useState(false);
 
-  const [businessUnitSearchInput, setBusinessUnitSearchInput] = useState<string>('');
-
+  const [businessUnitSearchInput, setBusinessUnitSearchInput] =
+    useState<string>("");
 
   const initialSidebarWidth = isMd ? 420 : "140%";
   const [sidebarWidth, setSidebarWidth] = useState<number | string>(
@@ -259,19 +259,21 @@ export const EmployeesHome = () => {
     const options = new Set<string>();
     console.log(allEmployeesForSearch, selectedBusinessUnit);
     // Filter employees based on the selected business unit
-    const filteredEmployees = allEmployeesForSearch.filter((employee: EmployeeDto) => {
-      // If "All Employees" is selected (id 1), return all employees
-      console.log(employee, selectedBusinessUnit);
-      if (selectedBusinessUnitId === 1) {
-        return true;
+    const filteredEmployees = allEmployeesForSearch.filter(
+      (employee: EmployeeDto) => {
+        // If "All Employees" is selected (id 1), return all employees
+        console.log(employee, selectedBusinessUnit);
+        if (selectedBusinessUnitId === 1) {
+          return true;
+        }
+        // Otherwise, return employees whose businessUnitId matches the selected one
+        return employee.businessUnitID === selectedBusinessUnitId;
       }
-      // Otherwise, return employees whose businessUnitId matches the selected one
-      return employee.businessUnitID === selectedBusinessUnitId;
-    });
+    );
 
     filteredEmployees.forEach((employee: EmployeeDto) => {
-      if (employee.employeeId?.toString().includes(searchTerm)) {
-        options.add(employee.employeeId.toString());
+      if (employee.id?.toString().includes(searchTerm)) {
+        options.add(employee.id.toString());
       }
 
       if (searchInput.length >= 3) {
@@ -319,7 +321,8 @@ export const EmployeesHome = () => {
     useGetEmployeeCountPerApprovalStatusQuery({
       businssUnitId: selectedBusinessUnitId,
     });
-  const isLoading = isCountsLoading || isListLoading || isEmployeesForSearchLoading;
+  const isLoading =
+    isCountsLoading || isListLoading || isEmployeesForSearchLoading;
 
   const businessUnitTree = buildBusinessUnitTree(items?.items || []);
 
@@ -350,8 +353,14 @@ export const EmployeesHome = () => {
 
       // Expand parents of the selected business unit
       let currentUnit = selectedUnit;
-      while (currentUnit && currentUnit.parentId && currentUnit.parentId !== 1) {
-        const parent = items?.items?.find((item) => item.id === currentUnit?.parentId);
+      while (
+        currentUnit &&
+        currentUnit.parentId &&
+        currentUnit.parentId !== 1
+      ) {
+        const parent = items?.items?.find(
+          (item) => item.id === currentUnit?.parentId
+        );
         if (parent) {
           setExpanded((prev) => new Set(prev).add(parent.id!));
           currentUnit = parent;
@@ -394,7 +403,8 @@ export const EmployeesHome = () => {
     setIsResizing(true);
   };
 
-  const handleMouseMove = useCallback( // Use useCallback for stable function reference
+  const handleMouseMove = useCallback(
+    // Use useCallback for stable function reference
     (e: MouseEvent) => {
       if (!isResizing || !containerRef.current) return;
 
@@ -412,7 +422,8 @@ export const EmployeesHome = () => {
     [isResizing] // Dependency for useCallback
   );
 
-  const handleMouseUp = useCallback(() => { // Use useCallback for stable function reference
+  const handleMouseUp = useCallback(() => {
+    // Use useCallback for stable function reference
     setIsResizing(false);
   }, []);
 
@@ -479,12 +490,16 @@ export const EmployeesHome = () => {
           // Filter options based on input when 3 or more characters are typed
           options={
             businessUnitSearchInput.length >= 3
-              ? (items?.items || []).filter(unit =>
-                  unit.name?.toLowerCase().includes(businessUnitSearchInput.toLowerCase())
+              ? (items?.items || []).filter((unit) =>
+                  unit.name
+                    ?.toLowerCase()
+                    .includes(businessUnitSearchInput.toLowerCase())
                 )
               : [] // Show no options if less than 3 characters
           }
-          getOptionLabel={(option) => (typeof option === 'string' ? option : option.name || '')}
+          getOptionLabel={(option) =>
+            typeof option === "string" ? option : option.name || ""
+          }
           loading={isListLoading}
           inputValue={businessUnitSearchInput}
           onInputChange={(_, newInputValue) => {
@@ -492,7 +507,10 @@ export const EmployeesHome = () => {
           }}
           onChange={handleBusinessUnitSearchSelect}
           // Only open the autocomplete dropdown if 3 or more characters are typed
-          open={businessUnitSearchInput.length >= 3 && businessUnitSearchInput.length > 0}
+          open={
+            businessUnitSearchInput.length >= 3 &&
+            businessUnitSearchInput.length > 0
+          }
           onOpen={() => {}}
           onClose={() => {}}
           sx={{ mb: 2 }}
@@ -502,7 +520,11 @@ export const EmployeesHome = () => {
               label="Search Business Units"
               InputProps={{
                 ...params.InputProps,
-                endAdornment: isListLoading ? <CircularProgress color="inherit" size={20} /> : params.InputProps.endAdornment,
+                endAdornment: isListLoading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : (
+                  params.InputProps.endAdornment
+                ),
               }}
             />
           )}
@@ -592,7 +614,8 @@ export const EmployeesHome = () => {
                   ...params.InputProps,
                   endAdornment: (
                     <>
-                      {isEmployeesForSearchLoading && searchInput.length === 0 ? (
+                      {isEmployeesForSearchLoading &&
+                      searchInput.length === 0 ? (
                         <CircularProgress color="inherit" size={20} />
                       ) : null}
                       {params.InputProps.endAdornment}
@@ -603,7 +626,7 @@ export const EmployeesHome = () => {
             )}
           />
 
-          {selectedBusinessUnit?.id  && (
+          {selectedBusinessUnit?.id && selectedBusinessUnit?.id !== 1 && (
             <Button
               variant="contained"
               startIcon={<AddIcon />}

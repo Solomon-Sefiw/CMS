@@ -171,7 +171,7 @@ export const ProbationApprovalRequests = () => {
                 {(filteredProbation || []).map((employee: EmployeeDto) => {
                   return (
                     <TableRow hover key={employee.id}>
-                      <TableCell>{employee.employeeId}</TableCell>
+                      <TableCell>{employee.id}</TableCell>
                       <TableCell>{employee.displayName}</TableCell>
                       <TableCell>
                         {employee.job?.jobRole?.roleName || "-"}

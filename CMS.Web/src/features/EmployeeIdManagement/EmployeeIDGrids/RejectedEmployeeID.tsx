@@ -125,7 +125,7 @@ const permissions = usePermission();
               <TableBody>
                 {(filteredEmployeeIDList || []).map((employee: EmployeeDto) => (
                   <TableRow hover key={employee.id}>
-                    <TableCell>{employee.employeeId}</TableCell>
+                    <TableCell>{employee.id}</TableCell>
                     <TableCell>{employee.displayName}</TableCell>
                     <TableCell>
                       {employee.job?.jobRole?.roleName || "-"}

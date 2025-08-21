@@ -49,7 +49,8 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.DelegationAssign
                 delegation.BusinessUnit,
                 delegation.StartDate,
                 delegation.EndDate,
-                delegation.ApprovalStatus
+                delegation.ApprovalStatus,
+                delegation.IsActive
             ));
             var approved = regionList.Where(r => r.ApprovalStatus == ApprovalStatus.Approved).ToList();
             var submitted = regionList.Where(r => r.ApprovalStatus == ApprovalStatus.Submitted).ToList();

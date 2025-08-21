@@ -34,7 +34,7 @@ namespace CMS.Application.Features.Jobs.JobCatagories.Command.RejectJobCatagory
 
             jobCategory.ApprovalStatus = ApprovalStatus.Rejected;
 
-            jobCategory.LastModifiedAt = DateTime.UtcNow;
+            jobCategory.LastModifiedAt = DateTime.Now;
 
             await dataService.SaveAsync(cancellationToken);
 

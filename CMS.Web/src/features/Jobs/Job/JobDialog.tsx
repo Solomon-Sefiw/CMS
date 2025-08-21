@@ -8,9 +8,11 @@ import {
   Typography,
   Snackbar,
   Alert,
+  Autocomplete
+
 } from "@mui/material";
 import { Formik, Form } from "formik";
-import { DialogHeader, FormSelectField } from "../../../components";
+import { DialogHeader, FormSelectField, FormTextField } from "../../../components";
 import { useBusinessUnit } from "../../BusinessUnit/useBusinessUnits";
 import { useJobRole } from "./useJobRole";
 import { useCallback, useEffect, useState } from "react";
@@ -23,6 +25,8 @@ import {
   useUpdateJobMutation,
 } from "../../../app/api";
 import { useAlert } from "../../notification";
+import { FormAutocompleteField } from "../JobRole/FormAutocompleteField";
+import { FormAutocomplete } from "../../../components/form-controls/form-auto-complete";
 
 interface JobDialogProps {
   job?: JobDto;
@@ -49,6 +53,9 @@ export const JobDialog = ({ onClose, job, title }: JobDialogProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [isLocked, setIsLocked] = useState(false);
   const { showSuccessAlert, showErrorAlert } = useAlert();
+  const [searchBusinessUnit, setSearchBusinessUnit] = useState("");
+  const [searchJobRole, setSearchJobRole] = useState("");
+
 
   useEffect(() => {
     setJobData({
@@ -88,6 +95,7 @@ export const JobDialog = ({ onClose, job, title }: JobDialogProps) => {
           const addCommand: AddJobCommand = {
             jobRoleId: values.jobRoleId,
             businessunitId: values.businessUnitId,
+            requiredNumber: values?.requiredNumber as any
           };
           const response = await addJob({ addJobCommand: addCommand }).unwrap();
           if (response.jobCountExceeded) {
@@ -101,8 +109,7 @@ export const JobDialog = ({ onClose, job, title }: JobDialogProps) => {
           }
         }
         setOpenSnackbar(false);
-          onClose();
-
+        onClose();
       } catch (error) {
         setOpenSnackbar(false);
         setSeverity("error");
@@ -143,23 +150,34 @@ export const JobDialog = ({ onClose, job, title }: JobDialogProps) => {
                   </Grid>
                 )}
                 <Grid item xs={12}>
-                  <Box sx={{ display: "flex", gap: 2 }}>
-                    <FormSelectField
+                  <Box sx={{ width: "100%"}}>
+                   <FormAutocomplete
                       name="businessUnitId"
                       label="Business Unit"
-                      type="number"
-                      options={businessUnitLookups}
-                      fullWidth
-                    />
+                      options={businessUnitLookups.filter(bu => bu.value !== 1)}
+                    
+                         />
+                     </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box sx={{ width: "100%"}}>
+
+                     <FormAutocomplete
+                      name="jobRoleId"
+                      label="Job Role"
+                      options={jobRoleLookups}
+                    
+                         />
+
+
                   </Box>
                 </Grid>
                 <Grid item xs={12}>
                   <Box sx={{ display: "flex", gap: 2 }}>
-                    <FormSelectField
-                      name="jobRoleId"
-                      label="Job Role"
+                    <FormTextField
+                      name="requiredNumber"
+                      label="Required Number of Jobs"
                       type="number"
-                      options={jobRoleLookups}
                       fullWidth
                     />
                   </Box>
