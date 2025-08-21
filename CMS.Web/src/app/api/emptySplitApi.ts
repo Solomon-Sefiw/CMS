@@ -6,8 +6,8 @@ export const emptySplitApi = createApi({
   reducerPath: "HCMSApi",
   baseQuery: fetchBaseQuery({
    // baseUrl: "https://cms-api-cnxw.onrender.com",
-   // baseUrl: "https://cms-api.somee.com",
-    baseUrl: "http://localhost:5023", 
+    baseUrl: "https://cms-api.somee.com",
+    //baseUrl: "http://localhost:5023", 
         credentials: 'include', // ✅ include cookies 
     prepareHeaders: (headers) => {
       if (!headers.has("Content-Type")) {
