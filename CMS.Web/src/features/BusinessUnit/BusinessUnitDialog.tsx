@@ -171,7 +171,7 @@ export const BusinessUnitDialog: React.FC<BusinessUnitDialogProps> = ({
                                                     label="Parent Business Unit"
                                                     options={
                                                         businessUnitList?.approved
-                                                            ?.filter(j => (values.type ?? 0) > 0 && ((isBranch || values.type !== 5)   ? (j.type === (values.type ?? 0) - 1) : (j.type === (values.type ?? 0) - 2)))
+                                                            ?.filter(j => (values.type ?? 0) > 0 && ((isBranch || values.type !== 5)   ? (j.type === (values.type ?? 0) - 1) : (j.type === (values.type ?? 0) - 1)))
                                                             ?.map(j => ({ value: j.id, label: j.name })) as SelectOption[]
                                                     }
                                                 />
