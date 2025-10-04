@@ -3,6 +3,10 @@ export enum Gender {
   Female = 2,
   Unspecified = 0, // Default/empty value
 }
+export enum HearingType { Preliminary = 1, Main = 2, Continuation = 3, Adjourned = 4, Virtual = 5 }
+export enum CaseType { Direct = 1, RTD = 2, Appeal = 3, Assigned = 4 }
+export enum CaseStatus { Pending = 1, Submitted = 2, Verified = 3, Assigned = 4, Scheduled = 5, InHearing = 6, JudgmentDraft = 7, JudgmentPublished = 8, Rejected = 9, Closed = 10, Archived = 11 }
+
     export enum LetterType
     {
         Incoming = 1,

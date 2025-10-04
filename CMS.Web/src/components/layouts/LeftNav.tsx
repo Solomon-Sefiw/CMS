@@ -76,6 +76,11 @@ const navMenuItems: NavMenuItem[] = [
     icon: <EmailRounded color="primary" />,
     url: "/letters",
   },
+    {
+    label: "menu.letters",
+    icon: <EmailRounded color="primary" />,
+    url: "/cases",
+  },
 ];
 
 interface Props {

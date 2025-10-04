@@ -34,8 +34,8 @@ namespace CMS.Persistance.SeedData
             await context.SaveChangesAsync();
 
 
-            var businessUnits = new BusinessUnit() { Name = "FederalSupremeCourt", BusinessUnitID = "FederalSupremeCourt",
-                BusinessUnitCode = "01", ParentId = 1, Type = BusinessUnitTypeEnum.FederalSupremeCourt
+            var businessUnits = new BusinessUnit() { Name = "FederalSuperemeSeber", BusinessUnitID = "FederalSuperemeSeber",
+                BusinessUnitCode = "01", ParentId = 1, Type = BusinessUnitTypeEnum.FederalSuperemeSeber
             };
             context.BusinessUnits.Add(businessUnits);
             await context.SaveChangesAsync();

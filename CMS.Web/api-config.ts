@@ -1,8 +1,8 @@
 // api-config.ts
 const config: any = {
    //schemaFile: "https://cms-api-cnxw.onrender.com/swagger/v1/swagger.json",
-   schemaFile: "https://cms-api.somee.com/swagger/v1/swagger.json",
-  //schemaFile: "http://localhost:5023/swagger/v1/swagger.json",
+   //schemaFile: "https://cms-api.somee.com/swagger/v1/swagger.json",
+  schemaFile: "http://localhost:5023/swagger/v1/swagger.json",
   apiFile: "./src/app/api/emptySplitApi.ts",
   apiImport: "emptySplitApi",
   outputFile: "./src/app/api/HCMSApi.ts",

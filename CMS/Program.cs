@@ -40,6 +40,8 @@ builder.Services.AddControllers(opt =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+// ✅ 3. Add SignalR for real-time chat
+builder.Services.AddSignalR();
 
 // Data Protection (required for consistent token generation in production)
 builder.Services.AddDataProtection()
@@ -84,4 +86,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chatHub"); // ✅ Ensure this is correctly mapped
 app.Run();

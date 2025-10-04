@@ -1,23 +1,35 @@
 ﻿
 using CMS.Domain;
+using CMS.Domain.Acting;
+using CMS.Domain.Adress;
+using CMS.Domain.Appointments;
+using CMS.Domain.Archive;
+using CMS.Domain.Assignment;
+using CMS.Domain.Benefit;
+using CMS.Domain.BranchGrade;
+using CMS.Domain.Cases;
+using CMS.Domain.Chat;
+using CMS.Domain.Contacts;
+using CMS.Domain.Courts;
+using CMS.Domain.Delegations;
 using CMS.Domain.Document;
+using CMS.Domain.Education;
+using CMS.Domain.Education.awards;
 using CMS.Domain.EmailTemplet;
+using CMS.Domain.Employee;
+using CMS.Domain.Hearings;
+using CMS.Domain.Jobs;
+using CMS.Domain.Judgments;
+using CMS.Domain.Language;
+using CMS.Domain.LetterDocument;
 using CMS.Domain.letters;
+using CMS.Domain.Notifications;
+using CMS.Domain.Payments;
+using CMS.Domain.Templates;
+using CMS.Domain.Timelines;
 using CMS.Domain.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using CMS.Domain.Adress;
-using CMS.Domain.Contacts;
-using CMS.Domain.LetterDocument;
-using CMS.Domain.Benefit;
-using CMS.Domain.BranchGrade;
-using CMS.Domain.Education.awards;
-using CMS.Domain.Education;
-using CMS.Domain.Employee;
-using CMS.Domain.Jobs;
-using CMS.Domain.Language;
-using CMS.Domain.Acting;
-using CMS.Domain.Delegations;
 
 namespace CMS.Services.DataService
 {
@@ -74,7 +86,20 @@ namespace CMS.Services.DataService
         public DbSet<BenefitValue> BenefitValues { get; set; }
         public DbSet<BenefitUnitPrice> BenefitUnitPrices { get; set; }
         public DbSet<JobGradeStepsValue> JobGradeStepsValues { get; set; }
-
+        //Case
+        public DbSet<Chilot> Chillots { get; set; }
+        public DbSet<Case> Cases { get; set; }
+        public DbSet<CaseDocument> CaseDocuments { get; set; }
+        public DbSet<Hearing> Hearings { get; set; }
+        public DbSet<Judgment> Judgments { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<CaseTemplate> CaseTemplates { get; set; }
+        public DbSet<CaseTimeline> CaseTimelines { get; set; }
+        public DbSet<JudgeAssignment> JudgeAssignments { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<DocketEntry> DocketEntries { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
 
         //EmployeeExperiences
         void Save();

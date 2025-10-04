@@ -9,16 +9,12 @@ namespace CMS.Domain.Enum
     public enum BusinessUnitTypeEnum
     {
         Unknown=0,
-        FederalSupremeCourt ,
-        FederalHighCourt,
-        FederalFirstInstanceCourt,
-        RegionalSupremeCourt,
-        RegionalHighCourt,
-        RegionalFirstInstanceCourt,
-        ZonalCourt,
-        WoredaOrSubCityCourt,
-        CourtDivision,
-        CourtSection
-
+        FederalSuperemeSeber,
+        FederalSupermeCourt,
+        RegionalSeber,
+        RegionalSupermeCourt,
+        ZonalHighCourt,
+        WeredaCourts,
+        MahiberawiCourt,
     }
 }

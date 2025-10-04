@@ -8,27 +8,39 @@ export const addTagTypes = [
   "EmployeeProfile",
   "BusinessUnit",
   "Admin",
+  "Appointment",
   "Awards",
   "Benefit",
   "BenefitUnitPrice",
   "BenefitUnitOfMeasurement",
   "BenefitValues",
+  "Case",
+  "CaseTemplate",
+  "CaseTimeline",
+  "Chilot",
   "Contact",
   "Delegation",
+  "DocketEntry",
   "Documents",
   "Education",
   "EducationLevel",
   "EmployeeFamily",
   "FieldOfStudy",
   "Health",
+  "Hearing",
   "InstitutionName",
   "Job",
   "JobCategory",
   "JobGrade",
   "JobRoleCategory",
+  "JudgeAssignment",
+  "Judgment",
   "LanguageSkill",
   "Letter",
   "Lookup",
+  "Message",
+  "Notification",
+  "Payment",
   "Region",
   "SubCity",
   "Users",
@@ -381,6 +393,66 @@ const injectedRtkApi = api
           params: { id: queryArg.id, role: queryArg.role },
         }),
         invalidatesTags: ["Admin"],
+      }),
+      createAppointment: build.mutation<
+        CreateAppointmentApiResponse,
+        CreateAppointmentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Appointment/Create`,
+          method: "POST",
+          body: queryArg.createAppointmentCommand,
+        }),
+        invalidatesTags: ["Appointment"],
+      }),
+      getAllAppointments: build.query<
+        GetAllAppointmentsApiResponse,
+        GetAllAppointmentsApiArg
+      >({
+        query: () => ({ url: `/api/Appointment/GetAll` }),
+        providesTags: ["Appointment"],
+      }),
+      getAppointmentsByBusinessUnitId: build.query<
+        GetAppointmentsByBusinessUnitIdApiResponse,
+        GetAppointmentsByBusinessUnitIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Appointment/GetByBusinessUnitId`,
+          params: { businessUnitId: queryArg.businessUnitId },
+        }),
+        providesTags: ["Appointment"],
+      }),
+      getAppointmentsByCaseId: build.query<
+        GetAppointmentsByCaseIdApiResponse,
+        GetAppointmentsByCaseIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Appointment/GetByCaseId`,
+          params: { caseId: queryArg.caseId },
+        }),
+        providesTags: ["Appointment"],
+      }),
+      getAppointmentById: build.query<
+        GetAppointmentByIdApiResponse,
+        GetAppointmentByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Appointment/GetById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Appointment"],
+      }),
+      updateAppointment: build.mutation<
+        UpdateAppointmentApiResponse,
+        UpdateAppointmentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Appointment/Update`,
+          method: "PUT",
+          body: queryArg.updateAppointmentCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["Appointment"],
       }),
       approveAward: build.mutation<ApproveAwardApiResponse, ApproveAwardApiArg>(
         {
@@ -951,6 +1023,206 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["BusinessUnit"],
       }),
+      getCaseById: build.query<GetCaseByIdApiResponse, GetCaseByIdApiArg>({
+        query: (queryArg) => ({ url: `/api/Case/${queryArg.id}` }),
+        providesTags: ["Case"],
+      }),
+      getCaseByBusinessUnitId: build.query<
+        GetCaseByBusinessUnitIdApiResponse,
+        GetCaseByBusinessUnitIdApiArg
+      >({
+        query: (queryArg) => ({ url: `/api/Case/${queryArg.id}/businessUnit` }),
+        providesTags: ["Case"],
+      }),
+      getCaseInfo: build.query<GetCaseInfoApiResponse, GetCaseInfoApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Case/${queryArg.id}/info`,
+          params: { version: queryArg.version },
+        }),
+        providesTags: ["Case"],
+      }),
+      getCaseRecordVersions: build.query<
+        GetCaseRecordVersionsApiResponse,
+        GetCaseRecordVersionsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Case/${queryArg.id}/record-versions`,
+        }),
+        providesTags: ["Case"],
+      }),
+      createCase: build.mutation<CreateCaseApiResponse, CreateCaseApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Case/add`,
+          method: "POST",
+          body: queryArg.createCaseCommand,
+        }),
+        invalidatesTags: ["Case", "Dashboard"],
+      }),
+      getAllCases: build.query<GetAllCasesApiResponse, GetAllCasesApiArg>({
+        query: () => ({ url: `/api/Case/all` }),
+        providesTags: ["Case"],
+      }),
+      getAllCasesByStatus: build.query<
+        GetAllCasesByStatusApiResponse,
+        GetAllCasesByStatusApiArg
+      >({
+        query: () => ({ url: `/api/Case/allByStatus` }),
+        providesTags: ["Case"],
+      }),
+      getAllCaseLists: build.query<
+        GetAllCaseListsApiResponse,
+        GetAllCaseListsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Case/allCases`,
+          params: {
+            businessUnitId: queryArg.businessUnitId,
+            status: queryArg.status,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+            searchQuery: queryArg.searchQuery,
+          },
+        }),
+        providesTags: ["Case"],
+      }),
+      getCaseCountPerApprovalStatus: build.query<
+        GetCaseCountPerApprovalStatusApiResponse,
+        GetCaseCountPerApprovalStatusApiArg
+      >({
+        query: () => ({ url: `/api/Case/counts` }),
+        providesTags: ["Case"],
+      }),
+      updateCase: build.mutation<UpdateCaseApiResponse, UpdateCaseApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Case/update`,
+          method: "POST",
+          body: queryArg.updateCaseCommand,
+        }),
+        invalidatesTags: ["Case", "Dashboard"],
+      }),
+      createCaseTemplate: build.mutation<
+        CreateCaseTemplateApiResponse,
+        CreateCaseTemplateApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/CaseTemplate/Create`,
+          method: "POST",
+          body: queryArg.createCaseTemplateCommand,
+        }),
+        invalidatesTags: ["CaseTemplate"],
+      }),
+      getAllCaseTemplates: build.query<
+        GetAllCaseTemplatesApiResponse,
+        GetAllCaseTemplatesApiArg
+      >({
+        query: () => ({ url: `/api/CaseTemplate/GetAll` }),
+        providesTags: ["CaseTemplate"],
+      }),
+      getCaseTemplateById: build.query<
+        GetCaseTemplateByIdApiResponse,
+        GetCaseTemplateByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/CaseTemplate/GetById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["CaseTemplate"],
+      }),
+      updateCaseTemplate: build.mutation<
+        UpdateCaseTemplateApiResponse,
+        UpdateCaseTemplateApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/CaseTemplate/Update`,
+          method: "PUT",
+          body: queryArg.updateCaseTemplateCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["CaseTemplate"],
+      }),
+      createCaseTimeline: build.mutation<
+        CreateCaseTimelineApiResponse,
+        CreateCaseTimelineApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/CaseTimeline/Create`,
+          method: "POST",
+          body: queryArg.createCaseTimelineCommand,
+        }),
+        invalidatesTags: ["CaseTimeline"],
+      }),
+      getAllCaseTimelines: build.query<
+        GetAllCaseTimelinesApiResponse,
+        GetAllCaseTimelinesApiArg
+      >({
+        query: () => ({ url: `/api/CaseTimeline/GetAll` }),
+        providesTags: ["CaseTimeline"],
+      }),
+      getCaseTimelinesByCaseId: build.query<
+        GetCaseTimelinesByCaseIdApiResponse,
+        GetCaseTimelinesByCaseIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/CaseTimeline/GetByCaseId`,
+          params: { caseId: queryArg.caseId },
+        }),
+        providesTags: ["CaseTimeline"],
+      }),
+      getCaseTimelineById: build.query<
+        GetCaseTimelineByIdApiResponse,
+        GetCaseTimelineByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/CaseTimeline/GetById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["CaseTimeline"],
+      }),
+      updateCaseTimeline: build.mutation<
+        UpdateCaseTimelineApiResponse,
+        UpdateCaseTimelineApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/CaseTimeline/Update`,
+          method: "PUT",
+          body: queryArg.updateCaseTimelineCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["CaseTimeline"],
+      }),
+      getAllChilot: build.query<GetAllChilotApiResponse, GetAllChilotApiArg>({
+        query: () => ({ url: `/api/Chilot/allChilot` }),
+        providesTags: ["Chilot"],
+      }),
+      getChilotByBusinessUnit: build.query<
+        GetChilotByBusinessUnitApiResponse,
+        GetChilotByBusinessUnitApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Chilot/by-business/${queryArg.businessUnitId}`,
+        }),
+        providesTags: ["Chilot"],
+      }),
+      createChilot: build.mutation<CreateChilotApiResponse, CreateChilotApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Chilot/create`,
+            method: "POST",
+            body: queryArg.createChilotCommand,
+          }),
+          invalidatesTags: ["Chilot"],
+        }
+      ),
+      updateChilot: build.mutation<UpdateChilotApiResponse, UpdateChilotApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Chilot/update`,
+            method: "PUT",
+            body: queryArg.updateChilotCommand,
+          }),
+          invalidatesTags: ["Chilot"],
+        }
+      ),
       getContactsById: build.query<
         GetContactsByIdApiResponse,
         GetContactsByIdApiArg
@@ -1250,6 +1522,56 @@ const injectedRtkApi = api
           body: queryArg.updateDelegationCommands,
         }),
         invalidatesTags: ["Delegation"],
+      }),
+      createDocketEntry: build.mutation<
+        CreateDocketEntryApiResponse,
+        CreateDocketEntryApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/DocketEntry/Create`,
+          method: "POST",
+          body: queryArg.createDocketEntryCommand,
+        }),
+        invalidatesTags: ["DocketEntry"],
+      }),
+      getAllDocketEntries: build.query<
+        GetAllDocketEntriesApiResponse,
+        GetAllDocketEntriesApiArg
+      >({
+        query: () => ({ url: `/api/DocketEntry/GetAll` }),
+        providesTags: ["DocketEntry"],
+      }),
+      getDocketEntriesByCaseId: build.query<
+        GetDocketEntriesByCaseIdApiResponse,
+        GetDocketEntriesByCaseIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/DocketEntry/GetByCaseId`,
+          params: { caseId: queryArg.caseId },
+        }),
+        providesTags: ["DocketEntry"],
+      }),
+      getDocketEntryById: build.query<
+        GetDocketEntryByIdApiResponse,
+        GetDocketEntryByIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/DocketEntry/GetById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["DocketEntry"],
+      }),
+      updateDocketEntry: build.mutation<
+        UpdateDocketEntryApiResponse,
+        UpdateDocketEntryApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/DocketEntry/Update`,
+          method: "PUT",
+          body: queryArg.updateDocketEntryCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["DocketEntry"],
       }),
       getApiDocumentsById: build.query<
         GetApiDocumentsByIdApiResponse,
@@ -2102,6 +2424,39 @@ const injectedRtkApi = api
         query: () => ({ url: `/api/Health` }),
         providesTags: ["Health"],
       }),
+      createHearing: build.mutation<
+        CreateHearingApiResponse,
+        CreateHearingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Hearing/Create`,
+          method: "POST",
+          body: queryArg.createHearingCommand,
+        }),
+        invalidatesTags: ["Hearing"],
+      }),
+      getHearingByCaseId: build.query<
+        GetHearingByCaseIdApiResponse,
+        GetHearingByCaseIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Hearing/GetHearingByCaseId`,
+          params: { caseId: queryArg.caseId },
+        }),
+        providesTags: ["Hearing"],
+      }),
+      updateHearing: build.mutation<
+        UpdateHearingApiResponse,
+        UpdateHearingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Hearing/update`,
+          method: "PUT",
+          body: queryArg.updateHearingCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["Hearing"],
+      }),
       approveInstitutionName: build.mutation<
         ApproveInstitutionNameApiResponse,
         ApproveInstitutionNameApiArg
@@ -2710,6 +3065,72 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["JobRoleCategory"],
       }),
+      createJudgeAssignment: build.mutation<
+        CreateJudgeAssignmentApiResponse,
+        CreateJudgeAssignmentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/JudgeAssignment/Create`,
+          method: "POST",
+          body: queryArg.createJudgeAssignmentCommand,
+        }),
+        invalidatesTags: ["JudgeAssignment"],
+      }),
+      getJudgeAssignmentsByCaseId: build.query<
+        GetJudgeAssignmentsByCaseIdApiResponse,
+        GetJudgeAssignmentsByCaseIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/JudgeAssignment/GetByCaseId`,
+          params: { caseId: queryArg.caseId },
+        }),
+        providesTags: ["JudgeAssignment"],
+      }),
+      updateJudgeAssignment: build.mutation<
+        UpdateJudgeAssignmentApiResponse,
+        UpdateJudgeAssignmentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/JudgeAssignment/Update`,
+          method: "PUT",
+          body: queryArg.updateJudgeAssignmentCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["JudgeAssignment"],
+      }),
+      createJudgment: build.mutation<
+        CreateJudgmentApiResponse,
+        CreateJudgmentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Judgment/Create`,
+          method: "POST",
+          body: queryArg.createJudgmentCommand,
+        }),
+        invalidatesTags: ["Judgment"],
+      }),
+      getJudgmentsByCaseId: build.query<
+        GetJudgmentsByCaseIdApiResponse,
+        GetJudgmentsByCaseIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Judgment/GetByCaseId`,
+          params: { caseId: queryArg.caseId },
+        }),
+        providesTags: ["Judgment"],
+      }),
+      updateJudgment: build.mutation<
+        UpdateJudgmentApiResponse,
+        UpdateJudgmentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Judgment/Update`,
+          method: "PUT",
+          body: queryArg.updateJudgmentCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["Judgment"],
+      }),
       createLanguage: build.mutation<
         CreateLanguageApiResponse,
         CreateLanguageApiArg
@@ -2868,6 +3289,130 @@ const injectedRtkApi = api
           providesTags: ["Lookup"],
         }
       ),
+      getUserConversations: build.query<
+        GetUserConversationsApiResponse,
+        GetUserConversationsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Message/conversations`,
+          params: { userId: queryArg.userId },
+        }),
+        providesTags: ["Message"],
+      }),
+      markMessagesAsRead: build.mutation<
+        MarkMessagesAsReadApiResponse,
+        MarkMessagesAsReadApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Message/mark-read/${queryArg.chatPartnerId}`,
+          method: "POST",
+          params: { userId: queryArg.userId },
+        }),
+        invalidatesTags: ["Message"],
+      }),
+      getMessages: build.query<GetMessagesApiResponse, GetMessagesApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Message/messages/${queryArg.chatPartnerId}`,
+          params: { userId: queryArg.userId },
+        }),
+        providesTags: ["Message"],
+      }),
+      sendMessage: build.mutation<SendMessageApiResponse, SendMessageApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Message/send`,
+          method: "POST",
+          body: queryArg.sendMessageCommand,
+        }),
+        invalidatesTags: ["Message"],
+      }),
+      createNotification: build.mutation<
+        CreateNotificationApiResponse,
+        CreateNotificationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Notification/Create`,
+          method: "POST",
+          body: queryArg.createNotificationCommand,
+        }),
+        invalidatesTags: ["Notification"],
+      }),
+      getNotificationsByUserId: build.query<
+        GetNotificationsByUserIdApiResponse,
+        GetNotificationsByUserIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Notification/GetByUserId/${queryArg.userId}`,
+        }),
+        providesTags: ["Notification"],
+      }),
+      updateNotification: build.mutation<
+        UpdateNotificationApiResponse,
+        UpdateNotificationApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Notification/Update/${queryArg.id}`,
+          method: "PUT",
+          body: queryArg.updateNotificationCommand,
+        }),
+        invalidatesTags: ["Notification"],
+      }),
+      createPayment: build.mutation<
+        CreatePaymentApiResponse,
+        CreatePaymentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Payment/Create`,
+          method: "POST",
+          body: queryArg.createPaymentCommand,
+        }),
+        invalidatesTags: ["Payment"],
+      }),
+      getAllPayments: build.query<
+        GetAllPaymentsApiResponse,
+        GetAllPaymentsApiArg
+      >({
+        query: () => ({ url: `/api/Payment/GetAll` }),
+        providesTags: ["Payment"],
+      }),
+      getPaymentsByBusinessUnit: build.query<
+        GetPaymentsByBusinessUnitApiResponse,
+        GetPaymentsByBusinessUnitApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Payment/GetByBusinessUnit`,
+          params: { businessUnitId: queryArg.businessUnitId },
+        }),
+        providesTags: ["Payment"],
+      }),
+      getPaymentsByCaseId: build.query<
+        GetPaymentsByCaseIdApiResponse,
+        GetPaymentsByCaseIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Payment/GetByCaseId`,
+          params: { caseId: queryArg.caseId },
+        }),
+        providesTags: ["Payment"],
+      }),
+      getById: build.query<GetByIdApiResponse, GetByIdApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Payment/GetById`,
+          params: { id: queryArg.id },
+        }),
+        providesTags: ["Payment"],
+      }),
+      updatePayment: build.mutation<
+        UpdatePaymentApiResponse,
+        UpdatePaymentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Payment/Update`,
+          method: "PUT",
+          body: queryArg.updatePaymentCommand,
+          params: { id: queryArg.id },
+        }),
+        invalidatesTags: ["Payment"],
+      }),
       approveRegion: build.mutation<
         ApproveRegionApiResponse,
         ApproveRegionApiArg
@@ -3311,6 +3856,33 @@ export type RemoveUserRoleApiArg = {
   id?: string;
   role?: string;
 };
+export type CreateAppointmentApiResponse = /** status 200 Success */ number;
+export type CreateAppointmentApiArg = {
+  createAppointmentCommand: CreateAppointmentCommand;
+};
+export type GetAllAppointmentsApiResponse =
+  /** status 200 Success */ AppointmentDto[];
+export type GetAllAppointmentsApiArg = void;
+export type GetAppointmentsByBusinessUnitIdApiResponse =
+  /** status 200 Success */ AppointmentDto[];
+export type GetAppointmentsByBusinessUnitIdApiArg = {
+  businessUnitId?: number;
+};
+export type GetAppointmentsByCaseIdApiResponse =
+  /** status 200 Success */ AppointmentDto[];
+export type GetAppointmentsByCaseIdApiArg = {
+  caseId?: number;
+};
+export type GetAppointmentByIdApiResponse =
+  /** status 200 Success */ AppointmentDto;
+export type GetAppointmentByIdApiArg = {
+  id?: number;
+};
+export type UpdateAppointmentApiResponse = /** status 200 Success */ boolean;
+export type UpdateAppointmentApiArg = {
+  id?: number;
+  updateAppointmentCommand: UpdateAppointmentCommand;
+};
 export type ApproveAwardApiResponse = /** status 200 Success */ number;
 export type ApproveAwardApiArg = {
   approveAwardCommand: ApproveAwardCommand;
@@ -3552,6 +4124,106 @@ export type UpdateBusinessUnitApiResponse = /** status 200 Success */ number;
 export type UpdateBusinessUnitApiArg = {
   updateBusinessUnitCommand: UpdateBusinessUnitCommand;
 };
+export type GetCaseByIdApiResponse =
+  /** status 200 Success */ CaseDetailsDtoRead;
+export type GetCaseByIdApiArg = {
+  id: number;
+};
+export type GetCaseByBusinessUnitIdApiResponse =
+  /** status 200 Success */ CaseDtoRead[];
+export type GetCaseByBusinessUnitIdApiArg = {
+  id: number;
+};
+export type GetCaseInfoApiResponse = /** status 200 Success */ CaseDtoRead;
+export type GetCaseInfoApiArg = {
+  id: number;
+  version?: string;
+};
+export type GetCaseRecordVersionsApiResponse =
+  /** status 200 Success */ CaseRecordVersions;
+export type GetCaseRecordVersionsApiArg = {
+  id: number;
+};
+export type CreateCaseApiResponse =
+  /** status 200 Success */ CreateCaseReturnType;
+export type CreateCaseApiArg = {
+  createCaseCommand: CreateCaseCommand;
+};
+export type GetAllCasesApiResponse = /** status 200 Success */ CaseDtoRead[];
+export type GetAllCasesApiArg = void;
+export type GetAllCasesByStatusApiResponse =
+  /** status 200 Success */ CaseListRead;
+export type GetAllCasesByStatusApiArg = void;
+export type GetAllCaseListsApiResponse =
+  /** status 200 Success */ CaseSearchResultRead;
+export type GetAllCaseListsApiArg = {
+  businessUnitId?: number;
+  status?: ApprovalStatus;
+  pageNumber?: number;
+  pageSize?: number;
+  searchQuery?: string;
+};
+export type GetCaseCountPerApprovalStatusApiResponse =
+  /** status 200 Success */ CaseCountsByStatus;
+export type GetCaseCountPerApprovalStatusApiArg = void;
+export type UpdateCaseApiResponse = /** status 200 Success */ number;
+export type UpdateCaseApiArg = {
+  updateCaseCommand: UpdateCaseCommand;
+};
+export type CreateCaseTemplateApiResponse = /** status 200 Success */ number;
+export type CreateCaseTemplateApiArg = {
+  createCaseTemplateCommand: CreateCaseTemplateCommand;
+};
+export type GetAllCaseTemplatesApiResponse =
+  /** status 200 Success */ CaseTemplateDto[];
+export type GetAllCaseTemplatesApiArg = void;
+export type GetCaseTemplateByIdApiResponse =
+  /** status 200 Success */ CaseTemplateDto;
+export type GetCaseTemplateByIdApiArg = {
+  id?: number;
+};
+export type UpdateCaseTemplateApiResponse = /** status 200 Success */ boolean;
+export type UpdateCaseTemplateApiArg = {
+  id?: number;
+  updateCaseTemplateCommand: UpdateCaseTemplateCommand;
+};
+export type CreateCaseTimelineApiResponse = /** status 200 Success */ number;
+export type CreateCaseTimelineApiArg = {
+  createCaseTimelineCommand: CreateCaseTimelineCommand;
+};
+export type GetAllCaseTimelinesApiResponse =
+  /** status 200 Success */ CaseTimelineDto[];
+export type GetAllCaseTimelinesApiArg = void;
+export type GetCaseTimelinesByCaseIdApiResponse =
+  /** status 200 Success */ CaseTimelineDto[];
+export type GetCaseTimelinesByCaseIdApiArg = {
+  caseId?: number;
+};
+export type GetCaseTimelineByIdApiResponse =
+  /** status 200 Success */ CaseTimelineDto;
+export type GetCaseTimelineByIdApiArg = {
+  id?: number;
+};
+export type UpdateCaseTimelineApiResponse = /** status 200 Success */ boolean;
+export type UpdateCaseTimelineApiArg = {
+  id?: number;
+  updateCaseTimelineCommand: UpdateCaseTimelineCommand;
+};
+export type GetAllChilotApiResponse = /** status 200 Success */ ChilotDto[];
+export type GetAllChilotApiArg = void;
+export type GetChilotByBusinessUnitApiResponse =
+  /** status 200 Success */ ChilotDto[];
+export type GetChilotByBusinessUnitApiArg = {
+  businessUnitId: number;
+};
+export type CreateChilotApiResponse = /** status 200 Success */ number;
+export type CreateChilotApiArg = {
+  createChilotCommand: CreateChilotCommand;
+};
+export type UpdateChilotApiResponse = /** status 200 Success */ number;
+export type UpdateChilotApiArg = {
+  updateChilotCommand: UpdateChilotCommand;
+};
 export type GetContactsByIdApiResponse = unknown;
 export type GetContactsByIdApiArg = {
   requestId?: number;
@@ -3668,6 +4340,28 @@ export type SubmitDelegationApiArg = {
 export type UpdateDelegationApiResponse = /** status 200 Success */ number;
 export type UpdateDelegationApiArg = {
   updateDelegationCommands: UpdateDelegationCommands;
+};
+export type CreateDocketEntryApiResponse = /** status 200 Success */ number;
+export type CreateDocketEntryApiArg = {
+  createDocketEntryCommand: CreateDocketEntryCommand;
+};
+export type GetAllDocketEntriesApiResponse =
+  /** status 200 Success */ DocketEntryDto[];
+export type GetAllDocketEntriesApiArg = void;
+export type GetDocketEntriesByCaseIdApiResponse =
+  /** status 200 Success */ DocketEntryDto[];
+export type GetDocketEntriesByCaseIdApiArg = {
+  caseId?: number;
+};
+export type GetDocketEntryByIdApiResponse =
+  /** status 200 Success */ DocketEntryDto;
+export type GetDocketEntryByIdApiArg = {
+  id?: number;
+};
+export type UpdateDocketEntryApiResponse = /** status 200 Success */ boolean;
+export type UpdateDocketEntryApiArg = {
+  id?: number;
+  updateDocketEntryCommand: UpdateDocketEntryCommand;
 };
 export type GetApiDocumentsByIdApiResponse = /** status 200 Success */ Blob;
 export type GetApiDocumentsByIdApiArg = {
@@ -3814,7 +4508,7 @@ export type GetEmployeeChangeLogApiArg = {
   employeeId: number;
 };
 export type GetEmployeeByIdApiResponse =
-  /** status 200 Success */ EmployeeDetailsDto;
+  /** status 200 Success */ EmployeeDetailsDtoRead;
 export type GetEmployeeByIdApiArg = {
   id: number;
 };
@@ -3827,11 +4521,12 @@ export type AddEmployeePhotoApiArg = {
   };
 };
 export type GetEmployeeByBusinessUnitIdApiResponse =
-  /** status 200 Success */ EmployeeDto[];
+  /** status 200 Success */ EmployeeDtoRead[];
 export type GetEmployeeByBusinessUnitIdApiArg = {
   id: number;
 };
-export type GetEmployeeInfoApiResponse = /** status 200 Success */ EmployeeDto;
+export type GetEmployeeInfoApiResponse =
+  /** status 200 Success */ EmployeeDtoRead;
 export type GetEmployeeInfoApiArg = {
   id: number;
   version?: string;
@@ -3852,10 +4547,10 @@ export type CreateEmployeeProfileApiArg = {
   createEmployeeProfileCommand: CreateEmployeeProfileCommand;
 };
 export type GetAllEmployeesApiResponse =
-  /** status 200 Success */ EmployeeDto[];
+  /** status 200 Success */ EmployeeDtoRead[];
 export type GetAllEmployeesApiArg = void;
 export type GetAllEmployeesByStatusApiResponse =
-  /** status 200 Success */ EmployeeList;
+  /** status 200 Success */ EmployeeListRead;
 export type GetAllEmployeesByStatusApiArg = void;
 export type AllEmployeeApproveProbationApiResponse =
   /** status 200 Success */ number;
@@ -3863,7 +4558,7 @@ export type AllEmployeeApproveProbationApiArg = {
   allEmployeeApproveCommand: AllEmployeeApproveCommand;
 };
 export type GetAllEmployeetListsApiResponse =
-  /** status 200 Success */ EmployeeSearchResult;
+  /** status 200 Success */ EmployeeSearchResultRead;
 export type GetAllEmployeetListsApiArg = {
   businessUnitId?: number;
   status?: ApprovalStatus;
@@ -3922,23 +4617,23 @@ export type EmployeeProbationTerminationApiArg = {
   employeeProbationTerminationCommand: EmployeeProbationTerminationCommand;
 };
 export type GetActiveEmployeeForIdManagementApiResponse =
-  /** status 200 Success */ EmployeeDto[];
+  /** status 200 Success */ EmployeeDtoRead[];
 export type GetActiveEmployeeForIdManagementApiArg = void;
 export type GetAllEmployeeIdListApiResponse =
-  /** status 200 Success */ EmployeeIdSearchResult;
+  /** status 200 Success */ EmployeeIdSearchResultRead;
 export type GetAllEmployeeIdListApiArg = {
   status?: EmployeeIdCardStatus;
   pageNumber?: number;
   pageSize?: number;
 };
 export type GetAllEmployeeOnProbationApiResponse =
-  /** status 200 Success */ EmployeeDto[];
+  /** status 200 Success */ EmployeeDtoRead[];
 export type GetAllEmployeeOnProbationApiArg = void;
 export type GetAllEmployeesIdCardInfoApiResponse =
-  /** status 200 Success */ EmployeeDto[];
+  /** status 200 Success */ EmployeeDtoRead[];
 export type GetAllEmployeesIdCardInfoApiArg = void;
 export type GetAllProbationForNotificationApiResponse =
-  /** status 200 Success */ EmployeeDto[];
+  /** status 200 Success */ EmployeeDtoRead[];
 export type GetAllProbationForNotificationApiArg = void;
 export type GetEmployeeEmergencyContactsApiResponse =
   /** status 200 Success */ EmployeeEmergencyContactDtoRead[];
@@ -3949,7 +4644,7 @@ export type GetEmployeeIdCountPerApprovalStatusApiResponse =
   /** status 200 Success */ GetEmployeeIdCountsByStatus;
 export type GetEmployeeIdCountPerApprovalStatusApiArg = void;
 export type GetProbationListApiResponse =
-  /** status 200 Success */ ProbationSearchResult;
+  /** status 200 Success */ ProbationSearchResultRead;
 export type GetProbationListApiArg = {
   status?: EmployeeStatusEnum;
   pageNumber?: number;
@@ -4039,6 +4734,20 @@ export type UpdateFieldOfStudyApiArg = {
 };
 export type GetApiHealthApiResponse = unknown;
 export type GetApiHealthApiArg = void;
+export type CreateHearingApiResponse = /** status 200 Success */ number;
+export type CreateHearingApiArg = {
+  createHearingCommand: CreateHearingCommand;
+};
+export type GetHearingByCaseIdApiResponse =
+  /** status 200 Success */ HearingDto[];
+export type GetHearingByCaseIdApiArg = {
+  caseId?: number;
+};
+export type UpdateHearingApiResponse = /** status 200 Success */ number;
+export type UpdateHearingApiArg = {
+  id?: number;
+  updateHearingCommand: UpdateHearingCommand;
+};
 export type ApproveInstitutionNameApiResponse =
   /** status 200 Success */ number;
 export type ApproveInstitutionNameApiArg = {
@@ -4296,6 +5005,34 @@ export type UpdateJobRoleCategoryApiResponse = /** status 200 Success */ number;
 export type UpdateJobRoleCategoryApiArg = {
   updateJobRoleCatagoryCommand: UpdateJobRoleCatagoryCommand;
 };
+export type CreateJudgeAssignmentApiResponse = /** status 200 Success */ number;
+export type CreateJudgeAssignmentApiArg = {
+  createJudgeAssignmentCommand: CreateJudgeAssignmentCommand;
+};
+export type GetJudgeAssignmentsByCaseIdApiResponse =
+  /** status 200 Success */ JudgeAssignmentDto[];
+export type GetJudgeAssignmentsByCaseIdApiArg = {
+  caseId?: number;
+};
+export type UpdateJudgeAssignmentApiResponse = /** status 200 Success */ number;
+export type UpdateJudgeAssignmentApiArg = {
+  id?: number;
+  updateJudgeAssignmentCommand: UpdateJudgeAssignmentCommand;
+};
+export type CreateJudgmentApiResponse = /** status 200 Success */ number;
+export type CreateJudgmentApiArg = {
+  createJudgmentCommand: CreateJudgmentCommand;
+};
+export type GetJudgmentsByCaseIdApiResponse =
+  /** status 200 Success */ JudgmentDto[];
+export type GetJudgmentsByCaseIdApiArg = {
+  caseId?: number;
+};
+export type UpdateJudgmentApiResponse = /** status 200 Success */ number;
+export type UpdateJudgmentApiArg = {
+  id?: number;
+  updateJudgmentCommand: UpdateJudgmentCommand;
+};
 export type CreateLanguageApiResponse = /** status 200 Success */ number;
 export type CreateLanguageApiArg = {
   createLanguageSkillCommand: CreateLanguageSkillCommand;
@@ -4366,6 +5103,64 @@ export type SubmitLetterApiArg = {
 };
 export type GetAllLookupsApiResponse = /** status 200 Success */ LookupDtoRead;
 export type GetAllLookupsApiArg = void;
+export type GetUserConversationsApiResponse =
+  /** status 200 Success */ ConversationDto[];
+export type GetUserConversationsApiArg = {
+  userId?: string;
+};
+export type MarkMessagesAsReadApiResponse = unknown;
+export type MarkMessagesAsReadApiArg = {
+  userId?: string;
+  chatPartnerId: string;
+};
+export type GetMessagesApiResponse = /** status 200 Success */ ChatMessageDto[];
+export type GetMessagesApiArg = {
+  userId?: string;
+  chatPartnerId: string;
+};
+export type SendMessageApiResponse = unknown;
+export type SendMessageApiArg = {
+  sendMessageCommand: SendMessageCommand;
+};
+export type CreateNotificationApiResponse = /** status 200 Success */ number;
+export type CreateNotificationApiArg = {
+  createNotificationCommand: CreateNotificationCommand;
+};
+export type GetNotificationsByUserIdApiResponse =
+  /** status 200 Success */ NotificationDto[];
+export type GetNotificationsByUserIdApiArg = {
+  userId: string;
+};
+export type UpdateNotificationApiResponse = /** status 200 Success */ number;
+export type UpdateNotificationApiArg = {
+  id: number;
+  updateNotificationCommand: UpdateNotificationCommand;
+};
+export type CreatePaymentApiResponse = /** status 200 Success */ number;
+export type CreatePaymentApiArg = {
+  createPaymentCommand: CreatePaymentCommand;
+};
+export type GetAllPaymentsApiResponse = /** status 200 Success */ PaymentDto[];
+export type GetAllPaymentsApiArg = void;
+export type GetPaymentsByBusinessUnitApiResponse =
+  /** status 200 Success */ PaymentDto[];
+export type GetPaymentsByBusinessUnitApiArg = {
+  businessUnitId?: number;
+};
+export type GetPaymentsByCaseIdApiResponse =
+  /** status 200 Success */ PaymentDto[];
+export type GetPaymentsByCaseIdApiArg = {
+  caseId?: number;
+};
+export type GetByIdApiResponse = /** status 200 Success */ PaymentDto;
+export type GetByIdApiArg = {
+  id?: number;
+};
+export type UpdatePaymentApiResponse = /** status 200 Success */ boolean;
+export type UpdatePaymentApiArg = {
+  id?: number;
+  updatePaymentCommand: UpdatePaymentCommand;
+};
 export type ApproveRegionApiResponse = /** status 200 Success */ number;
 export type ApproveRegionApiArg = {
   approveRegionCommand: ApproveRegionCommand;
@@ -4546,7 +5341,7 @@ export type CreateActingCommand = {
 export type ApprovalStatus = 1 | 2 | 3 | 4;
 export type Gender = 0 | 1 | 2;
 export type MartialStatus = 1 | 2 | 3 | 4;
-export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type BusinessUnitTypeEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export type Status = 1 | 2;
 export type BusinessUnitType = {
   value?: BusinessUnitTypeEnum;
@@ -4556,10 +5351,665 @@ export type BusinessUnitType = {
   order?: number;
   isActive?: boolean;
 };
+export type CourtLevel = 1 | 2 | 3;
+export type ChilotType = 1 | 2 | 3 | 99;
+export type StringIdentityRoleClaim = {
+  id?: number;
+  roleId?: string | null;
+  claimType?: string | null;
+  claimValue?: string | null;
+};
+export type HrRole = {
+  id?: string | null;
+  name?: string | null;
+  normalizedName?: string | null;
+  concurrencyStamp?: string | null;
+  description?: string | null;
+  displayName?: string | null;
+  claims?: StringIdentityRoleClaim[] | null;
+};
+export type UserRole = {
+  userId?: string | null;
+  roleId?: string | null;
+  role?: HrRole;
+  user?: HrUser;
+};
+export type UserRoleRead = {
+  userId?: string | null;
+  roleId?: string | null;
+  role?: HrRole;
+  user?: HrUser;
+};
+export type LetterType = 1 | 2 | 3;
+export type LetterStatus = 1 | 2 | 3 | 4;
+export type DocumentType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type LetterDocument = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+  isImage?: boolean;
+  letterId?: number;
+  letter?: Letter;
+};
+export type LetterDocumentRead = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+  isImage?: boolean;
+  letterId?: number;
+  letter?: Letter;
+};
+export type Letter = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  id?: number;
+  referenceNumber?: string | null;
+  subject?: string | null;
+  content?: string | null;
+  letterType?: LetterType;
+  status?: LetterStatus;
+  receivedDate?: string | null;
+  sentDate?: string | null;
+  senderId?: string | null;
+  sender?: HrUser;
+  recipientId?: string | null;
+  recipient?: HrUser;
+  businessUnitId?: number;
+  businessUnits?: BusinessUnit;
+  letterDocuments?: LetterDocument[] | null;
+};
+export type IDomainEvent = object;
+export type LetterRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  domainEvents?: IDomainEvent[] | null;
+  id?: number;
+  referenceNumber?: string | null;
+  subject?: string | null;
+  content?: string | null;
+  letterType?: LetterType;
+  status?: LetterStatus;
+  receivedDate?: string | null;
+  sentDate?: string | null;
+  senderId?: string | null;
+  sender?: HrUser;
+  recipientId?: string | null;
+  recipient?: HrUser;
+  businessUnitId?: number;
+  businessUnits?: BusinessUnit;
+  letterDocuments?: LetterDocumentRead[] | null;
+};
+export type UserDocument = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+  userId?: string | null;
+  user?: HrUser;
+};
+export type UserDocumentRead = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  documentType?: DocumentType;
+  documentId?: string | null;
+  fileName?: string | null;
+  userId?: string | null;
+  user?: HrUser;
+};
+export type CaseType = 1 | 2 | 3 | 4;
+export type CaseStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+export type CaseDocument = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  fileName: string;
+  filePath: string;
+  documentType?: DocumentType;
+  pageCount?: number;
+  isVerified?: boolean;
+  uploadedById?: string | null;
+  uploadedAt?: string;
+  caseId?: number;
+  case?: Case;
+};
+export type CaseDocumentRead = {
+  isDeleted?: boolean | null;
+  deletedBy?: string | null;
+  deletedAt?: string | null;
+  deletionComment?: string | null;
+  id?: number;
+  fileName: string;
+  filePath: string;
+  documentType?: DocumentType;
+  pageCount?: number;
+  isVerified?: boolean;
+  uploadedById?: string | null;
+  uploadedAt?: string;
+  caseId?: number;
+  case?: Case;
+};
+export type PaymentStatus = 1 | 2 | 3 | 4;
+export type Payment = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  amount?: number;
+  gateway?: string | null;
+  transactionId?: string | null;
+  status?: PaymentStatus;
+  receiptFilePath?: string | null;
+  processedById?: string | null;
+  processedBy?: HrUser;
+  paidAt?: string | null;
+};
+export type PaymentRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  amount?: number;
+  gateway?: string | null;
+  transactionId?: string | null;
+  status?: PaymentStatus;
+  receiptFilePath?: string | null;
+  processedById?: string | null;
+  processedBy?: HrUser;
+  paidAt?: string | null;
+};
+export type HearingType = 1 | 2 | 3 | 4 | 5;
+export type HearingParticipant = {
+  id?: number;
+  userId?: string | null;
+  displayName?: string | null;
+  role?: string | null;
+};
+export type Hearing = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  scheduledAt?: string;
+  hearingType?: HearingType;
+  locationOrUrl?: string | null;
+  responsibleJudgeId?: string | null;
+  participants?: HearingParticipant[] | null;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  notes?: string | null;
+};
+export type HearingRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  scheduledAt?: string;
+  hearingType?: HearingType;
+  locationOrUrl?: string | null;
+  responsibleJudgeId?: string | null;
+  participants?: HearingParticipant[] | null;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  notes?: string | null;
+};
+export type Judgment = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  htmlContent?: string | null;
+  pdfFilePath?: string | null;
+  signedByUserId?: string | null;
+  signedBy?: HrUser;
+  signedAt?: string | null;
+  fileHash?: string | null;
+  isPublished?: boolean;
+  publishedAt?: string | null;
+};
+export type JudgmentRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  htmlContent?: string | null;
+  pdfFilePath?: string | null;
+  signedByUserId?: string | null;
+  signedBy?: HrUser;
+  signedAt?: string | null;
+  fileHash?: string | null;
+  isPublished?: boolean;
+  publishedAt?: string | null;
+};
+export type CaseTimeline = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  eventType: string;
+  details?: string | null;
+  actorUserId?: string | null;
+  eventAt?: string;
+};
+export type CaseTimelineRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  eventType: string;
+  details?: string | null;
+  actorUserId?: string | null;
+  eventAt?: string;
+};
+export type CaseTemplate = {
+  createdAt?: string;
+  modifiedAt?: string | null;
+  createdBy?: HrUser;
+  modifiedBy?: string | null;
+  id?: number;
+  name: string;
+  content?: string | null;
+  createdById?: string | null;
+};
+export type CaseTemplateRead = {
+  createdAt?: string;
+  modifiedAt?: string | null;
+  createdBy?: HrUser;
+  modifiedBy?: string | null;
+  id?: number;
+  name: string;
+  content?: string | null;
+  createdById?: string | null;
+};
+export type AppointmentStatus = 1 | 2 | 3 | 4;
+export type Appointment = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  appointmentDate?: string;
+  subject: string;
+  location?: string | null;
+  status?: AppointmentStatus;
+  scheduledById?: string | null;
+  scheduledBy?: HrUser;
+  notes?: string | null;
+};
+export type AppointmentRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  appointmentDate?: string;
+  subject: string;
+  location?: string | null;
+  status?: AppointmentStatus;
+  scheduledById?: string | null;
+  scheduledBy?: HrUser;
+  notes?: string | null;
+};
+export type ChatbotMessage = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  senderId?: string | null;
+  sender?: HrUser;
+  receiverId?: string | null;
+  receiver?: HrUser;
+  message?: string | null;
+  response?: string | null;
+  seen?: boolean;
+  isSystem?: boolean;
+  sentAt?: string;
+};
+export type ChatbotMessageRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  caseId?: number;
+  case?: Case;
+  senderId?: string | null;
+  sender?: HrUser;
+  receiverId?: string | null;
+  receiver?: HrUser;
+  message?: string | null;
+  response?: string | null;
+  seen?: boolean;
+  isSystem?: boolean;
+  sentAt?: string;
+};
+export type Case = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  id?: number;
+  caseNumber: string;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName: string;
+  accusedName: string;
+  subject?: string | null;
+  filedAt?: string;
+  closedAt?: string | null;
+  filedById: string;
+  filedBy?: HrUser;
+  assignedJudgeId?: string | null;
+  assignedJudge?: HrUser;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  documents?: CaseDocument[] | null;
+  payments?: Payment[] | null;
+  hearings?: Hearing[] | null;
+  judgments?: Judgment[] | null;
+  timeline?: CaseTimeline[] | null;
+  judgeAssignments?: JudgeAssignment[] | null;
+  templatesUsed?: CaseTemplate[] | null;
+  appointments?: Appointment[] | null;
+  chatbotMessages?: ChatbotMessage[] | null;
+};
+export type CaseRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  workflowComment?: string | null;
+  versionNumber?: string;
+  skipStateTransitionCheck?: boolean;
+  domainEvents?: IDomainEvent[] | null;
+  id?: number;
+  caseNumber: string;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName: string;
+  accusedName: string;
+  subject?: string | null;
+  filedAt?: string;
+  closedAt?: string | null;
+  filedById: string;
+  filedBy?: HrUser;
+  assignedJudgeId?: string | null;
+  assignedJudge?: HrUser;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  documents?: CaseDocumentRead[] | null;
+  payments?: PaymentRead[] | null;
+  hearings?: HearingRead[] | null;
+  judgments?: JudgmentRead[] | null;
+  timeline?: CaseTimelineRead[] | null;
+  judgeAssignments?: JudgeAssignment[] | null;
+  templatesUsed?: CaseTemplateRead[] | null;
+  appointments?: AppointmentRead[] | null;
+  chatbotMessages?: ChatbotMessageRead[] | null;
+};
+export type NotificationChannel = 1 | 2 | 3;
+export type Notification = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  userId?: string | null;
+  user?: HrUser;
+  title: string;
+  body?: string | null;
+  isRead?: boolean;
+  sentAt?: string;
+  caseId?: number | null;
+  paymentId?: number | null;
+  hearingId?: number | null;
+  channel?: NotificationChannel;
+};
+export type NotificationRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  userId?: string | null;
+  user?: HrUser;
+  title: string;
+  body?: string | null;
+  isRead?: boolean;
+  sentAt?: string;
+  caseId?: number | null;
+  paymentId?: number | null;
+  hearingId?: number | null;
+  channel?: NotificationChannel;
+};
+export type HrUser = {
+  id?: string | null;
+  userName?: string | null;
+  normalizedUserName?: string | null;
+  email?: string | null;
+  normalizedEmail?: string | null;
+  emailConfirmed?: boolean;
+  passwordHash?: string | null;
+  securityStamp?: string | null;
+  concurrencyStamp?: string | null;
+  phoneNumber?: string | null;
+  phoneNumberConfirmed?: boolean;
+  twoFactorEnabled?: boolean;
+  lockoutEnd?: string | null;
+  lockoutEnabled?: boolean;
+  accessFailedCount?: number;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  branchId?: number;
+  isDeactivated?: boolean;
+  roles?: UserRole[] | null;
+  sentLetters?: Letter[] | null;
+  receivedLetters?: Letter[] | null;
+  userDocuments?: UserDocument[] | null;
+  filedCases?: Case[] | null;
+  assignedCases?: Case[] | null;
+  notifications?: Notification[] | null;
+};
+export type HrUserRead = {
+  id?: string | null;
+  userName?: string | null;
+  normalizedUserName?: string | null;
+  email?: string | null;
+  normalizedEmail?: string | null;
+  emailConfirmed?: boolean;
+  passwordHash?: string | null;
+  securityStamp?: string | null;
+  concurrencyStamp?: string | null;
+  phoneNumber?: string | null;
+  phoneNumberConfirmed?: boolean;
+  twoFactorEnabled?: boolean;
+  lockoutEnd?: string | null;
+  lockoutEnabled?: boolean;
+  accessFailedCount?: number;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  branchId?: number;
+  isDeactivated?: boolean;
+  roles?: UserRoleRead[] | null;
+  sentLetters?: LetterRead[] | null;
+  receivedLetters?: LetterRead[] | null;
+  userDocuments?: UserDocumentRead[] | null;
+  filedCases?: CaseRead[] | null;
+  assignedCases?: CaseRead[] | null;
+  notifications?: NotificationRead[] | null;
+};
+export type JudgeAssignment = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  judgeId?: string | null;
+  judge?: HrUser;
+  caseId?: number | null;
+  case?: Case;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  assignedAt?: string;
+  unassignedAt?: string | null;
+  role?: string | null;
+};
+export type JudgeAssignmentRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  judgeId?: string | null;
+  judge?: HrUserRead;
+  caseId?: number | null;
+  case?: CaseRead;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  businessUnitId?: number | null;
+  businessUnit?: BusinessUnit;
+  assignedAt?: string;
+  unassignedAt?: string | null;
+  role?: string | null;
+};
+export type Chilot = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  name?: string | null;
+  chilotType?: ChilotType;
+  roomNumber?: string | null;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  judgeAssignments?: JudgeAssignment[] | null;
+  cases?: Case[] | null;
+};
+export type ChilotRead = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: number;
+  name?: string | null;
+  chilotType?: ChilotType;
+  roomNumber?: string | null;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  judgeAssignments?: JudgeAssignmentRead[] | null;
+  cases?: CaseRead[] | null;
+};
 export type BusinessUnit = {
   id?: number;
-  businessUnitID?: string | null;
-  name?: string | null;
+  businessUnitID: string;
+  name: string;
   parentId?: number;
   type?: BusinessUnitTypeEnum;
   businessUnitCode?: string | null;
@@ -4567,6 +6017,34 @@ export type BusinessUnit = {
   approvalStatus?: ApprovalStatus;
   status?: Status;
   businessUnitType?: BusinessUnitType;
+  courtLevel?: CourtLevel;
+  courtCode?: string | null;
+  location?: string | null;
+  address?: string | null;
+  chillots?: Chilot[] | null;
+  cases?: Case[] | null;
+  appointments?: Appointment[] | null;
+  judgeAssignments?: JudgeAssignment[] | null;
+};
+export type BusinessUnitRead = {
+  id?: number;
+  businessUnitID: string;
+  name: string;
+  parentId?: number;
+  type?: BusinessUnitTypeEnum;
+  businessUnitCode?: string | null;
+  staffStrength?: number | null;
+  approvalStatus?: ApprovalStatus;
+  status?: Status;
+  businessUnitType?: BusinessUnitType;
+  courtLevel?: CourtLevel;
+  courtCode?: string | null;
+  location?: string | null;
+  address?: string | null;
+  chillots?: ChilotRead[] | null;
+  cases?: CaseRead[] | null;
+  appointments?: AppointmentRead[] | null;
+  judgeAssignments?: JudgeAssignmentRead[] | null;
 };
 export type JobStatus = 1 | 2;
 export type JobRoleCategory = {
@@ -4726,11 +6204,22 @@ export type Job = {
   jobRole?: JobRole;
   remark?: string | null;
 };
+export type JobRead = {
+  id?: number;
+  jobRoleId?: number;
+  businessUnitId?: number;
+  isVacant?: boolean;
+  jobStatus?: JobStatus;
+  approvalStatus?: ApprovalStatus;
+  isLocked?: boolean;
+  businessUnit?: BusinessUnitRead;
+  jobRole?: JobRole;
+  remark?: string | null;
+};
 export type EmployeeStatusEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 export type ProbationResult = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type EmployeeIdCardStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export type EmployeeIdCardReplaceReason = 1 | 2 | 3 | 4 | 5;
-export type DocumentType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export type EmployeeDocument = {
   isDeleted?: boolean | null;
   deletedBy?: string | null;
@@ -5029,7 +6518,6 @@ export type Employee = {
   employeeFamilies?: EmployeeFamily[] | null;
   employeeIdCardStatusRemark?: string | null;
 };
-export type IDomainEvent = object;
 export type EmployeeRead = {
   createdAt?: string | null;
   modifiedAt?: string | null;
@@ -5062,8 +6550,8 @@ export type EmployeeRead = {
   employementDate?: string;
   gender?: Gender;
   martialStatus?: MartialStatus;
-  businessUnits?: BusinessUnit;
-  job?: Job;
+  businessUnits?: BusinessUnitRead;
+  job?: JobRead;
   isNew?: boolean;
   employeeStatus?: EmployeeStatusEnum;
   probationResult?: ProbationResult;
@@ -5097,7 +6585,7 @@ export type ActingDtoRead = {
   jobRoleId?: number;
   jobRole?: JobRole;
   businessUnitId?: number | null;
-  businessUnit?: BusinessUnit;
+  businessUnit?: BusinessUnitRead;
   startDate?: string;
   endDate?: string | null;
   approvalStatus?: ApprovalStatus;
@@ -5164,21 +6652,6 @@ export type UpdateAddressCommand = {
   houseNumber?: string | null;
   requestId?: number;
 };
-export type StringIdentityRoleClaim = {
-  id?: number;
-  roleId?: string | null;
-  claimType?: string | null;
-  claimValue?: string | null;
-};
-export type HrRole = {
-  id?: string | null;
-  name?: string | null;
-  normalizedName?: string | null;
-  concurrencyStamp?: string | null;
-  description?: string | null;
-  displayName?: string | null;
-  claims?: StringIdentityRoleClaim[] | null;
-};
 export type CreateRoleDto = {
   role?: HrRole;
   permissionNames?: string[] | null;
@@ -5188,185 +6661,6 @@ export type PermissionClaim = {
   id?: string;
   claimValue?: string | null;
   claimCategory?: ClaimCategory;
-};
-export type UserRole = {
-  userId?: string | null;
-  roleId?: string | null;
-  role?: HrRole;
-  user?: HrUser;
-};
-export type UserRoleRead = {
-  userId?: string | null;
-  roleId?: string | null;
-  role?: HrRole;
-  user?: HrUser;
-};
-export type LetterType = 1 | 2 | 3;
-export type LetterStatus = 1 | 2 | 3 | 4;
-export type LetterDocument = {
-  isDeleted?: boolean | null;
-  deletedBy?: string | null;
-  deletedAt?: string | null;
-  deletionComment?: string | null;
-  id?: number;
-  documentType?: DocumentType;
-  documentId?: string | null;
-  fileName?: string | null;
-  isImage?: boolean;
-  letterId?: number;
-  letter?: Letter;
-};
-export type LetterDocumentRead = {
-  isDeleted?: boolean | null;
-  deletedBy?: string | null;
-  deletedAt?: string | null;
-  deletionComment?: string | null;
-  id?: number;
-  documentType?: DocumentType;
-  documentId?: string | null;
-  fileName?: string | null;
-  isImage?: boolean;
-  letterId?: number;
-  letter?: Letter;
-};
-export type Letter = {
-  createdAt?: string | null;
-  modifiedAt?: string | null;
-  createdBy?: string | null;
-  modifiedBy?: string | null;
-  approvalStatus?: ApprovalStatus;
-  approvedBy?: string | null;
-  approvedAt?: string | null;
-  submittedBy?: string | null;
-  submittedAt?: string | null;
-  rejectedBy?: string | null;
-  rejectedAt?: string | null;
-  workflowComment?: string | null;
-  versionNumber?: string;
-  skipStateTransitionCheck?: boolean;
-  id?: number;
-  referenceNumber?: string | null;
-  subject?: string | null;
-  content?: string | null;
-  letterType?: LetterType;
-  status?: LetterStatus;
-  receivedDate?: string | null;
-  sentDate?: string | null;
-  senderId?: string | null;
-  sender?: HrUser;
-  recipientId?: string | null;
-  recipient?: HrUser;
-  businessUnitId?: number;
-  businessUnits?: BusinessUnit;
-  letterDocuments?: LetterDocument[] | null;
-};
-export type LetterRead = {
-  createdAt?: string | null;
-  modifiedAt?: string | null;
-  createdBy?: string | null;
-  modifiedBy?: string | null;
-  approvalStatus?: ApprovalStatus;
-  approvedBy?: string | null;
-  approvedAt?: string | null;
-  submittedBy?: string | null;
-  submittedAt?: string | null;
-  rejectedBy?: string | null;
-  rejectedAt?: string | null;
-  workflowComment?: string | null;
-  versionNumber?: string;
-  skipStateTransitionCheck?: boolean;
-  domainEvents?: IDomainEvent[] | null;
-  id?: number;
-  referenceNumber?: string | null;
-  subject?: string | null;
-  content?: string | null;
-  letterType?: LetterType;
-  status?: LetterStatus;
-  receivedDate?: string | null;
-  sentDate?: string | null;
-  senderId?: string | null;
-  sender?: HrUser;
-  recipientId?: string | null;
-  recipient?: HrUser;
-  businessUnitId?: number;
-  businessUnits?: BusinessUnit;
-  letterDocuments?: LetterDocumentRead[] | null;
-};
-export type UserDocument = {
-  isDeleted?: boolean | null;
-  deletedBy?: string | null;
-  deletedAt?: string | null;
-  deletionComment?: string | null;
-  id?: number;
-  documentType?: DocumentType;
-  documentId?: string | null;
-  fileName?: string | null;
-  userId?: string | null;
-  user?: HrUser;
-};
-export type UserDocumentRead = {
-  isDeleted?: boolean | null;
-  deletedBy?: string | null;
-  deletedAt?: string | null;
-  deletionComment?: string | null;
-  id?: number;
-  documentType?: DocumentType;
-  documentId?: string | null;
-  fileName?: string | null;
-  userId?: string | null;
-  user?: HrUser;
-};
-export type HrUser = {
-  id?: string | null;
-  userName?: string | null;
-  normalizedUserName?: string | null;
-  email?: string | null;
-  normalizedEmail?: string | null;
-  emailConfirmed?: boolean;
-  passwordHash?: string | null;
-  securityStamp?: string | null;
-  concurrencyStamp?: string | null;
-  phoneNumber?: string | null;
-  phoneNumberConfirmed?: boolean;
-  twoFactorEnabled?: boolean;
-  lockoutEnd?: string | null;
-  lockoutEnabled?: boolean;
-  accessFailedCount?: number;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  branchId?: number;
-  isDeactivated?: boolean;
-  roles?: UserRole[] | null;
-  sentLetters?: Letter[] | null;
-  receivedLetters?: Letter[] | null;
-  userDocuments?: UserDocument[] | null;
-};
-export type HrUserRead = {
-  id?: string | null;
-  userName?: string | null;
-  normalizedUserName?: string | null;
-  email?: string | null;
-  normalizedEmail?: string | null;
-  emailConfirmed?: boolean;
-  passwordHash?: string | null;
-  securityStamp?: string | null;
-  concurrencyStamp?: string | null;
-  phoneNumber?: string | null;
-  phoneNumberConfirmed?: boolean;
-  twoFactorEnabled?: boolean;
-  lockoutEnd?: string | null;
-  lockoutEnabled?: boolean;
-  accessFailedCount?: number;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  branchId?: number;
-  isDeactivated?: boolean;
-  roles?: UserRoleRead[] | null;
-  sentLetters?: LetterRead[] | null;
-  receivedLetters?: LetterRead[] | null;
-  userDocuments?: UserDocumentRead[] | null;
 };
 export type RegisterDto = {
   email?: string | null;
@@ -5449,6 +6743,36 @@ export type UserDetail = {
   roles?: Role[] | null;
   claims?: Claim[] | null;
   isDeactivated?: boolean;
+};
+export type CreateAppointmentCommand = {
+  caseId?: number;
+  businessUnitId?: number;
+  appointmentDate?: string;
+  subject?: string | null;
+  location?: string | null;
+  scheduledById?: string | null;
+  notes?: string | null;
+};
+export type AppointmentDto = {
+  id?: number;
+  caseId?: number;
+  businessUnitId?: number;
+  appointmentDate?: string;
+  subject?: string | null;
+  location?: string | null;
+  status?: string | null;
+  scheduledById?: string | null;
+  notes?: string | null;
+  createdAt?: string;
+  modifiedAt?: string | null;
+};
+export type UpdateAppointmentCommand = {
+  id?: number;
+  appointmentDate?: string;
+  subject?: string | null;
+  location?: string | null;
+  status?: string | null;
+  notes?: string | null;
 };
 export type ApproveAwardCommand = {
   id?: number;
@@ -5756,6 +7080,277 @@ export type UpdateBusinessUnitCommand = {
   staffStrength?: number | null;
   branchGradeId?: number | null;
 };
+export type CaseDetailsDto = {
+  workflowComment?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  versionNumber?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  id?: number;
+  caseNumber: string;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName: string;
+  accusedName: string;
+  subject?: string | null;
+  filedAt?: string;
+  closedAt?: string | null;
+  filedById: string;
+  filedBy?: HrUser;
+  assignedJudgeId?: string | null;
+  assignedJudge?: HrUser;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  hasAddressInfo?: boolean;
+  hasContactInfo?: boolean;
+  hasEmployeeFamilyInfo?: boolean;
+  hasEmergencyContactInfo?: boolean;
+  hasLanguageSkillInfo?: boolean;
+};
+export type CaseDetailsDtoRead = {
+  workflowComment?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  versionNumber?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  id?: number;
+  caseNumber: string;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName: string;
+  accusedName: string;
+  subject?: string | null;
+  filedAt?: string;
+  closedAt?: string | null;
+  filedById: string;
+  filedBy?: HrUserRead;
+  assignedJudgeId?: string | null;
+  assignedJudge?: HrUserRead;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnitRead;
+  chilotId?: number | null;
+  chilot?: ChilotRead;
+  hasAddressInfo?: boolean;
+  hasContactInfo?: boolean;
+  hasEmployeeFamilyInfo?: boolean;
+  hasEmergencyContactInfo?: boolean;
+  hasLanguageSkillInfo?: boolean;
+};
+export type CaseDto = {
+  workflowComment?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  versionNumber?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  id?: number;
+  caseNumber: string;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName: string;
+  accusedName: string;
+  subject?: string | null;
+  filedAt?: string;
+  closedAt?: string | null;
+  filedById: string;
+  filedBy?: HrUser;
+  assignedJudgeId?: string | null;
+  assignedJudge?: HrUser;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnit;
+  chilotId?: number | null;
+  chilot?: Chilot;
+  hasAddressInfo?: boolean;
+  hasContactInfo?: boolean;
+  hasEmployeeFamilyInfo?: boolean;
+  hasEmergencyContactInfo?: boolean;
+  hasLanguageSkillInfo?: boolean;
+};
+export type CaseDtoRead = {
+  workflowComment?: string | null;
+  approvalStatus?: ApprovalStatus;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  versionNumber?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  id?: number;
+  caseNumber: string;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName: string;
+  accusedName: string;
+  subject?: string | null;
+  filedAt?: string;
+  closedAt?: string | null;
+  filedById: string;
+  filedBy?: HrUserRead;
+  assignedJudgeId?: string | null;
+  assignedJudge?: HrUserRead;
+  businessUnitId?: number;
+  businessUnit?: BusinessUnitRead;
+  chilotId?: number | null;
+  chilot?: ChilotRead;
+  hasAddressInfo?: boolean;
+  hasContactInfo?: boolean;
+  hasEmployeeFamilyInfo?: boolean;
+  hasEmergencyContactInfo?: boolean;
+  hasLanguageSkillInfo?: boolean;
+};
+export type CaseRecordVersions = {
+  current?: string | null;
+  approved?: string | null;
+  submitted?: string | null;
+  draft?: string | null;
+  rejected?: string | null;
+};
+export type CreateCaseReturnType = {
+  id?: number;
+  versionNumber?: string;
+};
+export type CreateCaseCommand = {
+  caseNumber?: string | null;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName?: string | null;
+  accusedName?: string | null;
+  subject?: string | null;
+  filedAt?: string;
+  closedAt?: string | null;
+  filedById?: string | null;
+  assignedJudgeId?: string | null;
+  businessUnitId?: number;
+  chilotId?: number | null;
+};
+export type CaseList = {
+  approved?: CaseDto[] | null;
+  submitted?: CaseDto[] | null;
+  rejected?: CaseDto[] | null;
+  draft?: CaseDto[] | null;
+};
+export type CaseListRead = {
+  approved?: CaseDtoRead[] | null;
+  submitted?: CaseDtoRead[] | null;
+  rejected?: CaseDtoRead[] | null;
+  draft?: CaseDtoRead[] | null;
+};
+export type CaseSearchResult = {
+  items?: CaseDto[] | null;
+  totalCount?: number;
+};
+export type CaseSearchResultRead = {
+  items?: CaseDtoRead[] | null;
+  totalCount?: number;
+};
+export type CaseCountsByStatus = {
+  approved?: number;
+  approvalRequests?: number;
+  rejected?: number;
+  drafts?: number;
+};
+export type UpdateCaseCommand = {
+  id?: number;
+  caseNumber?: string | null;
+  caseType?: CaseType;
+  status?: CaseStatus;
+  plaintiffName?: string | null;
+  accusedName?: string | null;
+  subject?: string | null;
+  closedAt?: string | null;
+  filedById?: string | null;
+  assignedJudgeId?: string | null;
+  businessUnitId?: number;
+  chilotId?: number | null;
+};
+export type CreateCaseTemplateCommand = {
+  name?: string | null;
+  content?: string | null;
+  createdById?: string | null;
+};
+export type CaseTemplateDto = {
+  id?: number;
+  name?: string | null;
+  content?: string | null;
+  createdById?: string | null;
+  createdByName?: string | null;
+  createdAt?: string;
+};
+export type UpdateCaseTemplateCommand = {
+  id?: number;
+  name?: string | null;
+  content?: string | null;
+};
+export type CreateCaseTimelineCommand = {
+  caseId?: number;
+  eventType?: string | null;
+  details?: string | null;
+  actorUserId?: string | null;
+  eventAt?: string | null;
+};
+export type CaseTimelineDto = {
+  id?: number;
+  caseId?: number;
+  caseNumber?: string | null;
+  eventType?: string | null;
+  details?: string | null;
+  actorUserId?: string | null;
+  actorUserName?: string | null;
+  eventAt?: string;
+  createdAt?: string;
+  modifiedAt?: string | null;
+};
+export type UpdateCaseTimelineCommand = {
+  id?: number;
+  caseId?: number;
+  eventType?: string | null;
+  details?: string | null;
+  actorUserId?: string | null;
+  eventAt?: string;
+};
+export type ChilotDto = {
+  id?: number;
+  name?: string | null;
+  chilotType?: ChilotType;
+  roomNumber?: string | null;
+  businessUnitId?: number;
+  businessUnit?: string | null;
+};
+export type CreateChilotCommand = {
+  name?: string | null;
+  chilotType?: ChilotType;
+  roomNumber?: string | null;
+  businessUnitId?: number;
+};
+export type UpdateChilotCommand = {
+  id?: number;
+  name?: string | null;
+  chilotType?: ChilotType;
+  roomNumber?: string | null;
+  businessUnitId?: number;
+};
 export type ContactCategoryEnum = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export type ContactTypeEnum = 1 | 2 | 3 | 4 | 5 | 6;
 export type CreateContactCommand = {
@@ -5815,7 +7410,7 @@ export type LetterDtoRead = {
   recipientId?: string | null;
   recipient?: HrUserRead;
   businessUnitId?: number;
-  businessUnits?: BusinessUnit;
+  businessUnits?: BusinessUnitRead;
   letterDocuments?: LetterDocumentRead[] | null;
 };
 export type ApproveDelegationCommand = {
@@ -5853,7 +7448,7 @@ export type DelegationDtoRead = {
   jobRoleId?: number;
   jobRole?: JobRole;
   businessUnitId?: number | null;
-  businessUnit?: BusinessUnit;
+  businessUnit?: BusinessUnitRead;
   startDate?: string;
   endDate?: string | null;
   approvalStatus?: ApprovalStatus;
@@ -5891,6 +7486,29 @@ export type UpdateDelegationCommands = {
   businessUnitId?: number | null;
   startDate?: string;
   endDate?: string | null;
+};
+export type CreateDocketEntryCommand = {
+  docketNumber?: string | null;
+  caseId?: number;
+  storagePath?: string | null;
+  archivedBy?: string | null;
+};
+export type DocketEntryDto = {
+  id?: number;
+  docketNumber?: string | null;
+  caseId?: number;
+  storagePath?: string | null;
+  archivedAt?: string;
+  archivedBy?: string | null;
+  createdAt?: string;
+  modifiedAt?: string | null;
+};
+export type UpdateDocketEntryCommand = {
+  id?: number;
+  docketNumber?: string | null;
+  caseId?: number;
+  storagePath?: string | null;
+  archivedBy?: string | null;
 };
 export type DocumentEndpointRootPath = {
   path?: string | null;
@@ -6217,6 +7835,57 @@ export type EmployeeDetailsDto = {
   hasEmergencyContactInfo?: boolean;
   hasLanguageSkillInfo?: boolean;
 };
+export type EmployeeDetailsDtoRead = {
+  workflowComment?: string | null;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  versionNumber?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  id?: number;
+  employeeId?: number;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  amharicFirstName?: string | null;
+  amharicMiddleName?: string | null;
+  amharicLastName?: string | null;
+  amharicDisplayName?: string | null;
+  businessUnitID?: number;
+  businessUnit?: string | null;
+  jobTitle?: string | null;
+  jobId?: number;
+  photoId?: string | null;
+  photoUrl?: string | null;
+  birthDate?: string;
+  employementDate?: string;
+  gender?: Gender;
+  martialStatus?: MartialStatus;
+  isCurrent?: boolean;
+  approvalStatus?: ApprovalStatus;
+  employeeDocuments?: EmployeeDocument[] | null;
+  businessUnits?: BusinessUnitRead;
+  job?: JobRead;
+  isNew?: boolean;
+  address?: Address;
+  contact?: Contact;
+  employeeStatus?: EmployeeStatusEnum;
+  probationResult?: ProbationResult;
+  probationRemark?: string | null;
+  employeeIDCardStatus?: EmployeeIdCardStatus;
+  idReplaceReason?: EmployeeIdCardReplaceReason;
+  employeeIdCardStatusRemark?: string | null;
+  hasAddressInfo?: boolean;
+  hasContactInfo?: boolean;
+  hasEmployeeFamilyInfo?: boolean;
+  hasEmergencyContactInfo?: boolean;
+  hasLanguageSkillInfo?: boolean;
+};
 export type DocumentMetadataDto = {
   id?: string | null;
 };
@@ -6271,6 +7940,57 @@ export type EmployeeDto = {
   hasEmergencyContactInfo?: boolean;
   hasLanguageSkillInfo?: boolean;
 };
+export type EmployeeDtoRead = {
+  workflowComment?: string | null;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  submittedBy?: string | null;
+  submittedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  versionNumber?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  id?: number;
+  employeeId?: number;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  amharicFirstName?: string | null;
+  amharicMiddleName?: string | null;
+  amharicLastName?: string | null;
+  amharicDisplayName?: string | null;
+  businessUnitID?: number;
+  businessUnit?: string | null;
+  jobTitle?: string | null;
+  jobId?: number;
+  photoId?: string | null;
+  photoUrl?: string | null;
+  birthDate?: string;
+  employementDate?: string;
+  gender?: Gender;
+  martialStatus?: MartialStatus;
+  isCurrent?: boolean;
+  approvalStatus?: ApprovalStatus;
+  employeeDocuments?: EmployeeDocument[] | null;
+  businessUnits?: BusinessUnitRead;
+  job?: JobRead;
+  isNew?: boolean;
+  address?: Address;
+  contact?: Contact;
+  employeeStatus?: EmployeeStatusEnum;
+  probationResult?: ProbationResult;
+  probationRemark?: string | null;
+  employeeIDCardStatus?: EmployeeIdCardStatus;
+  idReplaceReason?: EmployeeIdCardReplaceReason;
+  employeeIdCardStatusRemark?: string | null;
+  hasAddressInfo?: boolean;
+  hasContactInfo?: boolean;
+  hasEmployeeFamilyInfo?: boolean;
+  hasEmergencyContactInfo?: boolean;
+  hasLanguageSkillInfo?: boolean;
+};
 export type Note = {
   text?: string | null;
 };
@@ -6305,11 +8025,21 @@ export type EmployeeList = {
   rejected?: EmployeeDto[] | null;
   draft?: EmployeeDto[] | null;
 };
+export type EmployeeListRead = {
+  approved?: EmployeeDtoRead[] | null;
+  submitted?: EmployeeDtoRead[] | null;
+  rejected?: EmployeeDtoRead[] | null;
+  draft?: EmployeeDtoRead[] | null;
+};
 export type AllEmployeeApproveCommand = {
   employeeId?: number;
 };
 export type EmployeeSearchResult = {
   items?: EmployeeDto[] | null;
+  totalCount?: number;
+};
+export type EmployeeSearchResultRead = {
+  items?: EmployeeDtoRead[] | null;
   totalCount?: number;
 };
 export type ChangeWorkflowStatusEntityDto = {
@@ -6376,6 +8106,10 @@ export type EmployeeIdSearchResult = {
   items?: EmployeeDto[] | null;
   totalCount?: number;
 };
+export type EmployeeIdSearchResultRead = {
+  items?: EmployeeDtoRead[] | null;
+  totalCount?: number;
+};
 export type EmployeeEmergencyContactDto = {
   id?: number;
   name?: string | null;
@@ -6403,6 +8137,10 @@ export type GetEmployeeIdCountsByStatus = {
 };
 export type ProbationSearchResult = {
   items?: EmployeeDto[] | null;
+  totalCount?: number;
+};
+export type ProbationSearchResultRead = {
+  items?: EmployeeDtoRead[] | null;
   totalCount?: number;
 };
 export type ProbationApprovalCommand = {
@@ -6505,6 +8243,50 @@ export type UpdateFieldOfStudyCommand = {
   id?: number;
   name?: string | null;
   description?: string | null;
+};
+export type HearingParticipantDto = {
+  id?: number;
+  userId?: string | null;
+  displayName?: string | null;
+  role?: string | null;
+};
+export type CreateHearingCommand = {
+  caseId?: number;
+  scheduledAt?: string;
+  hearingType?: HearingType;
+  locationOrUrl?: string | null;
+  responsibleJudgeId?: string | null;
+  chilotId?: number | null;
+  businessUnitId?: number | null;
+  notes?: string | null;
+  participants?: HearingParticipantDto[] | null;
+};
+export type HearingDto = {
+  id?: number;
+  caseId?: number;
+  caseNumber?: string | null;
+  scheduledAt?: string;
+  hearingType?: HearingType;
+  locationOrUrl?: string | null;
+  responsibleJudgeId?: string | null;
+  responsibleJudgeName?: string | null;
+  chilotId?: number | null;
+  chilotName?: string | null;
+  businessUnitId?: number | null;
+  businessUnitName?: string | null;
+  notes?: string | null;
+  participants?: HearingParticipantDto[] | null;
+};
+export type UpdateHearingCommand = {
+  id?: number;
+  scheduledAt?: string;
+  hearingType?: HearingType;
+  locationOrUrl?: string | null;
+  responsibleJudgeId?: string | null;
+  chilotId?: number | null;
+  businessUnitId?: number | null;
+  notes?: string | null;
+  participants?: HearingParticipantDto[] | null;
 };
 export type ApproveInstitutionNameCommand = {
   id?: number;
@@ -6874,6 +8656,66 @@ export type UpdateJobRoleCatagoryCommand = {
   name?: string | null;
   description?: string | null;
 };
+export type CreateJudgeAssignmentCommand = {
+  caseId?: number | null;
+  chilotId?: number | null;
+  businessUnitId?: number | null;
+};
+export type JudgeAssignmentDto = {
+  id?: number;
+  judgeId?: string | null;
+  judgeName?: string | null;
+  caseId?: number | null;
+  caseNumber?: string | null;
+  chilotId?: number | null;
+  chilotName?: string | null;
+  businessUnitId?: number | null;
+  businessUnitName?: string | null;
+  assignedAt?: string;
+  unassignedAt?: string | null;
+  role?: string | null;
+};
+export type UpdateJudgeAssignmentCommand = {
+  id?: number;
+  caseId?: number | null;
+  chilotId?: number | null;
+  businessUnitId?: number | null;
+  judgeId?: string | null;
+  role?: string | null;
+};
+export type CreateJudgmentCommand = {
+  caseId?: number;
+  htmlContent?: string | null;
+  pdfFilePath?: string | null;
+  signedByUserId?: string | null;
+  signedAt?: string | null;
+  fileHash?: string | null;
+  isPublished?: boolean;
+  publishedAt?: string | null;
+};
+export type JudgmentDto = {
+  id?: number;
+  caseId?: number;
+  caseNumber?: string | null;
+  htmlContent?: string | null;
+  pdfFilePath?: string | null;
+  signedByUserId?: string | null;
+  signedByName?: string | null;
+  signedAt?: string | null;
+  fileHash?: string | null;
+  isPublished?: boolean;
+  publishedAt?: string | null;
+};
+export type UpdateJudgmentCommand = {
+  id?: number;
+  htmlContent?: string | null;
+  pdfFilePath?: string | null;
+  signedByUserId?: string | null;
+  signedAt?: string | null;
+  fileHash?: string | null;
+  isPublished?: boolean;
+  publishedAt?: string | null;
+};
 export type CreateLanguageSkillCommand = {
   language?: LanguageEnum;
   speaking?: SkillLevelEnum;
@@ -6981,6 +8823,82 @@ export type LookupDtoRead = {
   benefits?: BenefitDto[] | null;
   unitPricedBenefits?: BenefitDto[] | null;
   benefitUnitOfMeasurements?: BenefitUnitOfMeasurementDto[] | null;
+};
+export type ConversationDto = {
+  chatPartnerId?: string | null;
+  chatPartnerName?: string | null;
+  lastMessage?: string | null;
+  lastMessageTime?: string;
+  unreadCount?: number;
+};
+export type ChatMessageDto = {
+  id?: number;
+  senderId?: string | null;
+  receiverId?: string | null;
+  content?: string | null;
+  sentAt?: string;
+  isRead?: boolean;
+};
+export type SendMessageCommand = {
+  senderId?: string | null;
+  receiverId?: string | null;
+  content?: string | null;
+};
+export type CreateNotificationCommand = {
+  userId?: string | null;
+  title?: string | null;
+  body?: string | null;
+  caseId?: number | null;
+  paymentId?: number | null;
+  hearingId?: number | null;
+  channel?: NotificationChannel;
+};
+export type NotificationDto = {
+  id?: number;
+  title?: string | null;
+  body?: string | null;
+  isRead?: boolean;
+  sentAt?: string;
+  channel?: NotificationChannel;
+};
+export type UpdateNotificationCommand = {
+  id?: number;
+  isRead?: boolean;
+};
+export type CreatePaymentCommand = {
+  caseId?: number;
+  amount?: number;
+  gateway?: string | null;
+  transactionId?: string | null;
+  receiptFilePath?: string | null;
+  processedById?: string | null;
+  paidAt?: string | null;
+  status?: PaymentStatus;
+};
+export type PaymentDto = {
+  id?: number;
+  caseId?: number;
+  caseNumber?: string | null;
+  amount?: number;
+  gateway?: string | null;
+  transactionId?: string | null;
+  status?: string | null;
+  receiptFilePath?: string | null;
+  processedById?: string | null;
+  processedByName?: string | null;
+  paidAt?: string | null;
+  createdAt?: string;
+  modifiedAt?: string | null;
+};
+export type UpdatePaymentCommand = {
+  id?: number;
+  amount?: number;
+  gateway?: string | null;
+  transactionId?: string | null;
+  receiptFilePath?: string | null;
+  processedById?: string | null;
+  paidAt?: string | null;
+  status?: PaymentStatus;
 };
 export type ApproveRegionCommand = {
   id?: number;
@@ -7153,6 +9071,16 @@ export const {
   useLazyGetUserDetailQuery,
   useAddUserRoleMutation,
   useRemoveUserRoleMutation,
+  useCreateAppointmentMutation,
+  useGetAllAppointmentsQuery,
+  useLazyGetAllAppointmentsQuery,
+  useGetAppointmentsByBusinessUnitIdQuery,
+  useLazyGetAppointmentsByBusinessUnitIdQuery,
+  useGetAppointmentsByCaseIdQuery,
+  useLazyGetAppointmentsByCaseIdQuery,
+  useGetAppointmentByIdQuery,
+  useLazyGetAppointmentByIdQuery,
+  useUpdateAppointmentMutation,
   useApproveAwardMutation,
   useGetAwardCountPerStatusQuery,
   useLazyGetAwardCountPerStatusQuery,
@@ -7235,6 +9163,44 @@ export const {
   useLazySearchBusinessUnitsQuery,
   useSubmitBusinessUnitMutation,
   useUpdateBusinessUnitMutation,
+  useGetCaseByIdQuery,
+  useLazyGetCaseByIdQuery,
+  useGetCaseByBusinessUnitIdQuery,
+  useLazyGetCaseByBusinessUnitIdQuery,
+  useGetCaseInfoQuery,
+  useLazyGetCaseInfoQuery,
+  useGetCaseRecordVersionsQuery,
+  useLazyGetCaseRecordVersionsQuery,
+  useCreateCaseMutation,
+  useGetAllCasesQuery,
+  useLazyGetAllCasesQuery,
+  useGetAllCasesByStatusQuery,
+  useLazyGetAllCasesByStatusQuery,
+  useGetAllCaseListsQuery,
+  useLazyGetAllCaseListsQuery,
+  useGetCaseCountPerApprovalStatusQuery,
+  useLazyGetCaseCountPerApprovalStatusQuery,
+  useUpdateCaseMutation,
+  useCreateCaseTemplateMutation,
+  useGetAllCaseTemplatesQuery,
+  useLazyGetAllCaseTemplatesQuery,
+  useGetCaseTemplateByIdQuery,
+  useLazyGetCaseTemplateByIdQuery,
+  useUpdateCaseTemplateMutation,
+  useCreateCaseTimelineMutation,
+  useGetAllCaseTimelinesQuery,
+  useLazyGetAllCaseTimelinesQuery,
+  useGetCaseTimelinesByCaseIdQuery,
+  useLazyGetCaseTimelinesByCaseIdQuery,
+  useGetCaseTimelineByIdQuery,
+  useLazyGetCaseTimelineByIdQuery,
+  useUpdateCaseTimelineMutation,
+  useGetAllChilotQuery,
+  useLazyGetAllChilotQuery,
+  useGetChilotByBusinessUnitQuery,
+  useLazyGetChilotByBusinessUnitQuery,
+  useCreateChilotMutation,
+  useUpdateChilotMutation,
   useGetContactsByIdQuery,
   useLazyGetContactsByIdQuery,
   useCreateContactMutation,
@@ -7290,6 +9256,14 @@ export const {
   useRejectDelegationMutation,
   useSubmitDelegationMutation,
   useUpdateDelegationMutation,
+  useCreateDocketEntryMutation,
+  useGetAllDocketEntriesQuery,
+  useLazyGetAllDocketEntriesQuery,
+  useGetDocketEntriesByCaseIdQuery,
+  useLazyGetDocketEntriesByCaseIdQuery,
+  useGetDocketEntryByIdQuery,
+  useLazyGetDocketEntryByIdQuery,
+  useUpdateDocketEntryMutation,
   useGetApiDocumentsByIdQuery,
   useLazyGetApiDocumentsByIdQuery,
   useDownloadDocumentQuery,
@@ -7413,6 +9387,10 @@ export const {
   useUpdateFieldOfStudyMutation,
   useGetApiHealthQuery,
   useLazyGetApiHealthQuery,
+  useCreateHearingMutation,
+  useGetHearingByCaseIdQuery,
+  useLazyGetHearingByCaseIdQuery,
+  useUpdateHearingMutation,
   useApproveInstitutionNameMutation,
   useGetInstitutionNameCountPerStatusQuery,
   useLazyGetInstitutionNameCountPerStatusQuery,
@@ -7500,6 +9478,14 @@ export const {
   useLazySearchAllJobRoleCatagoriesQuery,
   useSubmitJobRoleCategoryMutation,
   useUpdateJobRoleCategoryMutation,
+  useCreateJudgeAssignmentMutation,
+  useGetJudgeAssignmentsByCaseIdQuery,
+  useLazyGetJudgeAssignmentsByCaseIdQuery,
+  useUpdateJudgeAssignmentMutation,
+  useCreateJudgmentMutation,
+  useGetJudgmentsByCaseIdQuery,
+  useLazyGetJudgmentsByCaseIdQuery,
+  useUpdateJudgmentMutation,
   useCreateLanguageMutation,
   useDeleteLanguageSkillMutation,
   useGetLanguageSkillByIdQuery,
@@ -7520,6 +9506,26 @@ export const {
   useSubmitLetterMutation,
   useGetAllLookupsQuery,
   useLazyGetAllLookupsQuery,
+  useGetUserConversationsQuery,
+  useLazyGetUserConversationsQuery,
+  useMarkMessagesAsReadMutation,
+  useGetMessagesQuery,
+  useLazyGetMessagesQuery,
+  useSendMessageMutation,
+  useCreateNotificationMutation,
+  useGetNotificationsByUserIdQuery,
+  useLazyGetNotificationsByUserIdQuery,
+  useUpdateNotificationMutation,
+  useCreatePaymentMutation,
+  useGetAllPaymentsQuery,
+  useLazyGetAllPaymentsQuery,
+  useGetPaymentsByBusinessUnitQuery,
+  useLazyGetPaymentsByBusinessUnitQuery,
+  useGetPaymentsByCaseIdQuery,
+  useLazyGetPaymentsByCaseIdQuery,
+  useGetByIdQuery,
+  useLazyGetByIdQuery,
+  useUpdatePaymentMutation,
   useApproveRegionMutation,
   useGetRegionCountPerStatusQuery,
   useLazyGetRegionCountPerStatusQuery,

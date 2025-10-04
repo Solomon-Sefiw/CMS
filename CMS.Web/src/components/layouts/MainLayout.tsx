@@ -82,7 +82,7 @@ export const MainLayout = () => {
 
   return (
     <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-      <AppBar
+      {/* <AppBar
         enableColorOnDark
         position="fixed"
         color="inherit"
@@ -95,7 +95,7 @@ export const MainLayout = () => {
         <Toolbar disableGutters sx={{ justifyContent: "space-between",  backgroundColor: "#0a3d52",}}>
           <Header  onMenuClick={onMenuOpen} opened={open} />
         </Toolbar>
-      </AppBar>
+      </AppBar> */}
 
       <Toolbar />
 

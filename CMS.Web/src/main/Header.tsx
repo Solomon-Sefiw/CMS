@@ -20,6 +20,7 @@ import { NotificationsDropdown } from "./NotificationDropDown";
 import dayjs from "dayjs";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { Message } from "@mui/icons-material";
 
 const noop = () => {};
 
@@ -212,6 +213,12 @@ const permissions = usePermission();
               />
               <Box sx={{ mr: 2 }}>
                {permissions.canViewSetup && <NotificationsDropdown notifications={probationNotifications} />}
+              </Box>
+              <Box sx={{ mr: 2 }}>
+               <Message sx={{color : "white"}}      
+                onClick={() => {
+                       navigate("/message");
+                   }}/>
               </Box>
               <Divider
                 orientation="vertical"

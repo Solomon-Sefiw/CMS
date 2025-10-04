@@ -68,7 +68,7 @@ namespace CMS.Application.Features.BusinessUnits.Services
             // Collect parent codes up to orderLevel - 1 (hierarchy levels before current business unit)
             for (int i = 0; i < orderLevel - 1; i++)
             {
-                if (currentParent == null || currentParent.Type == BusinessUnitTypeEnum.FederalSupremeCourt)
+                if (currentParent == null || currentParent.Type == BusinessUnitTypeEnum.FederalSuperemeSeber)
                 {
                     break;
                 }

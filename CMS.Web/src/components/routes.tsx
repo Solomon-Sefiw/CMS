@@ -82,6 +82,14 @@ import { ProbationHome } from "../features/Probation/ProbationHome";
 import { ActingHome } from "../features/Employee/ActivityTab/Acting/ActingHome";
 import { DelegationHome } from "../features/Employee/ActivityTab/Delegation/DelegationHome";
 import { EmployeeActivity } from "../features/Employee/ActivityTab/EmployeeActivity";
+import { CaseHome } from "../features/Case/CaseHome";
+import { ApprovedCases, SubmittedCases, RejectedCases, DraftCases } from "../features/Case/CaseGrids";
+import { CaseDetail } from "../features/Case/CaseDetail/CaseDetails";
+import { CaseSummaryTab } from "../features/Case/SummaryTab/CaseSummaryTab";
+import ChatList from "../features/Chat/ChatList";
+import ChatDetail from "../features/Chat/ChatDetail";
+import { JudgeAssignmentHome } from "../features/Case/SummaryTab/CaseJedgement/JudgeAssignmentHome";
+import { HearingHome } from "../features/Case/SummaryTab/CaseHearing/HearingHome";
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -107,7 +115,10 @@ const AppRoutes = () => {
       <Route path="verify" element={<MFA />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
       {/* AuthenticatedRoutes */}
+      
       <Route element={<AuthenticatedRoutes />}>
+              <Route  path="message"  element={<ChatList />} />
+        <Route  path="/chat/:chatPartnerId" element={<ChatDetail />} />
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
         <Route path="/setup" element={<SetupMenu />} />
@@ -261,6 +272,9 @@ const AppRoutes = () => {
         </Route>
 
         <Route path="jobtitle" element={<JobRoleHome />} />
+
+
+
         <Route path="employees" element={<EmployeesHome />}>
           <Route index element={<ApprovedEmployees />} />
           <Route path="approval-requests" element={<SubmittedEmployees />} />
@@ -394,6 +408,20 @@ const AppRoutes = () => {
           <Route path="archived" element={<ArchivedLetters />} />
           <Route path="pending" element={<PendingLetters />} />
         </Route>
+
+      <Route path="cases" element={<CaseHome />}>
+          <Route index element={<ApprovedCases />} />
+          <Route path="approval-requests" element={<SubmittedCases />} />
+          <Route path="rejected-approval-requests" element={<RejectedCases />} />
+          <Route path="draft" element={<DraftCases />} />
+        </Route>
+
+      <Route path="/case-detail/:id" element={<CaseDetail />}>
+        <Route index element={<CaseSummaryTab />} />
+        {/* <Route path="case-summary" element={<CaseSummaryTab />} /> */}
+        <Route path="other" element={<JudgeAssignmentHome />} />
+        <Route path="hearing" element={<HearingHome />} />
+      </Route>
 
 
       </Route>
