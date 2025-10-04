@@ -115,12 +115,10 @@ export const EmployeeGuaranterDialog = ({
         addEmployeeGurantersCommand: payload,
       })
         .unwrap()
-        .then(
-            (response: any) => {
-            showSuccessAlert("Employee Guaranter Added Successfully");
-            onClose();
-          },
-        )
+        .then((response: any) => {
+          showSuccessAlert("Employee Guaranter Added Successfully");
+          onClose();
+        })
         .catch((error: any) => {
           showErrorAlert("Failed to Add Employee Guaranter");
           onClose();

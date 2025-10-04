@@ -46,7 +46,6 @@ namespace CMS.Application.Features.Employees.Queries
                     AmharicMiddleName = emp.AmharicMiddleName,
                     AmharicLastName = emp.AmharicLastName,
                     AmharicDisplayName = emp.AmharicDisplayName,
-                    EmployeeId = emp.EmployeeId,
                     BusinessUnit = businessUnit.Name,
                     JobTitle = jobTitle.RoleName,
                     JobId = emp.JobId,
@@ -55,6 +54,11 @@ namespace CMS.Application.Features.Employees.Queries
                     MartialStatus=emp.MartialStatus,
                     Gender=emp.Gender,
                     ApprovalStatus = emp.ApprovalStatus,
+                    SalaryOnGradeStepId = emp.SalaryOnGradeStepId,
+                    EmploymentType=emp.EmploymentType,
+                    TinNumber=emp.TinNumber,
+                    PensionID=emp.PensionID,
+
 
 
                 };

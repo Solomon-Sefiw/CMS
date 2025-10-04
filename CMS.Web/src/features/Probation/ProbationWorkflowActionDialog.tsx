@@ -74,7 +74,7 @@ export const ProbationWorkflowActionDialog = ({
     if (employee) {
       setFormData({
         ...emptyEmployeeData,
-        employeeId: employee.employeeId ?? 0,
+        id: employee.id ?? 0,
         firstName: employee.firstName ?? "",
         middleName: employee.middleName ?? "",
         lastName: employee.lastName ?? "",

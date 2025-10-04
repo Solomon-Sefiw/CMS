@@ -11,7 +11,7 @@ namespace CMS.Application.Features.Employees.Commands.UpdateEmployee
     public class UpdateEmployeeCommand : IRequest<int>
     {
 
-         public int Id { get; set; }
+        public int Id { get; set; }
         public int EmployeeId { get; set; }
         public string FirstName { get; set; }
         public string? MiddleName { get; set; }
@@ -28,6 +28,11 @@ namespace CMS.Application.Features.Employees.Commands.UpdateEmployee
         public DateOnly EmployementDate { get; set; }
         public Gender Gender { get; set; }
         public MartialStatus MartialStatus { get; set; }
+        public int? SalaryOnGradeStepId { get; set; }//0 for base,10 for Ceiling and step is from grade steps 
+        public string? TinNumber { get; set; }
+        public string? PensionID { get; set; }
+        public EmploymentType? EmploymentType { get; set; }
+
     }
     public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, int>
     {
@@ -61,6 +66,11 @@ namespace CMS.Application.Features.Employees.Commands.UpdateEmployee
                 employee.BirthDate = request.BirthDate;
                 employee.EmployementDate = request.EmployementDate;
                 employee.ApprovalStatus = ApprovalStatus.Draft;
+                employee.SalaryOnGradeStepId = request.SalaryOnGradeStepId;
+                employee.EmploymentType = request?.EmploymentType;
+                employee.PensionID = request?.PensionID;
+                employee.TinNumber = request?.TinNumber;
+
             }
             else
             {
@@ -83,6 +93,11 @@ namespace CMS.Application.Features.Employees.Commands.UpdateEmployee
                 employee.BirthDate = request.BirthDate;
                 employee.EmployementDate = request.EmployementDate;
                 employee.ApprovalStatus = ApprovalStatus.Draft;
+                employee.SalaryOnGradeStepId = request.SalaryOnGradeStepId;
+                employee.EmploymentType = request?.EmploymentType;
+                employee.PensionID = request?.PensionID;
+                employee.TinNumber = request?.TinNumber;
+
             }
             await dataService.SaveAsync(cancellationToken);
             await employeeChangeLogService.LogEmployeeBasicInfoChange(employee, ChangeType.Modified, cancellationToken);

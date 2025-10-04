@@ -17,7 +17,7 @@ namespace CMS.Application.Features.Educations.Commands.AddEducation
             RuleFor(cmd => cmd.StartDate)
                 .NotEmpty()
                 .WithMessage("Start Date is required.")
-                .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
+                .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now))
                 .WithMessage("Start Date cannot be in the future.");
 
             RuleFor(cmd => cmd.EndDate)

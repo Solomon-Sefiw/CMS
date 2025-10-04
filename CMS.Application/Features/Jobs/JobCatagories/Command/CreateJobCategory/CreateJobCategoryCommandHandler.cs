@@ -32,8 +32,8 @@ namespace CMS.Application.Features.Jobs.JobCategories.Command.CreateJobCategory
                 ProbationPeriodInDays = request.ProbationPeriodInDays,
                 ApprovalStatus = Domain.Enum.ApprovalStatus.Draft,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                LastModifiedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now,
+                LastModifiedAt = DateTime.Now
             };
 
             dataService.JobCatagories.Add(jobCategory);

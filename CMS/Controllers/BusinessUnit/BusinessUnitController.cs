@@ -39,13 +39,13 @@ namespace CMS.API.Controllers.BusinessUnits
             return searchResult;
         }
 
-        //[HttpGet("countsByBusinssUnitId", Name = "GetEmployeeCountPerApprovalStatus")]
-        // [Authorize(Policy = AuthPolicy.Setup.canViewSetup)]
-        //[ProducesResponseType(200)]
-        //public async Task<EmployeeCountsByStatus> GetEmployeeCountPerApprovalStatus(int? businssUnitId)
-        //{
-        //    return await mediator.Send(new GetEmployeeCountQuery(businssUnitId));
-        //}
+        [HttpGet("countsByBusinssUnitId", Name = "GetEmployeeCountPerApprovalStatus")]
+        [Authorize(Policy = AuthPolicy.Setup.canViewSetup)]
+        [ProducesResponseType(200)]
+        public async Task<EmployeeCountsByStatus> GetEmployeeCountPerApprovalStatus(int? businssUnitId)
+        {
+            return await mediator.Send(new GetEmployeeCountQuery(businssUnitId));
+        }
 
         [HttpGet("search", Name = "SearchAllBusinessUnits")]
         [ProducesResponseType(200)]

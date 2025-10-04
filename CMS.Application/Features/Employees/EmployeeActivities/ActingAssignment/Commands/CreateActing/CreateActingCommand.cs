@@ -1,4 +1,5 @@
-﻿using CMS.Services.DataService;
+﻿using CMS.Domain.Enum;
+using CMS.Services.DataService;
 using MediatR;
 
 namespace CMS.Application.Features.Employees.EmployeeActivities.Acting.Commands.CreateActingAssignment
@@ -7,15 +8,17 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.Acting.Commands.
     {
         public int EmployeeId { get; set; }
         public int JobRoleId { get; set; }
+        public int PreviousJobRoleId { get; set; }
         public int? BusinessUnitId { get; set; }
+        public int? PreviousBusinessUnitId { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly? EndDate { get; set; }
+        public ActingType ActingType { get; set; }
     }
 
     public class CreateActingCommandHandler : IRequestHandler<CreateActingCommand, int>
     {
         private readonly IDataService dataService;
-
     public CreateActingCommandHandler(IDataService dataService)
         {
             this.dataService = dataService;
@@ -26,16 +29,16 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.Acting.Commands.
             {
                 EmployeeId = request.EmployeeId,
                 JobRoleId = request.JobRoleId,
+                PreviousJobRoleId = request.PreviousJobRoleId,
                 BusinessUnitId = request.BusinessUnitId,
+                PreviousBusinessUnitId = request.PreviousBusinessUnitId,
                 StartDate = request.StartDate,
-                EndDate = request.EndDate
+                EndDate = request.EndDate,
+                ActingType = request.ActingType,
             };
-
-            dataService.Actings.Add(acting);
+           await dataService.Actings.AddAsync(acting);
             await dataService.SaveAsync(cancellationToken);
-
             return acting.Id;
-
         }
     }
 }

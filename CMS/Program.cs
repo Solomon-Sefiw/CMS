@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using System.Text.Json.Serialization;
-using CMS.API.Configurations;
+﻿using CMS.Api;
 using CMS.Api.Filters;
 using CMS.Api.Services;
-using CMS.Api;
-using CMS.Common;
+using CMS.API.Configurations;
 using CMS.Application;
+using CMS.Application.EmployeeFile;
+using CMS.Common;
 using CMS.Infrastructure;
 using CMS.Persistance.DBContext;
-using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,8 @@ builder.Services.AddDataProtection()
 
 builder.Services.AddScoped<ApiExceptionFilterAttribute>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IAuditEmployeeFileDocumentService, AuditEmployeeFileDocumentService>();
 
 builder.Services.AddHttpClient();
 

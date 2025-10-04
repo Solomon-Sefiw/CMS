@@ -30,6 +30,15 @@ public class UserPermissions
             public const string Terminate = "canTerminateEmployeeProbation";
             public const string Activate = "canActivateDeactivateEmployeeProbation";
         }
+        public static class EmployeeActivity
+        {
+            public const string View = "canViewEmployeeActivity";
+            public const string Edit = "canCreateUpdateEmployeeActivity";
+            public const string Approve = "canApproveRejectEmployeeActivity";
+            public const string Submit = "canSubmitEmployeeActivity";
+            public const string Activate = "canActivateEmployeeActivity";
+            public const string Deactivate = "canDeactivateEmployeeActivity";
+        }
     }
 
     public static class User

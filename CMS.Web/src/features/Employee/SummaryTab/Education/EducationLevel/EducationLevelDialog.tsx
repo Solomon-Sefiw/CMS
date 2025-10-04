@@ -57,7 +57,10 @@ export const EducationLevelDialog: React.FC<EducationLevelDialogProps> = ({
     name: Yup.string()
       .required("Education Level Name is required.")
       .max(100, "Education Level Name cannot be longer than 100 characters.")
-      .matches(/^[a-zA-Z0-9\s-_]+$/, "Only letters, numbers, spaces, hyphens, and underscores are allowed."),
+      .matches(
+        /^[a-zA-Z0-9\s-_]+$/,
+        "Only letters, numbers, spaces, hyphens, and underscores are allowed."
+      ),
     description: Yup.string().max(
       200,
       "Description cannot be longer than 200 characters."

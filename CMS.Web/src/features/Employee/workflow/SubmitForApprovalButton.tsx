@@ -53,7 +53,9 @@ export const SubmitForApprovalButton = ({
         size="large"
         color="primary"
         // Button is disabled if user doesn't have permission OR if submission criteria are not met
-        disabled={!permissions.CanSubmitEmployeeApprovalRequest || !isSubmissionAllowed}
+        disabled={
+          !permissions.CanSubmitEmployeeApprovalRequest || !isSubmissionAllowed
+        }
         onClick={() => {
           setShowDialog(true);
         }}

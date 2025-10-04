@@ -63,7 +63,10 @@ export const AwardDialog: React.FC<AwardDialogProps> = ({
     name: Yup.string()
       .required("Award Name is required.")
       .max(100, "Award Name cannot be longer than 100 characters.")
-      .matches(/^[a-zA-Z0-9\s-_]+$/, "Only letters, numbers, spaces, hyphens, and underscores are allowed."),
+      .matches(
+        /^[a-zA-Z0-9\s-_]+$/,
+        "Only letters, numbers, spaces, hyphens, and underscores are allowed."
+      ),
     description: Yup.string().max(
       200,
       "Description cannot be longer than 200 characters."

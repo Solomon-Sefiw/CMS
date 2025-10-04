@@ -162,7 +162,9 @@ const EmployeeAddressesList: React.FC<Props> = ({
                         <TableCell sx={{ textAlign: "center" }}>
                           <Button
                             variant="contained"
-                            disabled={!permissions.CanCreateUpdateAddressAndContact}
+                            disabled={
+                              !permissions.CanCreateUpdateAddressAndContact
+                            }
                             startIcon={
                               addresses.length > 0 ? <Edit /> : <Add />
                             }

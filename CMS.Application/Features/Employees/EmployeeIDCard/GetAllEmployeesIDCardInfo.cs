@@ -46,7 +46,6 @@ namespace CMS.Application.Features.Employees.EmployeeID.Queries
                 
                 var employeeId = new EmployeeDto
                 { 
-                EmployeeId=emp.EmployeeId,
                 DisplayName=emp.DisplayName,
                 Job=emp.Job,
                 BusinessUnits=emp.BusinessUnits,

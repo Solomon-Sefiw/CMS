@@ -41,7 +41,7 @@ namespace CMS.Application.Features.Jobs.JobCatagories.Command.UpdateJobCatagory
             existingCategory.JobCategoryName = request.JobCategoryName ?? throw new ArgumentException("JobCategoryName is required.");
             existingCategory.ProbationPeriodInDays = request.ProbationPeriodInDays;
             existingCategory.ApprovalStatus = ApprovalStatus.Draft;
-            existingCategory.LastModifiedAt = DateTime.UtcNow;
+            existingCategory.LastModifiedAt = DateTime.Now;
             existingCategory.IsActive = true;
 
             dataService.JobCatagories.Update(existingCategory);

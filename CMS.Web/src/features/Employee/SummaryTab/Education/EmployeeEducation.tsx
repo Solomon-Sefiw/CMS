@@ -26,7 +26,7 @@ import { usePermission } from "../../../../hooks";
 export const EmployeeEducation = () => {
   const params = useParams();
   const employeeId = useMemo(() => +(params?.id || 0), [params?.id]);
-console.log(employeeId)
+  console.log(employeeId);
   const { data: educations } = useGetEducationByIdQuery(
     { employeeId },
     { skip: !employeeId }
@@ -120,7 +120,17 @@ console.log(employeeId)
                         Award: {education.awardName}
                       </Typography>
                     )}
+                                        {education?.cgpa && (
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        fontWeight="bold"
+                      >
+                        CGPA: {education.cgpa}
+                      </Typography>
+                    )}
                   </Box>
+
 
                   <Box sx={{ mr: 2 }}>
                     <Typography

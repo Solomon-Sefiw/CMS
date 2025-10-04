@@ -22,7 +22,6 @@ namespace CMS.Application.Features.Employees.Experience.Queries
     {
         public readonly IDataService dataService;
         public readonly IMapper mapper;
-
         public GetEmployeeExperienceListOfEmployeeHandler(IDataService dataService, IMapper mapper)
         {
             this.dataService = dataService;
@@ -30,9 +29,15 @@ namespace CMS.Application.Features.Employees.Experience.Queries
         }
         public async Task<List<EmployeeExperienceDto?>> Handle(GetEmployeeExperienceListOfEmployeeQuery request, CancellationToken cancellationToken)
         {
-            var employeeExperience = await dataService.EmployeeExperiences
-                .Where(s => s.EmployeeId == request.EmployeeId)
-                .ToListAsync(cancellationToken);  
+
+            var employeeExperience = await (
+                from exp in dataService.EmployeeExperiences
+                join emp in dataService.Employees
+                    on exp.EmployeeId equals emp.Id
+                where emp.Id == request.EmployeeId
+                      || emp.PreviousEmployeeId == request.EmployeeId
+                select exp
+            ).ToListAsync(cancellationToken);
 
             var employeeExperienceList = new List<EmployeeExperienceDto>();
 
@@ -43,10 +48,10 @@ namespace CMS.Application.Features.Employees.Experience.Queries
                     Id = experience.Id,
                     FirmName = experience.FirmName,
                     StartDate = experience.StartDate,
-                    EndDate = experience.EndDate,
+                    EndDate = experience.EndDate.GetValueOrDefault(),
                     JobTitle = experience.JobTitle,
                     City = experience.City,
-                    LastSalary = experience.LastSalary,
+                    LastSalary = (decimal)experience.LastSalary,
                     ReasonForResignation = experience.ReasonForResignation,
                     ExperienceType = experience.ExperienceType,
                     EmployeeId = experience.EmployeeId,
@@ -57,10 +62,5 @@ namespace CMS.Application.Features.Employees.Experience.Queries
 
             return employeeExperienceList;
         }
-
-
-
     }
-
-
 }

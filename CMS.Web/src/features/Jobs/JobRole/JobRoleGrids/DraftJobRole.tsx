@@ -122,7 +122,6 @@ export const DraftJobRole = () => {
                             gap: 1,
                           }}
                         >
-                        
                           {item.id && (
                             <>
                               {item.approvalStatus === ApprovalStatus.Draft && (
@@ -160,9 +159,6 @@ export const DraftJobRole = () => {
                           </Button>
                         </Box>
                       </TableCell>
-
-                     
-   
                     </TableRow>
                   </Fragment>
                 ))}

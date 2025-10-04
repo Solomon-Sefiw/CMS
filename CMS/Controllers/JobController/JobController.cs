@@ -32,6 +32,8 @@ using CMS.Application.Features.Jobs.JobGrades.Model;
 using Microsoft.AspNetCore.Authorization;
 using CMS.Application.Security;
 using CMS.API.Attributes;
+using CMS.Application.Features.Benefits.Model;
+using CMS.Application.Features.Jobs.JobRoles.Models;
 
 
 namespace CMS.API.Controllers.JobController
@@ -149,7 +151,14 @@ namespace CMS.API.Controllers.JobController
             var jobList = await mediator.Send(new GetAllJobQuery());
             return jobList;
         }
+        //JobRole on the Promotion case
+        [HttpGet("GetJobRoleforPromotion")]
+        public async Task<ActionResult<List<JobRoleDto>>> GetJobRoleforPromotion(string rolename)
+        {
+            return await mediator.Send(new GetJobRoleByRoleNameQuery(rolename));
+        }
 
+        //
         [HttpGet("GetJobByBUId", Name = "GetJobByBUId")]
         [ProducesResponseType(200)]
         [Authorize(Policy = AuthPolicy.Setup.canViewSetup)]

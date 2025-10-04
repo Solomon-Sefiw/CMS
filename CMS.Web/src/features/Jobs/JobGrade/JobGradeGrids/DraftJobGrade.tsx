@@ -146,7 +146,6 @@ export const DraftJobGrade = () => {
                             justifyContent: "center",
                             gap: 1,
                             alignItems: "flex-start",
-                         
                           }}
                         >
                           {item.jobGradeId &&
@@ -168,9 +167,7 @@ export const DraftJobGrade = () => {
                             </Button>
                           )}
 
-                          <Button 
-                          size="small"
-                          onClick={() => ViewDetail(item)}>
+                          <Button size="small" onClick={() => ViewDetail(item)}>
                             View Detail
                           </Button>
                         </Box>

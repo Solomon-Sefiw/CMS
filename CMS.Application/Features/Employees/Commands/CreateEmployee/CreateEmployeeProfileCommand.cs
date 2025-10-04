@@ -1,4 +1,5 @@
-﻿using CMS.Domain.Enums;
+﻿using CMS.Domain.Enum;
+using CMS.Domain.Enums;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,5 +21,11 @@ namespace CMS.Application.Features.Employees
         public DateOnly EmployementDate { get; set; }
         public Gender Gender { get; set; }
         public MartialStatus MartialStatus { get; set; }
+        public int? SalaryOnGradeStepId { get; set; }
+        public string? TinNumber { get; set; }
+        public string? PensionID { get; set; }
+        public EmploymentType? EmploymentType { get; set; }
+        public int? PreviousEmployeeId { get; set; } 
+
     }
 }

@@ -35,7 +35,7 @@ export const EmployeeDetailTabs = () => {
         href: `/employee-detail/${employeeId}/activities`,
       },
       {
-        label: "Eployee Documents",
+        label: "Employee Documents",
         href: `/employee-detail/${employeeId}/documents`,
       },
     ];

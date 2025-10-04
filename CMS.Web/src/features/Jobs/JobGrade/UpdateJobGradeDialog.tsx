@@ -43,8 +43,6 @@ const validationSchema = Yup.object({
   jobGradeRomanId: Yup.number().required("Job Grade Roman ID is required"),
 });
 
-
-
 export const UpdateJobGradeDialog = ({
   onClose,
   JobGrade,
@@ -55,8 +53,8 @@ export const UpdateJobGradeDialog = ({
   const [updateJobGrade, { error }] = useUpdateJobGradeMutation();
   const { showSuccessAlert, showErrorAlert } = useAlert();
   const handleSubmit = async (values: JobGradeDto) => {
-    const Payload={
-      jobGradeId:values.jobGradeId,
+    const Payload = {
+      jobGradeId: values.jobGradeId,
       jobGradeRomanId: values.jobGradeRomanId,
       name: values.name,
       baseSalary: values.baseSalary,
@@ -78,26 +76,26 @@ export const UpdateJobGradeDialog = ({
 
   const CeilingCalculator = () => {
     const { values, setFieldValue } = useFormikContext<JobGradeDto>();
-  
+
     useEffect(() => {
       if (values.baseSalary && values.stepCoefficient !== undefined) {
         const coefficient = values.stepCoefficient / 100;
         let salary = values.baseSalary;
         let stepNumber = 0;
-  
+
         while (stepNumber < 10) {
           salary += salary * coefficient;
           stepNumber++;
         }
-  
+
         const finalCeiling = parseFloat(salary.toFixed(2));
         setFieldValue("ceilingSalary", finalCeiling);
       }
     }, [values.baseSalary, values.stepCoefficient, setFieldValue]);
-  
+
     return null;
   };
-  
+
   const fieldErrors = (error as any)?.data?.errors;
 
   return (

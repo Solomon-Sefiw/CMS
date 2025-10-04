@@ -42,7 +42,7 @@ export const EmployeeIDUpdateDialog = ({
       try {
         const command = {
           employeeIdCardUpdateCommand: {
-            employeeId: employee.employeeId,
+            employeeId: employee.id,
             employeeIdCardStatusRemark: values.remark,
           },
         };
@@ -50,7 +50,7 @@ export const EmployeeIDUpdateDialog = ({
         onClose();
       } catch (error) {}
     },
-    [employee.employeeId, RemoveFromRejection, onClose]
+    [employee.id, RemoveFromRejection, onClose]
   );
 
   return (
@@ -65,7 +65,7 @@ export const EmployeeIDUpdateDialog = ({
                   <TextField
                     fullWidth
                     label="Employee ID"
-                    value={employee.employeeId}
+                    value={employee.id}
                     disabled
                   />
                 </Grid>

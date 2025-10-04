@@ -13,7 +13,6 @@ namespace CMS.Application.Features
     {
 
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
         public string FirstName { get; set; }
         public string? MiddleName { get; set; }
         public string? LastName { get; set; }
@@ -35,6 +34,7 @@ namespace CMS.Application.Features
         public MartialStatus MartialStatus { get; set; }
         public bool IsCurrent { get; set; }
         public ApprovalStatus ApprovalStatus { get; set; }
+        public int? SalaryOnGradeStepId { get; set; }
         public ICollection<Domain.Employee.EmployeeDocument> EmployeeDocuments { get; set; }
         public BusinessUnit BusinessUnits { get; set; }
         public Domain.Jobs.Job Job { get; set; }
@@ -53,5 +53,8 @@ namespace CMS.Application.Features
         public bool HasEmployeeFamilyInfo { get; set; }
         public bool HasEmergencyContactInfo { get; set; }
         public bool HasLanguageSkillInfo { get; set; }
+        public string? TinNumber { get; set; }
+        public string? PensionID { get; set; }
+        public EmploymentType? EmploymentType { get; set; }
     }
 }

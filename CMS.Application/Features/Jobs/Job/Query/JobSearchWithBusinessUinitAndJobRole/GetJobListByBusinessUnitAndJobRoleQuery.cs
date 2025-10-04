@@ -12,5 +12,5 @@ namespace CMS.Application.Features.Jobs.Job.Query.JobSearchWithBusinessUinitAndJ
 {
     public record JobSearchResultByBusinessUnitAndJobRole(List<JobDto> Items, int? TotalCount);
     public record GetJobListByBusinessUnitAndJobRoleQuery(int? businessUnit, int? jobRole, int PageNumber = 0, int PageSize = 0) : IRequest<JobSearchResultByBusinessUnitAndJobRole>;
-    
+
 }

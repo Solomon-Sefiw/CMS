@@ -97,7 +97,11 @@ export const JobRoleDetail = ({ onClose, JobRoles }: JobRoleDetailProps) => {
                     noWrap
                     sx={{ wordBreak: "break-all" }}
                   >
-  {JobGradeRomanId[JobRoles?.jobGrade as unknown as keyof typeof JobGradeRomanId]}
+                    {
+                      JobGradeRomanId[
+                        JobRoles?.jobGrade as unknown as keyof typeof JobGradeRomanId
+                      ]
+                    }
                   </Typography>
                 </Box>
               </Grid>

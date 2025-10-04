@@ -275,7 +275,8 @@ export const EmployeeFamily = ({
           sx={{ color: "#3f51b5" }}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-            Employee Family Information ({familyCount} Members) {/* Updated line */}
+            Employee Family Information ({familyCount} Members){" "}
+            {/* Updated line */}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -399,7 +400,9 @@ export const EmployeeFamily = ({
                                       onClose={() => handleClose(item.id)}
                                     >
                                       <MenuItem
-                                        disabled={!permissions.CanCreateUpdateAddressAndContact}
+                                        disabled={
+                                          !permissions.CanCreateUpdateAddressAndContact
+                                        }
                                         onClick={() =>
                                           AddContact(item.id, item.familyType)
                                         }
@@ -407,11 +410,12 @@ export const EmployeeFamily = ({
                                         Add Contact
                                       </MenuItem>
                                       <MenuItem
-                                        disabled={!permissions.CanCreateUpdateAddressAndContact}
+                                        disabled={
+                                          !permissions.CanCreateUpdateAddressAndContact
+                                        }
                                         onClick={() =>
                                           AddAddress(item.id, item.familyType)
                                         }
-
                                       >
                                         Add Address
                                       </MenuItem>
@@ -519,7 +523,9 @@ export const EmployeeFamily = ({
                                                   variant="outlined"
                                                   size="small"
                                                   color="secondary"
-                                                  disabled={!permissions.CanCreateUpdateAddressAndContact}
+                                                  disabled={
+                                                    !permissions.CanCreateUpdateAddressAndContact
+                                                  }
                                                   onClick={() =>
                                                     UpdateAddress(address.id)
                                                   }
@@ -603,7 +609,9 @@ export const EmployeeFamily = ({
                                                   variant="outlined"
                                                   size="small"
                                                   color="secondary"
-                                                  disabled={!permissions.CanCreateUpdateAddressAndContact}
+                                                  disabled={
+                                                    !permissions.CanCreateUpdateAddressAndContact
+                                                  }
                                                   onClick={() =>
                                                     UpdateContact(
                                                       contact.id,

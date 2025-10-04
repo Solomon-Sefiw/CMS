@@ -16,6 +16,7 @@ namespace CMS.Application.Features.Jobs.Job.Model
         public bool IsLocked { get; set; }
         public bool IsJobCountExceed { get; set; }
         public string Locked { get; set; }
+        public int? RequiredNumber { get; set; }
 
 
     }

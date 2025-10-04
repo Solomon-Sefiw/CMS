@@ -10,7 +10,6 @@ export const SummaryTab = () => {
   const params = useParams();
   const employeeId = useMemo(() => +(params?.id || 0), [params?.id]);
 
-
   return (
     <Box
       sx={{

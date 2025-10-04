@@ -50,7 +50,7 @@ namespace CMS.Application.Features.Employees.Queries
                     (emp.DisplayName != null && emp.DisplayName.ToLower().Contains(lowerCaseSearchQuery)) ||
                     (emp.Job != null && emp.Job.JobRole != null && emp.Job.JobRole.RoleName != null && emp.Job.JobRole.RoleName.ToLower().Contains(lowerCaseSearchQuery)) || // Assuming Job and JobRole are navigatable properties and have RoleName
                     (emp.BusinessUnits != null && emp.BusinessUnits.Name != null && emp.BusinessUnits.Name.ToLower().Contains(lowerCaseSearchQuery)) || // Assuming BusinessUnit is navigatable and has Name property
-                    emp.EmployeeId.ToString().Contains(lowerCaseSearchQuery)
+                    emp.Id.ToString().Contains(lowerCaseSearchQuery)
                 );
             }
             // End of Search Query Filter ---^
@@ -84,7 +84,6 @@ namespace CMS.Application.Features.Employees.Queries
                     AmharicMiddleName = emp.AmharicMiddleName,
                     AmharicLastName = emp.AmharicLastName,
                     AmharicDisplayName = emp.AmharicDisplayName,
-                    EmployeeId = emp.EmployeeId,
                     BusinessUnit = businessUnit?.Name,
                     JobTitle = jobTitle?.RoleName,
                     JobId = emp.JobId,
@@ -97,7 +96,12 @@ namespace CMS.Application.Features.Employees.Queries
                     IsNew = emp.IsNew,
                     EmployeeStatus = emp.EmployeeStatus,
                     Job = emp.Job, // Assuming this is directly mappable
-                    WorkflowComment = emp.WorkflowComment
+                    WorkflowComment = emp.WorkflowComment,
+                    SalaryOnGradeStepId = emp.SalaryOnGradeStepId,
+                    EmploymentType=emp.EmploymentType,
+                    TinNumber = emp.TinNumber,
+                    PensionID = emp.PensionID,
+
                 };
             }).ToList();
 

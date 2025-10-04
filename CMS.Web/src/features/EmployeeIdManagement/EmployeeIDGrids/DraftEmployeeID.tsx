@@ -132,7 +132,7 @@ export const DraftEmployeeID = () => {
   );
   const ApprovalRequest = (employee: EmployeeDto) => {
     setOpenDialog(true);
-    setEmployee(employee.employeeId);
+    setEmployee(employee.id);
   };
 
   const closeSubmitDialog = () => {
@@ -162,7 +162,7 @@ export const DraftEmployeeID = () => {
               <TableBody>
                 {(filteredEmployeeIDList || []).map((employee: EmployeeDto) => (
                   <TableRow hover key={employee.id}>
-                    <TableCell>{employee.employeeId}</TableCell>
+                    <TableCell>{employee.id}</TableCell>
                     <TableCell>{employee.displayName}</TableCell>
                     <TableCell>
                       {employee.job?.jobRole?.roleName || "-"}

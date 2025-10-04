@@ -42,7 +42,7 @@ const permissions = usePermission();
       try {
         const command = {
           employeeIdCardReplaceCommand: {
-            employeeId: employee.employeeId,
+            employeeId: employee.id,
             reason: values.reason,
             employeeIdCardStatusRemark: values.remark,
           },
@@ -52,7 +52,7 @@ const permissions = usePermission();
         onClose();
       } catch (error) {}
     },
-    [employee.employeeId, IDReplace, onClose]
+    [employee.id, IDReplace, onClose]
   );
 
   return (
@@ -67,7 +67,7 @@ const permissions = usePermission();
                   <TextField
                     fullWidth
                     label="Employee ID"
-                    value={employee.employeeId}
+                    value={employee.id}
                     disabled
                   />
                 </Grid>

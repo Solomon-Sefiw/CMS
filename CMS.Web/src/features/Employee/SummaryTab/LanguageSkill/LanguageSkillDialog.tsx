@@ -101,7 +101,9 @@ export const LanguageSkillDialog = ({
       )
         .unwrap()
         .then(() => {
-          values.id ? showSuccessAlert("Language Skill updated successfully!") : showSuccessAlert("Language Skill created successfully!");
+          values.id
+            ? showSuccessAlert("Language Skill updated successfully!")
+            : showSuccessAlert("Language Skill created successfully!");
           refetch(); // Trigger a refetch to refresh the list of language skills
           onClose();
         })

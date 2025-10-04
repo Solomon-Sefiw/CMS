@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using CMS.Service.Models;
 using CMS.Application.Features.Jobs.Job.JobCreationCustomResponse;
 using CMS.Application.Features.Jobs.Job.Services;
+using CMS.Domain.Jobs;
 namespace CMS.Application.Features.Jobs.Job.Command.CreateJob
 {
     public class AddJobCommandHandler : IRequestHandler<AddJobCommand, JobCreationResponse>
@@ -32,14 +33,20 @@ namespace CMS.Application.Features.Jobs.Job.Command.CreateJob
             if (jobCountExceeded) 
             { _notificationService.NotifyInfo("Job count has exceeded the staff strength for this business unit.");
             }
-            var newJob = new CMS.Domain.Jobs. Job()
+            var jobsList=new List<CMS.Domain.Jobs.Job>();
+            for (int i = 0; i<command.requiredNumber; i++)
             {
-                JobRoleId = command.jobRoleId,
-                BusinessUnitId = command.businessunitId,
-            };
-            await dataservice.Jobs.AddAsync(newJob);
+                var newJob = new CMS.Domain.Jobs.Job()
+                {
+                    JobRoleId = command.jobRoleId,
+                    BusinessUnitId = command.businessunitId,
+                };
+                jobsList.Add(newJob);
+                await dataservice.Jobs.AddAsync(newJob);
+
+            }
             await dataservice.SaveAsync(cancellationToken);
-            return new JobCreationResponse { JobId = newJob.Id, JobCountExceeded = jobCountExceeded };
+            return new JobCreationResponse { JobIds = jobsList.Select(a=>a.Id).ToList(), JobCountExceeded = jobCountExceeded };
         }
     }
 }

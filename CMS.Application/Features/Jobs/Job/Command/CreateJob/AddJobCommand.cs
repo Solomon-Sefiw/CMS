@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace CMS.Application.Features.Jobs.Job.Command.CreateJob
 {
-    public record AddJobCommand(int jobRoleId, int businessunitId) : IRequest<JobCreationResponse>;
+    public record AddJobCommand(int jobRoleId, int businessunitId,int requiredNumber) : IRequest<JobCreationResponse>;
 }

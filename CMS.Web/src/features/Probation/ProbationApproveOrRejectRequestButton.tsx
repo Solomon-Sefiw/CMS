@@ -2,7 +2,10 @@ import { Button } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { EmployeeDto, enums, ProbationApprovalCommand } from "../../app/store";
 import { ProbationWorkflowActionDialog } from "./ProbationWorkflowActionDialog";
-import { useRejectProbationApprovalMutation,useProbationApprovalMutation } from "../../app/api/HCMSApi";
+import {
+  useRejectProbationApprovalMutation,
+  useProbationApprovalMutation,
+} from "../../app/api/HCMSApi";
 import { usePermission } from "../../hooks";
 
 export const ProbationApproveOrRejectRequestButton = ({
@@ -15,8 +18,8 @@ export const ProbationApproveOrRejectRequestButton = ({
   const [approve, { error: approveError, reset: approveReset }] =
     useProbationApprovalMutation();
   const [reject, { error: rejectError, reset: rejectReset }] =
-  useRejectProbationApprovalMutation();
-const permissions = usePermission();
+    useRejectProbationApprovalMutation();
+  const permissions = usePermission();
   const onDialogClose = useCallback(() => {
     approveReset();
     rejectReset();
@@ -29,7 +32,7 @@ const permissions = usePermission();
 
       const basePayload = {
         id: employee.id,
-        employeeId: employee.employeeId,
+        employeeId: employee.id,
         probationResult: employee.probationResult,
         probationRemark: command.probationRemark,
       };

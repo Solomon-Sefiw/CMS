@@ -49,12 +49,12 @@ namespace CMS.Application.Features.Jobs.Job.Query
                     JobRole = jobTitle.RoleName,
                     BusinessUnit = businessUnit.Name,
                     Vacant = job.IsVacant.ToString(),
-                    BusinessUnitId= job.BusinessUnitId,
-                    IsVacant=job.IsVacant,
-                    Locked=job.IsLocked.ToString(),
+                    BusinessUnitId = job.BusinessUnitId,
+                    IsVacant = job.IsVacant,
+                    Locked = job.IsLocked.ToString(),
                     ApprovalStatus = job.ApprovalStatus,
                     JobStatus = job.JobStatus,
-                    IsJobCountExceed=jobCountExceeded,
+                    IsJobCountExceed = jobCountExceeded,
 
                 };
                 modifiedJobList.Add(newJob);

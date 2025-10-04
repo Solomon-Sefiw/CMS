@@ -7,7 +7,6 @@ import {
   TextField,
   Autocomplete,
   Divider,
-  Snackbar,
   Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -41,7 +40,6 @@ interface SearchParams {
 
 export const JobHome: React.FC = () => {
   const permissions = usePermission();
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [dialogOpened, setDialogOpened] = useState(false);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     businessUnit: null,
@@ -81,6 +79,7 @@ export const JobHome: React.FC = () => {
       ...prevParams,
       businessUnit: newValue || null,
     }));
+    setSearchTriggered(false)
   };
 
   const handleJobRoleChange = (event: any, newValue: SelectOption | null) => {
@@ -88,6 +87,7 @@ export const JobHome: React.FC = () => {
       ...prevParams,
       jobRole: newValue || null,
     }));
+    setSearchTriggered(false)
   };
 
   const handlePaginationChange = (newPagination: {
@@ -106,20 +106,6 @@ export const JobHome: React.FC = () => {
     setDialogOpened(false);
   }, []);
 
-  useEffect(() => {
-    if (
-      searchTriggered &&
-      filteredJobs &&
-      filteredJobs.items &&
-      filteredJobs.items.length === 0
-    ) {
-      setOpenSnackbar(true);
-    }
-  }, [searchTriggered, filteredJobs]);
-
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
-  };
   const navigate = useNavigate();
   const handleBackToHome = () => {
     navigate("/setup");
@@ -182,6 +168,20 @@ export const JobHome: React.FC = () => {
         ></Button>
       </Box>
       <Box sx={{ mb: 2 }}>
+        {searchTriggered && filteredJobs.items && filteredJobs.items.length === 0 && (
+             <Box sx={{ width: "100%", mb: 2 }}>
+               <Alert
+                 severity="error"
+                 sx={{
+                   width: "100%",
+                   backgroundColor: "#f8d7da",
+                   color: "#721c24",
+                 }}
+               >
+                 No search results found. Please try different filters.
+               </Alert>
+             </Box>
+           )}
         <Grid container spacing={2}>
           <Grid item xs={3}>
             <Autocomplete
@@ -252,6 +252,7 @@ export const JobHome: React.FC = () => {
               variant="contained"
               startIcon={<SearchIcon />}
               onClick={handleSearchSubmit}
+              disabled={!searchParams.businessUnit && !searchParams.jobRole} 
               sx={{
                 width: "auto",
                 height: 36,
@@ -273,43 +274,24 @@ export const JobHome: React.FC = () => {
         </Grid>
       </Box>
 
+     
       <Paper sx={{ p: 2, flex: 1 }}>
-        {searchTriggered &&
-        filteredJobs.items &&
-        filteredJobs.items.length > 0 ? (
-          <JobSearchResultByBUAndJR
-            filteredJobs={filteredJobs.items || []}
-            pageNumber={searchParams.pageNumber}
-            pageSize={searchParams.pageSize}
-            totalCount={filteredJobs.totalCount || 0}
-            onPageChange={handlePaginationChange}
-          />
-        ) : (
-          <>
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={handleSnackbarClose}
-            >
-              <Alert
-                onClose={handleSnackbarClose}
-                severity="error"
-                sx={{
-                  width: "100%",
-                  backgroundColor: "#f8d7da",
-                  color: "#721c24",
-                }}
-              >
-                No search results found. Please try different filters.
-              </Alert>
-            </Snackbar>
-
-            <JobListTabs counts={jobCounts} />
-            <Divider />
-            <Outlet />
-          </>
-        )}
-      </Paper>
+  {searchTriggered && filteredJobs.items && filteredJobs.items.length > 0 ? (
+    <JobSearchResultByBUAndJR
+      filteredJobs={filteredJobs.items || []}
+      pageNumber={searchParams.pageNumber}
+      pageSize={searchParams.pageSize}
+      totalCount={filteredJobs.totalCount || 0}
+      onPageChange={handlePaginationChange}
+    />
+  ) : (
+    <>
+      <JobListTabs counts={jobCounts} />
+      <Divider />
+      <Outlet />
+    </>
+  )}
+</Paper>
 
       {dialogOpened && <JobDialog onClose={onDialogClose} title="Add Job" />}
     </Box>

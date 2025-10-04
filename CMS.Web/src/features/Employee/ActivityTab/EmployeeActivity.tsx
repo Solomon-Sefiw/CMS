@@ -1,42 +1,45 @@
-import {
-  Box,
-  Button,
-  Tab,
-  Tabs,
-} from "@mui/material";
-import { useState } from "react";
-import {
-  Add,
-  Assignment,
-} from "@mui/icons-material";
-import { useParams, useNavigate } from "react-router-dom";
+ 
+import { Box, Tab, Tabs } from "@mui/material";
+import { useMemo, useState, useEffect } from "react";
+import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { usePermission } from "../../../hooks";
 import { ContentCard } from "../../../components";
-import { EducationDto } from "../../../app/api";
-import { EmployeeGuaranter } from "../SummaryTab/EmployeeGuaranters/EmployeeGuaranter";
+import { EmployeePromotionHome } from "./Promotion/EmployeePromotion/EmployeePromotionHome";
+import { EmployeeDemotionHome } from "./Demotion/EmployeeDemotionHome";
+import { EmployeeReClassificationHome } from "./ReClassification/EmployeeReClassificationHome";
 import { DelegationHome } from "./Delegation/DelegationHome";
 import { ActingHome } from "./Acting/ActingHome";
-
+import { EmployeeWarningHome } from "./EmployeeWarning/EmployeeWarningHome";
+import { EmployeeSalaryIncrementHome } from "./SalaryIncrement/EmployeeSalaryIncrementHome";
+import { SuspensionHome } from "./Suspension/SuspensionHome";
+import { ResignationHome } from "./Resignation/ResignationHome";
+ 
 export const EmployeeActivity = () => {
-  const params = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  
-  
+  const location = useLocation();
+ 
   const [tabValue, setTabValue] = useState(0);
-  const permissions = usePermission();
+ 
+  const base = `/employee-detail/${id}/activities`;
+  const transferPath = `${base}/transfer`;
+  const reemploymentPath = `${base}/reemployment`;
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  useEffect(() => {
+    if (location.pathname.startsWith(transferPath)) {
+      setTabValue(2);
+    } else if (location.pathname.startsWith(reemploymentPath)) {
+      setTabValue(10);
+    }
+  }, [location.pathname, transferPath, reemploymentPath]);
+ 
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
-    if (newValue === 0) {
-      navigate('delegation/approved');
-    }
-        if (newValue === 1) {
-      navigate('acting/approved');
-    }
-
+    if (newValue === 2) navigate(transferPath);
+     if (newValue === 10) navigate(reemploymentPath);
   };
-
-
+ 
   return (
     <ContentCard>
       <Box
@@ -54,29 +57,27 @@ export const EmployeeActivity = () => {
           <Tab label="Promotion" />
           <Tab label="Demotion" />
           <Tab label="Reclassification" />
+          <Tab label="Salary Increment" />
           <Tab label="Disciplinary Action" />
+          <Tab label="Suspension" />
+          <Tab label="Resignation" />
+           <Tab label="Re-Employment" />
         </Tabs>
-
       </Box>
-
-      {/* Assignment Tab Content */}
-      {tabValue === 0 && (
-        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-          {/* Your existing assignment content */}
-        </Box>
-      )}
-
-      {/* Delegation Tab */}
-      {tabValue === 0 && (
-        <Box sx={{ mt: 2 }}>
-          <DelegationHome />
-        </Box>
-      )}
-
-      {/* Other Tabs */}
+ 
+      {tabValue === 0 && <DelegationHome />}
       {tabValue === 1 && <ActingHome />}
-      {tabValue === 2 && <EmployeeGuaranter />}
-      {/* Add other tab contents as needed */}
+      {tabValue === 3 && <EmployeePromotionHome />}
+      {tabValue === 4 && <EmployeeDemotionHome />}
+      {tabValue === 5 && <EmployeeReClassificationHome />}
+      {tabValue === 6 && <EmployeeSalaryIncrementHome/>}
+      {tabValue === 7 && <EmployeeWarningHome />}
+      {tabValue === 8 && <SuspensionHome />}
+      {tabValue === 9 && <ResignationHome />}
+ 
+      {/* Transfer tab uses routing */}
+      {tabValue === 2 && <Outlet />}
+       {tabValue === 10 && <Outlet />}
     </ContentCard>
   );
 };

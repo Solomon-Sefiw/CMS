@@ -12,6 +12,7 @@ namespace CMS.Application.Features.Jobs.JobRoles.Queries
         {
             this.dataService = dataService;
         }
+        
         public async Task<List<JobRoleDto>> Handle(GetJobRoleQuery request, CancellationToken cancellationToken)
         {
             var jobRoles = await dataService.JobRoles.ToListAsync();
@@ -40,5 +41,7 @@ namespace CMS.Application.Features.Jobs.JobRoles.Queries
 
             return newjobRoleList;
         }
+    
+
     }
 }
