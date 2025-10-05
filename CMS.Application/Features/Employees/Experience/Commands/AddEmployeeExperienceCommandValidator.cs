@@ -17,8 +17,6 @@ namespace CMS.Application.Features.Employees.Experience.Commands
             RuleFor(experience => experience.StartDate)
                 .NotEmpty().WithMessage("Start Date is required.");
 
-            RuleFor(experience => experience.LastSalary)
-                .NotEmpty().WithMessage("Last Salary is required.");
 
         }
 

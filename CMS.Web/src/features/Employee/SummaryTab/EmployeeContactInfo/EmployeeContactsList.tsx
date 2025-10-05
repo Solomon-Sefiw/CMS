@@ -8,7 +8,7 @@ import {
   Paper,
   Tooltip,
 } from "@mui/material";
-import { ContactCategory } from "../../../../app/api/enums";
+import { ContactCategory, ContactType } from "../../../../app/api/enums";
 import { ContactDto, useGetContactsByIdQuery } from "../../../../app/api";
 import Add from "@mui/icons-material/Add";
 import ContactMail from "@mui/icons-material/ContactMail";
@@ -125,7 +125,9 @@ const EmployeeContactsList: React.FC<Props> = ({
                             variant="contained"
                             size="small"
                             color="primary"
-                            disabled={!permissions.CanCreateUpdateAddressAndContact}
+                            disabled={
+                              !permissions.CanCreateUpdateAddressAndContact
+                            }
                             onClick={() => handleEditContactClick(contact)}
                             startIcon={<Edit />}
                             sx={{

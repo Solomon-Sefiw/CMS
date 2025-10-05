@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from "react";
 import {
   Box,
@@ -177,7 +178,7 @@ if (itemsResponse && Array.isArray(itemsResponse.items)) {
                           versionNumber: item?.versionNumber as any,
                         })}
                       >
-                        <TableCell>{item.employeeId}</TableCell>
+                        <TableCell>{item.id}</TableCell>
                         <TableCell>{item.displayName}</TableCell>
                         <TableCell>{item.businessUnit}</TableCell>
                         <TableCell>{item.jobTitle}</TableCell>

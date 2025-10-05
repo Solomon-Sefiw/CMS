@@ -81,7 +81,7 @@ export const JobGradeDialog = ({
   const handleSubmit = useCallback(
     async (values: JobGradeDto) => {
       const payload = {
-        ...values
+        ...values,
       };
 
       try {

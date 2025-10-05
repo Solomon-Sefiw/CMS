@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   Grid,
+  Snackbar,
   Alert,
 } from "@mui/material";
 import { Formik, Form } from "formik";
@@ -37,7 +38,7 @@ export const JobCategoryDialog = ({ onClose }: JobCategoryDialogProps) => {
   const [severity, setSeverity] = useState<"info" | "error">();
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const { showSuccessAlert, showErrorAlert } = useAlert();
-  
+
   const validationSchema = Yup.object({
     jobCategoryName: Yup.string()
       .trim()
@@ -52,7 +53,7 @@ export const JobCategoryDialog = ({ onClose }: JobCategoryDialogProps) => {
       .positive("Probation period must be a positive number.")
       .integer("Probation period must be a whole number.")
       .required("Probation period is required.")
-      .min(30,"Probation Date should be greater than or equal to 30 days"),
+      .min(30, "Probation Date should be greater than or equal to 30 days"),
   });
   // Closing the dialog
   const onDialogClose = useCallback(() => {
@@ -75,7 +76,6 @@ export const JobCategoryDialog = ({ onClose }: JobCategoryDialogProps) => {
         setSeverity("info");
         setOpenSnackbar(true);
         onClose();
-       
       } catch (error) {
         setOpenSnackbar(true);
         setSeverity("error");

@@ -32,7 +32,7 @@ public class SubmitJobCategoryCommandHandler : IRequestHandler<SubmitJobCategory
         if (jobCategory.ApprovalStatus == ApprovalStatus.Submitted)
             throw new InvalidOperationException("This job category is already submitted for approval.");
         jobCategory.ApprovalStatus = ApprovalStatus.Submitted;
-        jobCategory.LastModifiedAt = DateTime.UtcNow;
+        jobCategory.LastModifiedAt = DateTime.Now;
         await dataService.SaveAsync(cancellationToken);
 
         return jobCategory.Id;

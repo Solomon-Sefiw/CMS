@@ -11,6 +11,9 @@ using CMS.Domain.Cases;
 using CMS.Domain.Chat;
 using CMS.Domain.Contacts;
 using CMS.Domain.Courts;
+using CMS.Domain.Benefit;
+using CMS.Domain.BranchGrade;
+using CMS.Domain.Contacts;
 using CMS.Domain.Delegations;
 using CMS.Domain.Document;
 using CMS.Domain.Education;
@@ -27,6 +30,13 @@ using CMS.Domain.Notifications;
 using CMS.Domain.Payments;
 using CMS.Domain.Templates;
 using CMS.Domain.Timelines;
+using CMS.Domain.Employee.EmployeeActivities;
+using CMS.Domain.EmployeeDocument;
+using CMS.Domain.Jobs;
+using CMS.Domain.Language;
+using CMS.Domain.LetterDocument;
+using CMS.Domain.letters;
+using CMS.Domain.Transfer;
 using CMS.Domain.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -100,6 +110,24 @@ namespace CMS.Services.DataService
         public DbSet<Message> Messages { get; set; }
         public DbSet<DocketEntry> DocketEntries { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+
+        public DbSet<Reemployment> Reemployments { get; set; }
+        public DbSet<Suspension> Suspensions { get; set; }
+        public DbSet<Resignation> Resignations { get; set; }
+
+        public DbSet<EmployeeWarning> EmployeeWarnings { get; set; }
+        public DbSet<EmployeeTransfer> EmployeeTransfers { get; set; }
+        public DbSet<EmployeeTransferSnapshot> EmployeeTransferSnapshots { get; set; }
+        //Transaction  on it 
+        public DbSet<EmployeePromotion> EmployeePromotions { get; set; }
+        public DbSet<EmployeeDemotion> EmployeeDemotions { get; set; }
+        public DbSet<EmployeeReClassification> EmployeeReClassifications { get; set; }
+        public DbSet<EmployeeSalaryIncrement> EmployeeSalaryIncrements { get; set; }
+
+        public DbSet<EmployeeFileDocument> EmployeeFileDocuments { get; set; }
+
+        public DbSet<AuditEmployeeFileDocumentLog> AuditEmployeeFileDocumentLogs { get; set; }
+
 
         //EmployeeExperiences
         void Save();

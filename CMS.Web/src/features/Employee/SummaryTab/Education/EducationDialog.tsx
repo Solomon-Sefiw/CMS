@@ -37,6 +37,7 @@ const emptyEducationData = {
   fieldOfStudyId: undefined,
   schoolCity: "",
   employeeId: undefined,
+  cgpa:null,
 } as EducationDto;
 
 export const EducationDialog = ({
@@ -77,6 +78,19 @@ export const EducationDialog = ({
   }, [education]);
 
   const validationSchema = Yup.object({
+        cgpa: Yup.number()
+             .nullable() // allows null
+             .typeError("CGPA must be a number")
+             .min(0, "CGPA cannot be less than 0")
+             .max(4, "CGPA cannot be greater than 4")
+             .test(
+               "max-decimals",
+               "CGPA can have at most 2 decimal places",
+               (value) => {
+                 if (value === null || value === undefined) return true; // skip if empty
+                 return /^\d+(\.\d{1,2})?$/.test(value.toString());
+               }
+             ),
     startDate: Yup.date()
       .required("Start Date is required.")
       .max(new Date(), "Start Date cannot be in the future"),
@@ -313,7 +327,18 @@ export const EducationDialog = ({
                         options={educationLavelLookups}
                         sx={{ width: "60%" }}
                       />
+                       <FormTextField
+                        name="cgpa"
+                        label="CGPA"
+                        type="text"
+                        sx={{ width: "60%" }}
+                      />
+                      </Box>
+                      </Grid>
 
+                    <Grid item xs={12}>
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                      
                       <FormTextField
                         name="startDate"
                         label="Start Date"
@@ -321,6 +346,7 @@ export const EducationDialog = ({
                         InputLabelProps={{ shrink: true }}
                         error={!!formikErrors.startDate && touched.startDate}
                         helperText={touched.startDate && formikErrors.startDate}
+                        sx={{flex:1}}
                       />
                       <FormTextField
                         name="endDate"
@@ -329,6 +355,7 @@ export const EducationDialog = ({
                         InputLabelProps={{ shrink: true }}
                         error={!!formikErrors.endDate && touched.endDate}
                         helperText={touched.endDate && formikErrors.endDate}
+                        sx={{flex:1}}
                       />
                     </Box>
                   </Grid>

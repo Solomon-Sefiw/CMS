@@ -30,6 +30,16 @@ public class AuthPolicy
             public const string canTerminateEmployeeProbation = "canTerminateEmployeeProbation";
             public const string canActivateDeactivateEmployeeProbation = "canActivateDeactivateEmployeeProbation";
         }
+        public static class EmployeeActivity
+        {
+            public const string canViewEmployeeActivity = "canViewEmployeeActivity";
+            public const string canCreateUpdateEmployeeActivity = "canCreateUpdateEmployeeActivity";
+            public const string canApproveRejectEmployeeActivity = "canApproveRejectEmployeeActivity";
+            public const string canSubmitEmployeeActivity = "canSubmitEmployeeActivity";
+            public const string canActivateEmployeeActivity = "canActivateEmployeeActivity";
+            public const string canDeactivateEmployeeActivity = "canDeactivateEmployeeActivity";
+        }
+
     }
 
     //user Related Policy

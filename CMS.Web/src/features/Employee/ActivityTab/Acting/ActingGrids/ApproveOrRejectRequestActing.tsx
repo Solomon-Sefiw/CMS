@@ -1,10 +1,12 @@
 import { Button } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { usePermission } from "../../../../../hooks";
-import { useApproveActingMutation, useRejectActingMutation } from "../../../../../app/api";
+import {
+  useApproveActingMutation,
+  useRejectActingMutation,
+} from "../../../../../app/api";
 import { WorkflowActionDialog } from "../../../../../components";
 import { removeEmptyFields } from "../../../../../utils";
-
 
 export const ApproveOrRejectRequestActing = ({ id }: { id: number }) => {
   const permissions = usePermission();
@@ -65,7 +67,7 @@ export const ApproveOrRejectRequestActing = ({ id }: { id: number }) => {
           setSelectedAction("approve");
         }}
         size="small"
-        disabled={!permissions.canApproveRejectSetup}
+        disabled={!permissions.CanApproveRejectEmployeeActivity}
       >
         Approve
       </Button>
@@ -76,7 +78,7 @@ export const ApproveOrRejectRequestActing = ({ id }: { id: number }) => {
           setSelectedAction("reject");
         }}
         size="small"
-        disabled={!permissions.canApproveRejectSetup}
+        disabled={!permissions.CanApproveRejectEmployeeActivity}
       >
         Reject
       </Button>

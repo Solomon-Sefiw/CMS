@@ -13,10 +13,6 @@ namespace CMS.Persistance.Configuration
                 t.HasPeriodStart("PeriodStart");
                 t.HasPeriodEnd("PeriodEnd");
             }));
-            builder.Property(x => x.EmployeeId)
-                .IsRequired()
-                .HasDefaultValueSql("NEXT VALUE FOR EMPLOYEEID");
-            builder.HasIndex(X => X.EmployeeId).IsUnique(true).IsClustered(false);
             builder.HasOne(x => x.BusinessUnits).WithMany().HasForeignKey(x => x.BusinessUnitID);
             builder.HasOne(x => x.Job).WithMany().HasForeignKey(x => x.JobId).OnDelete(DeleteBehavior.NoAction);
         }

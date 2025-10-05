@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CMS.Domain;
+﻿using CMS.Domain;
 using CMS.Domain.Employee;
 using CMS.Domain.Enum;
 
@@ -20,7 +15,8 @@ namespace CMS.Application.Features.Employees.EmployeeActivities.DelegationAssign
         BusinessUnit BusinessUnit,
         DateOnly StartDate,
         DateOnly? EndDate,
-        ApprovalStatus ApprovalStatus
+        ApprovalStatus ApprovalStatus,
+        bool IsActive 
     );
 
 

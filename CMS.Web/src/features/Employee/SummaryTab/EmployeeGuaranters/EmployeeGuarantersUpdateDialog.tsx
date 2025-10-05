@@ -55,7 +55,7 @@ export const EmployeeGuarantersUpdateDialog = ({
   const [employeeGuaranter, setEmployeeGuaranter] =
     useState<UpdateEmployeeGurantersCommand>(emptyEmployeeGuaranter);
   const [UpdateEmployeeGuaranter] = useUpdateEmployeeGurantersMutation();
-const { showSuccessAlert, showErrorAlert } = useAlert();
+  const { showSuccessAlert, showErrorAlert } = useAlert();
   const {
     data: employeeGuaranterInfo,
     isLoading,
@@ -105,13 +105,10 @@ const { showSuccessAlert, showErrorAlert } = useAlert();
         updateEmployeeGurantersCommand: payload,
       })
         .unwrap()
-        .then(
-          (response: any) => {
-            showSuccessAlert("Employee Guaranter Updated Successfully");
-            onClose();
-          },
-          onClose
-        )
+        .then((response: any) => {
+          showSuccessAlert("Employee Guaranter Updated Successfully");
+          onClose();
+        }, onClose)
         .catch((error: any) => {
           showErrorAlert("Failed to Update Employee Guaranter");
         });

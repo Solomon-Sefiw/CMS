@@ -62,6 +62,7 @@ import { useParams } from "react-router-dom";
 import { EmployeeGuarantersUpdateDialog } from "./EmployeeGuarantersUpdateDialog";
 import { EmployeeGuaranteeActivateButton } from "./EmployeeGuaranteeActivateButton";
 import { EmployeeGuaranteeDeActivateButton } from "./EmployeeGuaranteeDeActivateButton";
+import { usePermission } from "../../../../hooks";
 interface EmployeeGuaranterProps {
   items?: EmployeeGurantersDto[];
   hideWorkflowComment?: boolean;
@@ -70,8 +71,6 @@ interface EmployeeGuaranterProps {
 
 export const EmployeeGuaranter = ({
   items = [],
-  hideWorkflowComment,
-  suppressActionColumn,
 }: EmployeeGuaranterProps) => {
   const [OpenEmployeeGuaranterDialog, setOpenEmployeeGuaranterDialog] =
     useState<boolean>(false);
@@ -134,7 +133,7 @@ export const EmployeeGuaranter = ({
     setOpenContactDialog(true);
     setEmployeeContactCategory(ContactCategory);
   };
-
+const permissions = usePermission();
   //
   const UpdateDialog = (id: number | undefined) => {
     setGuaranter(id);
@@ -176,10 +175,6 @@ export const EmployeeGuaranter = ({
     setSelectedIdForAddress(id);
     setSelectedIdForContact(id);
     setExpandedRow(expandedRow === id ? undefined : id); // Update the selected ID to trigger the query
-  };
-  const showContact = (id: number | undefined) => {
-    setSelectedIdForContact(id);
-    setExpandedRow(expandedRow === id ? undefined : id);
   };
   //
   const OpenAddressDialogClose = () => {
@@ -268,6 +263,7 @@ export const EmployeeGuaranter = ({
           startIcon={<Add />}
           size="small"
           color="primary"
+          disabled={!permissions.CanCreateOrUpdateEmployeeInfo}
         >
           Add Guaranter
         </Button>

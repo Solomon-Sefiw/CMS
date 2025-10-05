@@ -108,12 +108,17 @@ export const EmployeeInfo = ({
             />
             <KeyValuePair
               label="Birth Date:"
-              value={dayjs(employeeInfo?.birthDate).format("DD MMM YYYY") || "-"}
+              value={
+                dayjs(employeeInfo?.birthDate).format("DD MMM YYYY") || "-"
+              }
               icon={<Cake />}
-            />    
+            />
             <KeyValuePair
               label="Employment Date:"
-              value={dayjs(employeeInfo?.employementDate).format("DD MMM YYYY") || "-"}
+              value={
+                dayjs(employeeInfo?.employementDate).format("DD MMM YYYY") ||
+                "-"
+              }
               icon={<HowToReg />}
             />
           </Grid>
@@ -121,7 +126,7 @@ export const EmployeeInfo = ({
 
         {employeeInfoDialogOpened && (
           <EmployeeDialog
-            onClose={handleCloseDialog} 
+            onClose={handleCloseDialog}
             employee={employeeInfo}
             title="Update Employee"
             businessUnitId={employeeInfo?.businessUnitID}

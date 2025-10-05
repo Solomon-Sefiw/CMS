@@ -30,7 +30,7 @@ namespace CMS.Application.Features.Employees.EmployeeID
             employee.EmployeeIdCardStatusRemark = request.EmployeeIdCardStatusRemark;
             employee.SkipStateTransitionCheck = true;
             await dataService.SaveAsync(cancellationToken);
-            return employee.EmployeeId;
+            return employee.Id;
         }
     }
 }

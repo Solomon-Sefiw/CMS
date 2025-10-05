@@ -55,15 +55,27 @@ export const RejectedProbation = () => {
     pageNumber: 0,
     pageSize: 10,
   });
-  const { data: counts, isLoading: isCountsLoading,refetch:CountReftch } = useGetProbationCountPerApprovalStatusQuery();
-const { data: probation, isLoading:isListLoading, isFetching, isSuccess, isError, refetch } = useGetProbationListQuery({
-  pageNumber: pagination.pageNumber + 1,
-  pageSize: pagination.pageSize,
-  status: EmployeeStatusEnum.ProbationApprovalRejected,
-});
-const probationList = probation?.items ?? [];
-const permissions = usePermission();
-  const [ApproveProbationPassed,{error:ApproveProbationPassedError}]=useAllEmployeeApproveProbationMutation();
+  const {
+    data: counts,
+    isLoading: isCountsLoading,
+    refetch: CountReftch,
+  } = useGetProbationCountPerApprovalStatusQuery();
+  const {
+    data: probation,
+    isLoading: isListLoading,
+    isFetching,
+    isSuccess,
+    isError,
+    refetch,
+  } = useGetProbationListQuery({
+    pageNumber: pagination.pageNumber + 1,
+    pageSize: pagination.pageSize,
+    status: EmployeeStatusEnum.ProbationApprovalRejected,
+  });
+  const probationList = probation?.items ?? [];
+  const permissions = usePermission();
+  const [ApproveProbationPassed, { error: ApproveProbationPassedError }] =
+    useAllEmployeeApproveProbationMutation();
   const [Approved, setApproved] = useState<Boolean>(false);
   const ApiCallCountRef = useRef(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -93,7 +105,7 @@ const permissions = usePermission();
       if (status.needsApproval) {
         const command = {
           allEmployeeApproveCommand: {
-            employeeId: employee?.employeeId,
+            employeeId: employee?.id,
             probationResult: ProbationResult.BecomePermanent,
             probationRemark: employee?.probationRemark,
           },
@@ -204,8 +216,8 @@ const permissions = usePermission();
                     employee?.job?.jobRole?.jobCatagory?.probationPeriodInDays
                   );
                   return (
-                    <TableRow hover key={employee.employeeId}>
-                      <TableCell>{employee.employeeId}</TableCell>
+                    <TableRow hover key={employee.id}>
+                      <TableCell>{employee.id}</TableCell>
                       <TableCell>{employee.displayName}</TableCell>
                       <TableCell>
                         {employee.job?.jobRole?.roleName || "-"}
@@ -260,8 +272,9 @@ const permissions = usePermission();
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <MenuItem onClick={() => handleTakeAction(menuEmployee, "Active")}
-        disabled={!permissions.CanActivateDeactivateEmployeeProbation}
+        <MenuItem
+          onClick={() => handleTakeAction(menuEmployee, "Active")}
+          disabled={!permissions.CanActivateDeactivateEmployeeProbation}
         >
           <CheckCircleOutline color="success" sx={{ mr: 1 }} />
           Active

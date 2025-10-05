@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CMS.Application.Exceptions;
+﻿using CMS.Application.Exceptions;
 using CMS.Services.DataService;
 using MediatR;
 

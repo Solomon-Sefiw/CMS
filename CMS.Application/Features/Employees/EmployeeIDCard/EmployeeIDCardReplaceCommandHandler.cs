@@ -34,7 +34,7 @@ namespace CMS.Application.Features.Employees.EmployeeID
             employee.IDReplaceReason = request.reason;
             employee.EmployeeIdCardStatusRemark = request.EmployeeIdCardStatusRemark;
             await dataService.SaveAsync(cancellationToken);
-            return employee.EmployeeId;
+            return employee.Id;
         }
     }
 }

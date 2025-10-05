@@ -10,7 +10,10 @@ export const useJobGrade = () => {
   const { JobGradesLookups, jobGrades } = useMemo(() => {
     const JobGradesLookups = (data?.jobGrades || []).map<SelectOption>(
       ({ jobGradeId, name, jobGradeRomanId }) => {
-        const enumKey = jobGradeRomanId !== undefined ? JobGradeRomanId[jobGradeRomanId] : undefined;
+        const enumKey =
+          jobGradeRomanId !== undefined
+            ? JobGradeRomanId[jobGradeRomanId]
+            : undefined;
         const label = enumKey || name || "";
         return {
           label,

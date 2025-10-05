@@ -143,7 +143,9 @@ export const EmployeeContactDialog = ({
     mutation
       .unwrap()
       .then(() => {
-        contactData?.id ? showSuccessAlert("Contact updated successfully!") : showSuccessAlert("Contact created successfully!");
+        contactData?.id
+          ? showSuccessAlert("Contact updated successfully!")
+          : showSuccessAlert("Contact created successfully!");
         refetch();
         onClose();
       })

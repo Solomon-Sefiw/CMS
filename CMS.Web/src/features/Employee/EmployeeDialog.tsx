@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   DialogHeader,
   Errors,
@@ -7,17 +7,23 @@ import {
   SelectOption,
 } from "../../components";
 import {
+  Autocomplete,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
+  FormControlLabel,
   Grid,
+  Radio,
+  RadioGroup,
+  Typography,
 } from "@mui/material";
 import {
   CreateEmployeeProfileCommand,
   useCreateEmployeeProfileMutation,
   useGetJobByBuIdQuery,
+  useGetJobGradeOfJobRoleQuery,
 } from "../../app/api/HCMSApi";
 import {
   EmployeeDto,
@@ -28,11 +34,13 @@ import dayjs from "dayjs";
 import { removeEmptyFields } from "../../utils";
 import * as Yup from "yup";
 import { useAlert } from "../notification";
-import { Gender, MartialStatus } from "../../app/api/enums";
+import { ApprovalStatus, Gender, MartialStatus } from "../../app/api/enums";
 import { getEnumOptions } from "../../components/form-controls/get-enum-list";
 import { useNavigateToDetailPage } from "./useNavigateToDetailPage";
 import { Form, Formik } from "formik";
-
+import { skipToken } from "@reduxjs/toolkit/query";
+import { JobGradeStepSalaryDialog } from "./JobGradeStepSalaryDialog";
+import { EmploymentType } from "../../app/api/enums";
 const emptyEmployeeData = {
   firstName: "",
   middleName: "",
@@ -46,6 +54,10 @@ const emptyEmployeeData = {
   employementDate: "",
   gender: 1,
   martialStatus: 1,
+  salaryOnGradeStepId: 0,
+  pensionID:'',
+  tinNumber:'',
+  employmentType:1,
 } as any;
 
 export const EmployeeDialog = ({
@@ -62,23 +74,22 @@ export const EmployeeDialog = ({
   const [employeeData, setEmployeeData] =
     useState<CreateEmployeeProfileCommand>();
 
-    //   const [selectedBu, setSelectedBu] =
-    // useState<CreateEmployeeProfileCommand>();
-
+  //   const [selectedBu, setSelectedBu] =
+  // useState<CreateEmployeeProfileCommand>();
 
   const [addEmployee, { error: addEmployeeErr }] =
     useCreateEmployeeProfileMutation();
   const { navigateToDetailPage } = useNavigateToDetailPage();
   const [updateEmployee, { error: updateEmployeeErr }] =
     useUpdateEmployeeMutation();
-  
+
   const { showSuccessAlert, showErrorAlert } = useAlert();
   const { data: businessUnitList } = useGetAllBusinessUnitsQuery();
 
-  const {data:businessUnitJobList}=useGetJobByBuIdQuery({
-    id:businessUnitId,
-    employeeId:employee?.employeeId
-  })
+  const { data: businessUnitJobList } = useGetJobByBuIdQuery({
+    id: businessUnitId,
+    employeeId: employee?.id,
+  });
   const validationSchema = Yup.object({
     firstName: Yup.string()
       .required("First Name is required.")
@@ -147,6 +158,7 @@ export const EmployeeDialog = ({
       ...employee,
       jobId: employee?.jobId || 0,
       businessUnitID: businessUnitId || employee?.businessUnitID || 0,
+      employmentType: employee?.employmentType || 1, 
     });
   }, [employee, businessUnitId]);
 
@@ -239,7 +251,80 @@ export const EmployeeDialog = ({
 
   const errors = (employee?.id ? updateEmployeeErr : (addEmployeeErr as any))
     ?.data?.errors;
+  const [isStepModalOpen, setIsStepModalOpen] = useState(false);
+  const [SelecteSalaryType, setSelecteSalaryType] = useState<number | null>(
+    null
+  );
+  const [step, setStep] = useState<number>(0);
+  const [jobRoleId, setJobRoleId] = useState<number | undefined>();
+  const valuesRef = useRef<any>(null);
+  const setFieldValueRef = useRef<((field: string, value: any) => void) | null>(
+    null
+  );
+  //
+  const [selectedJobIdFromForm, setSelectedJobIdFromForm] = useState<number>(0);
+  useEffect(() => {
+    const jobIdFromFormik = valuesRef.current?.jobId;
+    if (jobIdFromFormik && jobIdFromFormik !== selectedJobIdFromForm) {
+      setSelectedJobIdFromForm(jobIdFromFormik);
+    }
+  }, [valuesRef.current?.jobId]);
+  useEffect(() => {
+    if (!selectedJobIdFromForm || !businessUnitJobList?.length) return;
 
+    const selectedJob = businessUnitJobList.find(
+      (job) => job.id === selectedJobIdFromForm
+    );
+    if (selectedJob?.jobRoleId) {
+      setJobRoleId(selectedJob.jobRoleId);
+    }
+  }, [selectedJobIdFromForm, businessUnitJobList]);
+  const { data: GradeInfo } = useGetJobGradeOfJobRoleQuery(
+    jobRoleId ? { roleid: jobRoleId } : skipToken
+  );
+
+  useEffect(() => {
+    if (employeeData) {
+      const salaryId = employeeData.salaryOnGradeStepId ?? 0;
+      if (salaryId === 0) setSelecteSalaryType(0);
+      else if (salaryId === 10) setSelecteSalaryType(10);
+      else if (salaryId > 0) setSelecteSalaryType(3);
+      else setSelecteSalaryType(0);
+    }
+  }, [employeeData]);
+
+  // --- Handle Salary Option Change ---
+  const handleSalaryOptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const selected = Number(event.target.value);
+    setSelecteSalaryType(selected);
+    //
+    const setFieldValue = setFieldValueRef.current;
+    if (!setFieldValue) return;
+
+    if (selected === 0) {
+      setFieldValue("salaryOnGradeStepId", 0); // insert 0
+    } else if (selected === 10) {
+      setFieldValue("salaryOnGradeStepId", 10); // insert 10
+    } else if (selected === 3) {
+      setIsStepModalOpen(true);
+    }
+  };
+
+  // --- Handle Step Selection ---
+  const handleStepConfirm = (step: {
+    stepId: number;
+    stepNumber: number;
+    salary: number;
+  }) => {
+    setStep(step.stepNumber);
+    const setFieldValue = setFieldValueRef.current;
+    if (!setFieldValue) return;
+    setFieldValue("salaryOnGradeStepId", step.stepNumber); // Set actual step ID
+    setSelecteSalaryType(3);
+  };
+  //
   return (
     <Dialog
       scroll={"paper"}
@@ -255,9 +340,14 @@ export const EmployeeDialog = ({
           validationSchema={validationSchema}
           validateOnChange={true}
         >
-          {({ values }) => {
+          {({ values, setFieldValue }) => {
+            valuesRef.current = values;
+            setFieldValueRef.current = setFieldValue;
+
             const filteredBusinessUnits = businessUnitList?.approved
-              ?.filter((bu) => (businessUnitId ? bu.id === businessUnitId : true))
+              ?.filter((bu) =>
+                businessUnitId ? bu.id === businessUnitId : true
+              )
               .map((bu) => ({
                 value: bu.id,
                 label: bu.name,
@@ -270,7 +360,8 @@ export const EmployeeDialog = ({
                 const isAvailableForSelection = employee?.id
                   ? job.id === employee.jobId || job.isVacant === true
                   : job.isVacant === true;
-                return belongsToSelectedBusinessUnit && isAvailableForSelection;
+                 const statusApproval= job.approvalStatus===ApprovalStatus.Approved;
+                return belongsToSelectedBusinessUnit && isAvailableForSelection && statusApproval;
               })
               .map((job) => ({
                 value: job.id,
@@ -341,37 +432,111 @@ export const EmployeeDialog = ({
                         />
                       </Box>
                     </Grid>
-                    <Grid item xs={12}>
-                      <Box sx={{ display: "flex", gap: 2 }}>
-                        <FormSelectField
-                          name="businessUnitID"
-                          label="Business Unit"
-                          type="number"
-                          options={filteredBusinessUnits}
-                          disabled={!!businessUnitId}
+                    {/* {/* new created */}
+                        <Grid item xs={12}>
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        <FormTextField
+                          name="tinNumber"
+                          label="Tin Number"
+                          type="text"
                         />
-                        {values.businessUnitID > 0 && (
-                          <FormSelectField
-                            name="jobId"
-                            label="Job "
-                            type="number"
-                            options={filteredJobs}
-                          />
-                        )}
+
+                        <FormTextField
+                          name="pensionID"
+                          label="Pension ID"
+                          type="text"
+                        />
+                        <FormSelectField
+                          name="employmentType"
+                          label="Employment Type"
+                          options={getEnumOptions(EmploymentType)}
+                        />
                       </Box>
-                    </Grid>
+                    </Grid> 
+                    {/*  */}
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <FormSelectField
+                      name="businessUnitID"
+                      label="Business Unit"
+                      type="number"
+                      options={filteredBusinessUnits}
+                      disabled={!!businessUnitId}
+                      fullWidth
+                    />
+                  </Grid>
+              
+                     {values.businessUnitID > 0 && (
+                      <Grid item xs={6}>
+                         <Autocomplete
+                          options={filteredJobs || []}
+                          getOptionLabel={(option) => option.label}
+                          isOptionEqualToValue={(option, value) => option.value === value?.value}
+                          value={(filteredJobs || []).find(job => job.value === values.jobId) || null}
+                          onChange={(event, newValue) => {
+                            setFieldValue('jobId', newValue?.value || 0);
+                          }}
+                          renderInput={(params) => (
+                            <FormTextField {...params} label="Job" name="jobId" fullWidth />
+                          )}
+                          filterOptions={(options, params) => {
+                            const input = params.inputValue.toLowerCase();
+                        
+                            if (input.length < 3) return [];
+                        
+                            return options.filter((option) =>
+                              option.label.toLowerCase().includes(input)
+                            );
+                          }}
+                        />
+                       </Grid>
+                     )}
+                   </Grid>
+                 </Grid>
+
                     <Grid item xs={12}>
                       <Box sx={{ display: "flex", gap: 1 }}>
                         <FormTextField
                           name="birthDate"
                           label="Birth Date"
                           type="date"
+                          sx={{ width: "25%" }}
                         />
                         <FormTextField
                           name="employementDate"
                           label="Employment Date"
                           type="date"
+                          sx={{ width: "25%" }}
                         />
+                        <Box sx={{ width: "50%" }}>
+                          <Typography> Salary Setteled On </Typography>
+
+                          <RadioGroup
+                            row
+                            name="SalaryOnGradeStepId"
+                            value={SelecteSalaryType}
+                            onChange={(e) => {
+                              handleSalaryOptionChange(e);
+                            }}
+                          >
+                            <FormControlLabel
+                              value={0}
+                              control={<Radio />}
+                              label="Base Salary"
+                            />
+                            <FormControlLabel
+                              value={10}
+                              control={<Radio />}
+                              label="Ceiling Salary"
+                            />
+                            <FormControlLabel
+                              value={3}
+                              control={<Radio />}
+                              label="From Step"
+                            />
+                          </RadioGroup>
+                        </Box>
                       </Box>
                     </Grid>
                   </Grid>
@@ -387,6 +552,16 @@ export const EmployeeDialog = ({
           }}
         </Formik>
       )}
+      <JobGradeStepSalaryDialog
+        open={isStepModalOpen}
+        onClose={() => setIsStepModalOpen(false)}
+        steps={(GradeInfo?.jobGrade?.steps ?? []).map((step) => ({
+          id: step.id ?? 0,
+          stepNumber: step.stepNumber ?? 0, // default to 0 if undefined
+          salaryAmount: step.salaryAmount ?? 0, // default to 0 if undefined  handleStepConfirmBefore
+        }))}
+        onConfirm={handleStepConfirm}
+      />
     </Dialog>
   );
 };

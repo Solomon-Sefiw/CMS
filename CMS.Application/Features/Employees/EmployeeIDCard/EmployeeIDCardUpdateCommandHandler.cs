@@ -29,7 +29,7 @@ namespace CMS.Application.Features.Employees.EmployeeID
             employee.EmployeeIdCardStatusRemark = request.EmployeeIdCardStatusRemark;
 
             await dataService.SaveAsync(cancellationToken);
-            return employee.EmployeeId;
+            return employee.Id;
         }
     }
 }

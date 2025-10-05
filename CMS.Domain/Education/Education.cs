@@ -30,5 +30,6 @@ namespace CMS.Domain.Education
         // Foreign Key for Employee
         public int? EmployeeId { get; set; }
         public Domain.Employee.Employee? Employee { get; set; }
+        public Decimal? CGPA { get; set; }
     }
 }

@@ -77,8 +77,8 @@ export const EmployeesIdManagementList = () => {
     const element = document.getElementById("id-card-content");
     if (!element) return;
 
-    if (employee && employee.employeeId) {
-      await IDCardGiven(employee.employeeId);
+    if (employee && employee.id) {
+      await IDCardGiven(employee.id);
       const opt = {
         margin: 0,
         filename: `${employee?.displayName}.pdf`,
@@ -145,7 +145,7 @@ export const EmployeesIdManagementList = () => {
               {paginatedData.length > 0 ? (
                 paginatedData.map((employee) => (
                   <TableRow hover key={employee.id}>
-                    <TableCell>{employee.employeeId}</TableCell>
+                    <TableCell>{employee.id}</TableCell>
                     <TableCell>{employee.displayName}</TableCell>
                     <TableCell>
                       {employee.job?.jobRole?.roleName || "-"}

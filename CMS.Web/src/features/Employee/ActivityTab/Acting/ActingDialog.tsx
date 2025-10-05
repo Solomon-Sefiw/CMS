@@ -5,18 +5,25 @@ import {
   DialogContent,
   Grid,
   Alert,
+
 } from "@mui/material";
 import { Formik, Form, FormikHelpers } from "formik";
-
 import * as Yup from "yup";
-import { ActingDto, useCreateActingMutation, useUpdateActingMutation } from "../../../../app/store";
-import { useCallback, useEffect, useState } from "react";
+import {
+  ActingDto,
+  useCreateActingMutation,
+  useGetEmployeeByIdQuery,
+  useUpdateActingMutation
+} from "../../../../app/store";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAlert } from "../../../notification";
 import { DialogHeader, Errors, FormSelectField, FormTextField } from "../../../../components";
 import { useBusinessUnit } from "../../../BusinessUnit";
 import { useJobRole } from "../../../Jobs/JobRole/useJobRole";
 import dayjs from "dayjs";
-
+import { getEnumOptions } from "../../../../components/form-controls/get-enum-list";
+import { ActingType } from "../../../../app/api/enums";
+import { FormAutocomplete } from "../../../../components/form-controls/form-auto-complete";
 
 interface ActingDialogProps {
   initialActing?: ActingDto;
@@ -32,7 +39,11 @@ const emptyActingData: ActingDto = {
   businessUnitId: null,
   startDate: "",
   endDate: null,
+  actingType: undefined,
+  previousBusinessUnitId: null,
+  previousJobRoleId: null
 };
+
 
 export const ActingDialog = ({
   onClose,
@@ -40,50 +51,45 @@ export const ActingDialog = ({
   title,
   employeeId
 }: ActingDialogProps) => {
-  const [actingData, setActingData] = useState<ActingDto>(emptyActingData);
-  const [createActing, { error: createActingError, isLoading: isCreating }] =
-    useCreateActingMutation();
-  const [updateActing, { error: updateActingError, isLoading: isUpdating }] =
-    useUpdateActingMutation();
   const { showSuccessAlert, showErrorAlert } = useAlert();
-  const [notification, setNotification] = useState<string>("");
+  const { data: employeeData, refetch } = useGetEmployeeByIdQuery(
+    { id: employeeId },
+    { refetchOnMountOrArgChange: true }
+  );
+  const [createActing, { error: createActingError, isLoading: isCreating }] = useCreateActingMutation();
+  const [updateActing, { error: updateActingError, isLoading: isUpdating }] = useUpdateActingMutation();
+  const { businessUnitLookups } = useBusinessUnit();
+  const { jobRoleLookups } = useJobRole();
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-const { businessUnitLookups } = useBusinessUnit();
-const { jobRoleLookups } = useJobRole();
 
   useEffect(() => {
-    setActingData({
-      ...emptyActingData,
-      ...initialActing,
-      // Ensure dates are formatted correctly for input type="date"
-      startDate: initialActing?.startDate ? initialActing.startDate : "",
-      endDate: initialActing?.endDate ? initialActing.endDate : null,
-    });
+    refetch();
     if (initialActing?.id) {
-      setNotification("This Acting is being edited."); // Updated notification
       setOpenSnackbar(true);
-    } 
-  }, [initialActing]);
+    }
+  }, [initialActing, refetch]);
 
   const validationSchema = Yup.object({
     jobRoleId: Yup.number().required("Job Role is required.").nullable(),
-    businessUnitId: Yup.number().nullable(), // BusinessUnitId is optional (nullable in C#)
+    businessUnitId: Yup.number().nullable(),
+    actingType: Yup.number().required("Acting type is required."),
     startDate: Yup.string().required("Start Date is required."),
-    endDate: Yup.string()
-      .nullable()
-      .test(
-        "is-after-start",
-        "End Date must be after Start Date",
-        function (endDate) {
-          const { startDate } = this.parent;
-          if (!startDate || !endDate) {
-            return true; // Allow empty or if start date is missing
-          }
-          // Compare dates by converting to Date objects
-          return new Date(endDate) >= new Date(startDate);
-        }
-      ),
+    endDate: Yup.string().nullable().test("is-after-start", "End Date must be after Start Date", function (endDate) {
+      const { startDate } = this.parent;
+      if (!startDate || !endDate) return true;
+      return new Date(endDate) >= new Date(startDate);
+    })
   });
+
+  const initialFormData: ActingDto = useMemo(() => {
+    return {
+      ...emptyActingData,
+      ...initialActing,
+      employeeId,
+      startDate: initialActing?.startDate ?? "",
+      endDate: initialActing?.endDate ?? null
+    };
+  }, [initialActing, employeeId]);
 
   const handleSubmit = useCallback(
     async (
@@ -91,29 +97,34 @@ const { jobRoleLookups } = useJobRole();
       { setSubmitting, resetForm }: FormikHelpers<ActingDto>
     ) => {
       try {
-        values.employeeId = employeeId; // Ensure employeeId is set from props
-        values.startDate = dayjs(values.startDate).format('YYYY-MM-DD');
-          if (values.endDate) {
-             values.endDate = dayjs(values.endDate).format('YYYY-MM-DD');
-           }
-
+        values.employeeId = employeeId;
+        values.startDate = dayjs(values.startDate).format("YYYY-MM-DD");
+        if (values.endDate) {
+          values.endDate = dayjs(values.endDate).format("YYYY-MM-DD");
+        }
+        values.previousBusinessUnitId = employeeData?.businessUnitID;
+        values.previousJobRoleId = employeeData?.job?.jobRoleId ?? undefined;
         setSubmitting(true);
         const action = initialActing?.id
           ? updateActing({
-              updateActingCommand: { ...values, id: initialActing.id },
-            })
-          : createActing({ createActingCommand: values });
-
+            updateActingCommand: {
+              ...values,
+              id: initialActing.id,
+              previousJobRoleId: values.previousJobRoleId ?? undefined
+            }
+          })
+          : createActing({
+            createActingCommand: {
+              ...values,
+              previousJobRoleId: values.previousJobRoleId ?? undefined
+            }
+          });
         await action.unwrap();
-        showSuccessAlert(
-          initialActing?.id
-            ? "Acting updated successfully!" // Updated success message
-            : "Acting created successfully!" // Updated success message
-        );
+        showSuccessAlert(initialActing?.id ? "Acting updated successfully!" : "Acting created successfully!");
         resetForm();
         onClose();
       } catch (error: any) {
-        showErrorAlert(error?.data?.detail || "Failed to save Acting."); // Updated error message
+        showErrorAlert(error?.data?.detail || "Failed to save Acting.");
       } finally {
         setSubmitting(false);
       }
@@ -128,109 +139,100 @@ const { jobRoleLookups } = useJobRole();
   const isSaving = isCreating || isUpdating;
 
   return (
-    <Dialog
-      scroll={"paper"}
-      disableEscapeKeyDown={true}
-      maxWidth={"md"}
-      open={true}
-    >
-      {openSnackbar && notification && (
+    <Dialog scroll="paper" disableEscapeKeyDown maxWidth="md" open>
+      {openSnackbar && (
         <Alert
           severity="warning"
           onClose={() => setOpenSnackbar(false)}
           sx={{ mb: 2 }}
         >
-          {notification}
+          This Acting is being edited.
         </Alert>
       )}
-      {!!actingData && (
-        <Formik
-          initialValues={actingData}
-          enableReinitialize={true}
-          onSubmit={handleSubmit}
-          validationSchema={validationSchema}
-          validateOnChange={true}
-        >
-          {({ handleSubmit, isSubmitting }) => (
-            <Form onSubmit={handleSubmit}>
-              <DialogHeader title={title} onClose={onClose} />
-              <DialogContent dividers={true}>
-                <Grid container spacing={2}>
-                  {errors && (
-                    <Grid item xs={12}>
-                      <Errors errors={errors as any} />
-                    </Grid>
-                  )}
-
-
-                  {/* Job Role Dropdown */}
+      <Formik
+        initialValues={initialFormData}
+        enableReinitialize
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+        validateOnChange
+      >
+        {({ handleSubmit, isSubmitting }) => (
+          <Form onSubmit={handleSubmit}>
+            <DialogHeader title={title} onClose={onClose} />
+            <DialogContent dividers>
+              <Grid container spacing={2}>
+                {errors && (
                   <Grid item xs={12}>
-                    <FormSelectField
-                      name="jobRoleId"
-                      label="Job Role"
-                      type="number"
-                      options={jobRoleLookups}
-                      error={!!errors?.jobRoleId}
-                      helperText={errors?.jobRoleId}
-                    />
+                    <Errors errors={errors as any} />
                   </Grid>
-
-                  {/* Business Unit Dropdown (Optional) */}
-                  <Grid item xs={12}>
-                    <FormSelectField
-                      name="businessUnitId"
-                      label="Business Unit"
-                      type="number"
-                      options={businessUnitLookups}
-                      error={!!errors?.businessUnitId}
-                      helperText={errors?.businessUnitId}
-                    />
-                  </Grid>
-
-                  {/* Start Date */}
-                  <Grid item xs={12} sm={6}>
-                    <FormTextField
-                      name="startDate"
-                      label="Start Date"
-                      type="date"
-                      fullWidth
-                      InputLabelProps={{ shrink: true }} // Ensures label is always "shrunk" for date input
-                      error={!!errors?.startDate}
-                      helperText={errors?.startDate}
-                    />
-                  </Grid>
-
-                  {/* End Date */}
-                  <Grid item xs={12} sm={6}>
-                    <FormTextField
-                      name="endDate"
-                      label="End Date"
-                      type="date"
-                      fullWidth
-                      InputLabelProps={{ shrink: true }} // Ensures label is always "shrunk" for date input
-                      error={!!errors?.endDate}
-                      helperText={errors?.endDate}
-                    />
-                  </Grid>
+                )}
+                <Grid item xs={12}>
+                  <FormSelectField
+                    name="actingType"
+                    label="Acting Type"
+                    options={getEnumOptions(ActingType).filter(
+                      option => option.value !== ActingType.Reassignment)}
+                  />
                 </Grid>
-              </DialogContent>
-              <DialogActions sx={{ p: 2 }}>
-                <Button onClick={onClose} disabled={isSaving || isSubmitting}>
-                  Cancel
-                </Button>
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  type="submit"
-                  disabled={isSaving || isSubmitting}
-                >
-                  {isSaving || isSubmitting ? "Saving..." : "Save"}
-                </Button>
-              </DialogActions>
-            </Form>
-          )}
-        </Formik>
-      )}
+                <Grid item xs={12}>
+                  <FormAutocomplete
+                    name="jobRoleId"
+                    label="Job Role"
+                    options={jobRoleLookups
+                      .filter(jr => jr.value !== employeeData?.job?.jobRoleId) 
+                      .filter(jr => jr.label?.toLowerCase().includes("acting"))
+                    }
+                  />
+
+                </Grid>
+                <Grid item xs={12}>
+                  <FormAutocomplete
+                    name="businessUnitId"
+                    label="Business Unit"
+                    options={businessUnitLookups.filter(bu => bu.value !== 1)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormTextField
+                    name="startDate"
+                    label="Start Date"
+                    type="date"
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    error={!!errors?.startDate}
+                    helperText={errors?.startDate}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormTextField
+                    name="endDate"
+                    label="End Date"
+                    type="date"
+                    disabled
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    error={!!errors?.endDate}
+                    helperText={errors?.endDate}
+                  />
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions sx={{ p: 2 }}>
+              <Button onClick={onClose} disabled={isSaving || isSubmitting}>
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                variant="outlined"
+                type="submit"
+                disabled={isSaving || isSubmitting}
+              >
+                {isSaving || isSubmitting ? "Saving..." : "Save"}
+              </Button>
+            </DialogActions>
+          </Form>
+        )}
+      </Formik>
     </Dialog>
   );
 };

@@ -12,29 +12,18 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  FormControl,
   Grid,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
 } from "@mui/material";
 import {
-  CreateEmployeeProfileCommand,
-  useCreateEmployeeProfileMutation,
-  useGetAllJobListQuery,
-  useAddEmployeeChildrenMutation,
   useAddEmployeeExperienceMutation,
   AddEmployeeExperienceCommand,
 } from "../../../../app/api/HCMSApi";
-import { AddEmployeeFamilyCommand, enums } from "../../../../app/api";
 import dayjs from "dayjs";
-import { useRegion } from "../../../Address/useRegion";
-import { useSubCity } from "../../../Address/useSubCity";
-import { FamilyType } from "../../../../app/api/enums";
 import { removeEmptyFields } from "../../../../utils";
 import { useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { useAlert } from "../../../notification";
+import { ExperienceType } from "../../../../app/api/enums";
 const emptyEmployeeExperience = {
   firmName: "",
   startDate: dayjs().format("YYYY-MM-DD"), // Initialize with formatted date
@@ -46,8 +35,14 @@ const emptyEmployeeExperience = {
   employeeId: 0,
 };
 
-export const EmployeeExperience = ({ onClose }: { onClose: () => void }) => {
-    const { showSuccessAlert, showErrorAlert } = useAlert();
+export const EmployeeExperience = ({
+  onClose,
+  experienceType,
+}: {
+  onClose: () => void;
+  experienceType: ExperienceType;
+}) => {
+  const { showSuccessAlert, showErrorAlert } = useAlert();
   const [EmployeeExpereinceData, setEmployeeExpereinceData] =
     useState<AddEmployeeExperienceCommand>();
   const [addEmployeeExperience, { error: AddingExpereinceError }] =
@@ -73,33 +68,33 @@ export const EmployeeExperience = ({ onClose }: { onClose: () => void }) => {
     startDate: Yup.date().required("Start Date is required").nullable(),
 
     endDate: Yup.date()
-    .required("End Date is required")
-    .nullable()
-    .test(
-      "isAfterStartDate",
-      "End Date must be after Start Date",
-      function (value) {
-        const { startDate } = this.parent;
-        return !startDate || !value || new Date(value) >= new Date(startDate);
-      }
-    )
-    .test(
-      "minFiveMonths",
-      "Experience duration must be at least 6 months",
-      function (value) {
-        const { startDate } = this.parent;
-        if (!startDate || !value) return true;
+      .required("End Date is required")
+      .nullable()
+      .test(
+        "isAfterStartDate",
+        "End Date must be after Start Date",
+        function (value) {
+          const { startDate } = this.parent;
+          return !startDate || !value || new Date(value) >= new Date(startDate);
+        }
+      )
+      .test(
+        "minFiveMonths",
+        "Experience duration must be at least 6 months",
+        function (value) {
+          const { startDate } = this.parent;
+          if (!startDate || !value) return true;
 
-        const start = new Date(startDate);
-        const end = new Date(value);
+          const start = new Date(startDate);
+          const end = new Date(value);
 
-        const yearDiff = end.getFullYear() - start.getFullYear();
-        const monthDiff = end.getMonth() - start.getMonth();
-        const totalMonths = yearDiff * 12 + monthDiff;
+          const yearDiff = end.getFullYear() - start.getFullYear();
+          const monthDiff = end.getMonth() - start.getMonth();
+          const totalMonths = yearDiff * 12 + monthDiff;
 
-        return totalMonths >= 6;
-      }
-    ),
+          return totalMonths >= 6;
+        }
+      ),
 
     jobTitle: Yup.string()
       .required("Job Title is required")
@@ -129,22 +124,21 @@ export const EmployeeExperience = ({ onClose }: { onClose: () => void }) => {
         startDate,
         endDate,
         employeeId,
+        experienceType,
       });
       addEmployeeExperience({
         addEmployeeExperienceCommand: payload,
       })
         .unwrap()
-        .then(
-          (response: any) => {
-            showSuccessAlert("Employee Experience Added Successfully");
-            setEmployeeExpereinceData(response);
-            onClose();
-          },
-        )
-        .catch((error: any) => {
-          showErrorAlert("Failed to Add Employee Experience");
+        .then((response: any) => {
+          showSuccessAlert("Employee Experience Added Successfully");
+          setEmployeeExpereinceData(response);
           onClose();
-          });
+        })
+        .catch((error: any) => {
+          // showErrorAlert("Failed to Add Employee Experience");
+          //onClose();
+        });
     },
     [onClose, addEmployeeExperience]
   );

@@ -10,7 +10,7 @@ const ActingContext = createContext<ActingContextType | null>(null);
 export const ActingProvider = ({ children }: { children: React.ReactNode }) => {
   const { id } = useParams();
   const employeeId = Number(id);
-  
+
   return (
     <ActingContext.Provider value={{ employeeId }}>
       {children}

@@ -25,9 +25,26 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Add from "@mui/icons-material/Add";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { ContactType, Country, ExperienceType, Status } from "../../../../app/api/enums";
+import {
+  ContactType,
+  Country,
+  ExperienceType,
+  Status,
+} from "../../../../app/api/enums";
 import { EmployeeExperienceUpdate } from "./EmployeeExperienceUpdate";
 import { EmployeeExperience } from "./EmployeeExperience";
+import { usePermission } from "../../../../hooks";
+
+const experianceTypeLabels: Record<number, string> = {
+  1: "External",
+  2: "NewHire",
+  3: "Delegation",
+  4: "Acting",
+  5: "Promotion",
+  6: "Demotion",
+  7: "Transfer",
+  8: "Reassignment",
+};
 
 interface EmployeeExperienceProps {
   items?: EmployeeExperienceDto[];
@@ -42,7 +59,7 @@ export const EmployeeExperienceHome = ({
 }: EmployeeExperienceProps) => {
   const [OpenEmployeeExperienceDialog, setOpenEmployeeExperienceDialog] =
     useState<boolean>(false);
-
+const permissions = usePermission();
   const [EmployeeExperienceData, setEmployeeExperienceData] = useState<
     number | undefined
   >();
@@ -91,6 +108,8 @@ export const EmployeeExperienceHome = ({
           startIcon={<Add />}
           size="small"
           color="primary"
+          disabled={!permissions.CanCreateOrUpdateEmployeeInfo}
+
         >
           Add Experience
         </Button>
@@ -114,14 +133,18 @@ export const EmployeeExperienceHome = ({
                           JobTitle
                         </TableCell>
                         <TableCell sx={{ fontWeight: "bold" }}>
+                          Experience Type
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: "bold" }}>
+                          Reason
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: "bold" }}>
                           StartDate
                         </TableCell>
                         <TableCell sx={{ fontWeight: "bold" }}>
                           EndDate
                         </TableCell>
-                       <TableCell sx={{ fontWeight: "bold" }}>
-                          Experiance Type
-                        </TableCell>
+                       
                         <TableCell sx={{ fontWeight: "bold" }}>
                           Action
                         </TableCell>
@@ -139,6 +162,14 @@ export const EmployeeExperienceHome = ({
                                 {EmployeeExperienceList.jobTitle}
                               </TableCell>
                               <TableCell>
+                                {experianceTypeLabels[
+                                  EmployeeExperienceList.experienceType as keyof typeof experianceTypeLabels
+                                ] ?? "Unknown"}
+                              </TableCell>
+                              <TableCell>
+                                {EmployeeExperienceList.reasonForResignation}
+                              </TableCell>
+                              <TableCell>
                                 {EmployeeExperienceList.startDate
                                   ? dayjs(
                                       EmployeeExperienceList?.startDate
@@ -152,9 +183,7 @@ export const EmployeeExperienceHome = ({
                                     ).format("MMMM D, YYYY")
                                   : "-"}
                               </TableCell>
-                                  <TableCell>
-                                { ExperienceType[EmployeeExperienceList.experienceType ? EmployeeExperienceList.experienceType : 0] }
-                              </TableCell>
+                              
                               <TableCell>
                                 <Button
                                   onClick={() =>
@@ -185,12 +214,16 @@ export const EmployeeExperienceHome = ({
         </AccordionDetails>
       </Accordion>
       {OpenEmployeeExperienceDialog && (
-        <EmployeeExperience onClose={closeDialog} />
+        <EmployeeExperience
+          onClose={closeDialog}
+          experienceType={ExperienceType.External}
+        />
       )}
       {OpenUpdateDialog && EmployeeExperienceData !== null && (
         <EmployeeExperienceUpdate
           Id={EmployeeExperienceData}
           onClose={UpdateDialogClose}
+          experienceType={ExperienceType.External}
         />
       )}
     </Box>

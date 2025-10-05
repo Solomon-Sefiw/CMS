@@ -3,6 +3,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // 
 import {
   Box,
   Button,
+  Chip,
   Divider,
   Grid,
   Icon,
@@ -15,6 +16,8 @@ import { useSearchParams } from "react-router-dom";
 import { useEmployeeId } from "./useEmployeeId";
 import {
   EmployeeRecordVersions,
+  useGetActiveResignationQuery,
+  useGetActiveSuspentionQuery,
   useGetEmployeeInfoQuery,
   useGetEmployeeRecordVersionsQuery,
 } from "../../../app/api";
@@ -29,6 +32,7 @@ import {
   DynamicFeed,
   HowToReg,
   LocationOn,
+  Money,
   NewReleases,
   Person,
   Person2,
@@ -52,7 +56,7 @@ export const EmployeeDetailHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { loadCurrentVersion } = useCurrentVersion();
 
-  const { data: employee , refetch} = useGetEmployeeInfoQuery(
+  const { data: employee, refetch } = useGetEmployeeInfoQuery(
     {
       id,
       version,
@@ -69,7 +73,8 @@ export const EmployeeDetailHeader = () => {
       skip: !id,
     }
   );
-
+const { data: isResigned } = useGetActiveResignationQuery({ id: employee?.id });
+const { data: isSuspended } = useGetActiveSuspentionQuery({ id: employee?.id });
   const prevVersions = usePrevious(versions);
   useEffect(() => {
     const shouldSwitchToDraft =
@@ -112,7 +117,7 @@ export const EmployeeDetailHeader = () => {
 
       if (
         latestVersion ===
-        ApprovalStatus[employee.approvalStatus]?.toLowerCase() ||
+          ApprovalStatus[employee.approvalStatus]?.toLowerCase() ||
         isStaleVersion
       ) {
         searchParams.delete("version");
@@ -152,14 +157,7 @@ export const EmployeeDetailHeader = () => {
 
       return result;
     }
-  }, [
-    id,
-    searchParams,
-    setSearchParams,
-    employee,
-    version,
-    versions,
-  ]);
+  }, [id, searchParams, setSearchParams, employee, version, versions]);
 
   // Determine if all required fields are complete for submission
   const areRequiredFieldsComplete = useMemo(() => {
@@ -221,7 +219,9 @@ export const EmployeeDetailHeader = () => {
                 )}
               </Typography>
             </Box>
-            <Box sx={{ display: "flex", alignItems: "center", paddingBottom: 1 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", paddingBottom: 1 }}
+            >
               <Icon
                 component={Person}
                 sx={{ marginRight: 1, color: "primary.dark" }}
@@ -267,7 +267,7 @@ export const EmployeeDetailHeader = () => {
               />
               <Typography variant="subtitle2" color="text.secondary">
                 Employee #:{" "}
-                {!employee?.employeeId ? " - " : employee?.employeeId}
+                {!employee?.id ? " - " : employee?.id}
               </Typography>
             </Box>
           </Box>
@@ -335,6 +335,20 @@ export const EmployeeDetailHeader = () => {
                 Gender : {!employee?.gender ? " - " : Gender[employee?.gender]}
               </Typography>
             </Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Icon
+                component={Money}
+                sx={{ marginRight: 1, color: "primary.dark" }}
+              />
+              <Typography variant="subtitle2" color="text.secondary">
+                Salary On:
+                {employee?.salaryOnGradeStepId === 0
+                  ? "Base Salary"
+                  : employee?.salaryOnGradeStepId === 10
+                  ? "Ceiling Salary"
+                  : `Step Salary - Step ${employee?.salaryOnGradeStepId}`}
+              </Typography>
+            </Box>
           </Box>
 
           {/* Divider */}
@@ -360,35 +374,93 @@ export const EmployeeDetailHeader = () => {
               backgroundColor: "background.paper",
             }}
           >
-            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold' }}>
+            {/* <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold' }}>
               Submission Requirements:
+            </Typography> */}
+            <Typography
+              variant="body2"
+              color={employee.hasAddressInfo ? "success.main" : "error.main"}
+            >
+              <Icon
+                component={
+                  employee.hasAddressInfo ? CheckCircleOutlineIcon : BlockIcon
+                }
+                sx={{ verticalAlign: "middle", mr: 0.5 }}
+              />
+              Employee Address Info:{" "}
+              {employee.hasAddressInfo ? "Complete" : "Missing"}
             </Typography>
-            <Typography variant="body2" color={employee.hasAddressInfo ? "success.main" : "error.main"}>
-              <Icon component={employee.hasAddressInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Employee Address Info: {employee.hasAddressInfo ? "Complete" : "Missing"}
+            <Typography
+              variant="body2"
+              color={employee.hasContactInfo ? "success.main" : "error.main"}
+            >
+              <Icon
+                component={
+                  employee.hasContactInfo ? CheckCircleOutlineIcon : BlockIcon
+                }
+                sx={{ verticalAlign: "middle", mr: 0.5 }}
+              />
+              Employee Contact Info:{" "}
+              {employee.hasContactInfo ? "Complete" : "Missing"}
             </Typography>
-            <Typography variant="body2" color={employee.hasContactInfo ? "success.main" : "error.main"}>
-              <Icon component={employee.hasContactInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Employee Contact Info: {employee.hasContactInfo ? "Complete" : "Missing"}
+            <Typography
+              variant="body2"
+              color={
+                employee.hasEmployeeFamilyInfo ? "success.main" : "error.main"
+              }
+            >
+              <Icon
+                component={
+                  employee.hasEmployeeFamilyInfo
+                    ? CheckCircleOutlineIcon
+                    : BlockIcon
+                }
+                sx={{ verticalAlign: "middle", mr: 0.5 }}
+              />
+              Employee Family:{" "}
+              {employee.hasEmployeeFamilyInfo ? "Complete" : "Missing"}
             </Typography>
-            <Typography variant="body2" color={employee.hasEmployeeFamilyInfo ? "success.main" : "error.main"}>
-              <Icon component={employee.hasEmployeeFamilyInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Employee Family: {employee.hasEmployeeFamilyInfo ? "Complete" : "Missing"}
+            <Typography
+              variant="body2"
+              color={
+                employee.hasEmergencyContactInfo ? "success.main" : "error.main"
+              }
+            >
+              <Icon
+                component={
+                  employee.hasEmergencyContactInfo
+                    ? CheckCircleOutlineIcon
+                    : BlockIcon
+                }
+                sx={{ verticalAlign: "middle", mr: 0.5 }}
+              />
+              Emergency Contact:{" "}
+              {employee.hasEmergencyContactInfo ? "Complete" : "Missing"}
             </Typography>
-            <Typography variant="body2" color={employee.hasEmergencyContactInfo ? "success.main" : "error.main"}>
-              <Icon component={employee.hasEmergencyContactInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Emergency Contact: {employee.hasEmergencyContactInfo ? "Complete" : "Missing"}
-            </Typography>
-             <Typography variant="body2" color={employee.hasLanguageSkillInfo ? "success.main" : "error.main"}>
-              <Icon component={employee.hasLanguageSkillInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Language Skill: {employee.hasLanguageSkillInfo ? "Complete" : "Missing"}
+            <Typography
+              variant="body2"
+              color={
+                employee.hasLanguageSkillInfo ? "success.main" : "error.main"
+              }
+            >
+              <Icon
+                component={
+                  employee.hasLanguageSkillInfo
+                    ? CheckCircleOutlineIcon
+                    : BlockIcon
+                }
+                sx={{ verticalAlign: "middle", mr: 0.5 }}
+              />
+              Language Skill:{" "}
+              {employee.hasLanguageSkillInfo ? "Complete" : "Missing"}
             </Typography>
 
-            {!areRequiredFieldsComplete && employee?.approvalStatus === ApprovalStatus.Draft && (
+            {/* {!areRequiredFieldsComplete && employee?.approvalStatus === ApprovalStatus.Draft && (
                 <Typography variant="caption" color="error" sx={{ mt: 1 }}>
-                    Please complete all required information before submitting for approval.
+                  Please complete all required information before submitting for
+                  approval.
                 </Typography>
-            )}
+            )} */}
           </Box>
 
           {/* Workflow Action Buttons */}
@@ -413,8 +485,8 @@ export const EmployeeDetailHeader = () => {
                     employee?.approvalStatus === ApprovalStatus.Approved
                       ? "green"
                       : employee?.approvalStatus === ApprovalStatus.Rejected
-                        ? "red"
-                        : "orange", // Adjusted to a common palette color
+                      ? "red"
+                      : "orange", // Adjusted to a common palette color
                   color: "white",
                   fontWeight: "bold",
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
@@ -443,7 +515,13 @@ export const EmployeeDetailHeader = () => {
                     />
                   </Box>
                 )}
+                   <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
+                 {isSuspended?.isActive && (isSuspended.approvalStatus == ApprovalStatus.Approved ? <Chip label="Suspended" color="warning" size="small" /> : <Chip label="Under Suspension" color="warning" size="small" />)}
+
+                  {isResigned?.isActive && (isResigned.approvalStatus == ApprovalStatus.Approved  ? <Chip label="Resigned" color="error" size="small" />: <Chip label="Under Resignation" color="error" size="small" />)}
+                </Box>
               </Box>
+
             </Box>
           )}
 

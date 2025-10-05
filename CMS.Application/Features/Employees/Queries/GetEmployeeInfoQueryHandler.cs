@@ -20,18 +20,18 @@ namespace CMS.Application.Features.Employees.Queries
         }
         public async Task<EmployeeDto?> Handle(GetEmployeeInfoQuery request, CancellationToken cancellationToken)
         {
-            var employee = await dataService.Employees.Include(a => a.Job).ThenInclude(a=>a.JobRole)
-                .Include(a => a.BusinessUnits)
-               .Where(s => s.Id == request.employeeId )
-               //&&(request.Version != null && request.Version != Guid.Empty ? s.VersionNumber == request.Version : true))
-               .ProjectTo<EmployeeDto>(mapper.ConfigurationProvider)
+            var employee = await dataService.Employees.Include(a => a.Job).ThenInclude(a => a.JobRole).
+               ThenInclude(G => G.JobGrade).ThenInclude(S => S.Steps)
+               .Include(a => a.BusinessUnits)
+              .Where(s => s.Id == request.employeeId)
+              //&&(request.Version != null && request.Version != Guid.Empty ? s.VersionNumber == request.Version : true))
+              .ProjectTo<EmployeeDto>(mapper.ConfigurationProvider)
                .FirstOrDefaultAsync();
             var businessUnits = await dataService.BusinessUnits.ToListAsync();
             var Jobs = await dataService.Jobs.Include(a => a.JobRole).ToListAsync();
             var employeeinfo = new EmployeeDto()
             {
                 Id = employee.Id,
-                EmployeeId = employee.EmployeeId,
                 FirstName = employee.FirstName,
                 MiddleName = employee.MiddleName,
                 LastName = employee.LastName,
@@ -58,16 +58,21 @@ namespace CMS.Application.Features.Employees.Queries
                 EmployeeStatus = employee.EmployeeStatus,
                 Job = employee.Job,
                 WorkflowComment = employee.WorkflowComment,
-                VersionNumber = employee.VersionNumber
+                VersionNumber = employee.VersionNumber,
+                SalaryOnGradeStepId = employee.SalaryOnGradeStepId,
+                EmploymentType = employee.EmploymentType,
+                TinNumber = employee.TinNumber,
+                PensionID  = employee.PensionID,
+
             };
 
 
             // Manually set completeness flags after mapping.
-            employeeinfo.HasAddressInfo = dataService.Addresses.Any(a => a.RequestId == employee.EmployeeId && a.AddressType == AddressTypeEnum.CurrentAddress);
-            employeeinfo.HasContactInfo = dataService.Contacts.Any(a => a.RequestId == employee.EmployeeId && a.contactCategory == ContactCategoryEnum.EmployeeContact);
-            employeeinfo.HasEmployeeFamilyInfo = dataService.EmployeeFamilies.Any(a => a.EmployeeId == employee.EmployeeId);
-            employeeinfo.HasEmergencyContactInfo = dataService.EmployeeEmergencyContacts.Any(a => a.EmployeeId == employee.EmployeeId);
-            employeeinfo.HasLanguageSkillInfo = dataService.LanguageSkills.Any(a => a.EmployeeId == employee.EmployeeId);
+            employeeinfo.HasAddressInfo = dataService.Addresses.Any(a => a.RequestId == employee.Id && a.AddressType == AddressTypeEnum.CurrentAddress);
+            employeeinfo.HasContactInfo = dataService.Contacts.Any(a => a.RequestId == employee.Id && a.contactCategory == ContactCategoryEnum.EmployeeContact);
+            employeeinfo.HasEmployeeFamilyInfo = dataService.EmployeeFamilies.Any(a => a.Id == employee.Id);
+            employeeinfo.HasEmergencyContactInfo = dataService.EmployeeEmergencyContacts.Any(a => a.Id == employee.Id);
+            employeeinfo.HasLanguageSkillInfo = dataService.LanguageSkills.Any(a => a.Id == employee.Id);
             if (employeeinfo != null)
             {
 

@@ -9,5 +9,6 @@
         Promotion = 5,
         Demotion = 6,
         Transfer = 7,
+        Reassignment = 8,
     }
 }
