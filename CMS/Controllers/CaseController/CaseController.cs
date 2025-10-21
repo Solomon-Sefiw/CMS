@@ -106,11 +106,8 @@ namespace CMS.API.Controllers.EmployeeController
 
             return searchResult;
         }
-
-
-
-        [HttpPost("submit-for-approval", Name = "SubmitCaseForApproval")]
-        [InvalidateQueryTags("Dashboard")]
+        // this is small change
+        [HttpGet("{id}/record-versions", Name = "GetCaseRecordVersions")]
         [ProducesResponseType(200)]
         public async Task<ActionResult> SubmitCaseForApproval([FromBody] ChangeWorkflowStatusEntityDto payload)
         {
