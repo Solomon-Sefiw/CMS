@@ -11,9 +11,6 @@ using CMS.Domain.Cases;
 using CMS.Domain.Cases.CaseDocument;
 using CMS.Domain.Contacts;
 using CMS.Domain.Courts;
-using CMS.Domain.Benefit;
-using CMS.Domain.BranchGrade;
-using CMS.Domain.Contacts;
 using CMS.Domain.Delegations;
 using CMS.Domain.Document;
 using CMS.Domain.Education;
@@ -32,12 +29,6 @@ using CMS.Domain.Notifications;
 using CMS.Domain.Payments;
 using CMS.Domain.Templates;
 using CMS.Domain.Timelines;
-using CMS.Domain.Employee.EmployeeActivities;
-using CMS.Domain.EmployeeDocument;
-using CMS.Domain.Jobs;
-using CMS.Domain.Language;
-using CMS.Domain.LetterDocument;
-using CMS.Domain.letters;
 using CMS.Domain.Transfer;
 using CMS.Domain.User;
 using CMS.Persistence;
@@ -146,7 +137,7 @@ namespace CMS.Persistance.DBContext
         public DbSet<Chilot> Chillots { get; set; }
         public DbSet<Case> Cases { get; set; }
        // public DbSet<CaseDocument> CaseDocuments { get; set; }
-        public DbSet<CaseDocument> CaseDocuments { get; set; }
+       // public DbSet<CaseDocument> CaseDocuments { get; set; }
         public DbSet<Hearing> Hearings { get; set; }
         public DbSet<Judgment> Judgments { get; set; }
         public DbSet<Payment> Payments { get; set; }

@@ -100,7 +100,7 @@ namespace CMS.Services.DataService
         public DbSet<Chilot> Chillots { get; set; }
         public DbSet<Case> Cases { get; set; }
        // public DbSet<CaseDocument> CaseDocuments { get; set; }
-        public DbSet<CaseDocument> CaseDocuments { get; set; }
+        //public DbSet<CaseDocument> CaseDocuments { get; set; }
         public DbSet<Hearing> Hearings { get; set; }
         public DbSet<Judgment> Judgments { get; set; }
         public DbSet<Payment> Payments { get; set; }
