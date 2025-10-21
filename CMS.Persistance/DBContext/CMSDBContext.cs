@@ -8,18 +8,17 @@ using CMS.Domain.Assignment;
 using CMS.Domain.Benefit;
 using CMS.Domain.BranchGrade;
 using CMS.Domain.Cases;
-using CMS.Domain.Chat;
+using CMS.Domain.Cases.CaseDocument;
 using CMS.Domain.Contacts;
 using CMS.Domain.Courts;
-using CMS.Domain.Benefit;
-using CMS.Domain.BranchGrade;
-using CMS.Domain.Contacts;
 using CMS.Domain.Delegations;
 using CMS.Domain.Document;
 using CMS.Domain.Education;
 using CMS.Domain.Education.awards;
 using CMS.Domain.EmailTemplet;
 using CMS.Domain.Employee;
+using CMS.Domain.Employee.EmployeeActivities;
+using CMS.Domain.EmployeeDocument;
 using CMS.Domain.Hearings;
 using CMS.Domain.Jobs;
 using CMS.Domain.Judgments;
@@ -30,12 +29,6 @@ using CMS.Domain.Notifications;
 using CMS.Domain.Payments;
 using CMS.Domain.Templates;
 using CMS.Domain.Timelines;
-using CMS.Domain.Employee.EmployeeActivities;
-using CMS.Domain.EmployeeDocument;
-using CMS.Domain.Jobs;
-using CMS.Domain.Language;
-using CMS.Domain.LetterDocument;
-using CMS.Domain.letters;
 using CMS.Domain.Transfer;
 using CMS.Domain.User;
 using CMS.Persistence;
@@ -143,7 +136,7 @@ namespace CMS.Persistance.DBContext
 
         public DbSet<Chilot> Chillots { get; set; }
         public DbSet<Case> Cases { get; set; }
-        public DbSet<CaseDocument> CaseDocuments { get; set; }
+       // public DbSet<CaseDocument> CaseDocuments { get; set; }
         public DbSet<Hearing> Hearings { get; set; }
         public DbSet<Judgment> Judgments { get; set; }
         public DbSet<Payment> Payments { get; set; }
@@ -169,9 +162,10 @@ namespace CMS.Persistance.DBContext
         public DbSet<EmployeeSalaryIncrement> EmployeeSalaryIncrements { get; set; }
 
         public DbSet<EmployeeFileDocument> EmployeeFileDocuments { get; set; }
+        public DbSet<CaseFileDocument> CaseFileDocuments { get; set; }
 
         public DbSet<AuditEmployeeFileDocumentLog> AuditEmployeeFileDocumentLogs { get; set; }
-
+        public DbSet<AuditCaseFileDocumentLog> AuditCaseFileDocumentLogs { get; set; }
 
         public DbSet<T> Set<T>() where T : class
         {

@@ -24,7 +24,7 @@ namespace CMS.Api.Controllers.CaseController.CaseDetail
             return Ok(await mediator.Send(command));
         }
 
-        [HttpGet("GetById", Name = "GetDocketEntryById")]
+        [HttpGet("GetDocketById", Name = "GetDocketEntryById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<DocketEntryDto>> GetDocketEntryById(int id)
             => Ok(await mediator.Send(new GetDocketEntryByIdQuery(id)));

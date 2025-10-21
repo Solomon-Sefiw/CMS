@@ -10,14 +10,14 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useAlert } from "../../../notification";
 import { DialogHeader, Errors, FormSelectField, FormTextField } from "../../../../components";
-import { JudgeAssignmentDto, useCreateJudgeAssignmentMutation, useUpdateJudgeAssignmentMutation, useUpdateJudgmentMutation } from "../../../../app/api/HCMSApi";
+import { CaseDetailsDto, CaseDto, JudgeAssignmentDto, useCreateJudgeAssignmentMutation, useUpdateJudgeAssignmentMutation, useUpdateJudgmentMutation } from "../../../../app/api/HCMSApi";
 import { useBusinessUnit } from "../../../BusinessUnit";
 
 const emptyData: JudgeAssignmentDto = {
   // caseId: undefined,
   chilotId: undefined,
   businessUnitId: undefined,
-  // judgeId: undefined,
+   judgeId: undefined,
 };
 
 export const JudgeAssignmentDialog = ({
@@ -25,11 +25,13 @@ export const JudgeAssignmentDialog = ({
   title,
   assignment,
   caseId,
+  caseinfo,
 }: {
   onClose: () => void;
   title: string;
   assignment?: JudgeAssignmentDto;
   caseId: number;
+  caseinfo?: CaseDto;
 }) => {
   const { businessUnitLookups } = useBusinessUnit();
   const [createJudgeAssignment, { error: createErr }] =
@@ -42,11 +44,13 @@ export const JudgeAssignmentDialog = ({
   });
 
 
-
+     //     assignment && assignment.id ? emptyData.judgeId = assignment.judgeId : null;
   const handleSubmit = async (values: JudgeAssignmentDto) => {
     try {
-
+     
       values.caseId = caseId;
+      values.businessUnitId = caseinfo?.businessUnitId;
+      values.chilotId = caseinfo?.chilotId;
       console.log(values);
       await (values.id
         ? updateJudgeAssignment({ updateJudgeAssignmentCommand :values})
@@ -88,7 +92,7 @@ export const JudgeAssignmentDialog = ({
                     <Errors errors={serverErrors} />
                   </Grid>
                 )}
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <Box display="flex" gap={2}>
                     <FormTextField
                       name="chilotId"
@@ -108,7 +112,7 @@ export const JudgeAssignmentDialog = ({
                     error={!!errors.businessUnitId && touched.businessUnitId}
                     helperText={touched.businessUnitId && errors.businessUnitId}
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
             </DialogContent>
             <DialogActions>

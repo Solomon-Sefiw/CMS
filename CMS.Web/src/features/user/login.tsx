@@ -13,8 +13,8 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useForgotPasswordMutation, useLoginMutation } from "../../app/api";
-import logo from "../../assets/login.png";
-//import logo from "../../assets/transparent-logo.png";
+// import logo from "../../assets/login.png";
+import logo from "../../assets/transparent-logo.png";
 import { FormTextField } from "../../components/form-controls";
 import { YupShape } from "../../utils";
 import { useAlert } from "../notification";
@@ -102,8 +102,8 @@ export const Login = () => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              //backgroundColor: "#eaaa00",
-              backgroundColor: "#0a3d52",
+              backgroundColor: "#eaaa00",
+              // backgroundColor: "#0a3d52",
               
               p: 3,
             }}

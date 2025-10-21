@@ -1,3 +1,4 @@
+using CMS.Api.Dtos;
 using CMS.API.Attributes;
 using CMS.Application;
 using CMS.Application.Features;
@@ -106,11 +107,33 @@ namespace CMS.API.Controllers.EmployeeController
             return searchResult;
         }
 
-        [HttpGet("{id}/record-versions", Name = "GetCaseRecordVersions")]
+
+
+        [HttpPost("submit-for-approval", Name = "SubmitCaseForApproval")]
+        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
-        public async Task<CaseRecordVersions> GetCaseRecordVersions(int id)
+        public async Task<ActionResult> SubmitCaseForApproval([FromBody] ChangeWorkflowStatusEntityDto payload)
         {
-            return await mediator.Send(new GetCaseRecordVersionsQuery(Id: id));
+            await mediator.Send(new SubmitCaseApprovalRequestCommand(payload.Id, payload.Note));
+            return Ok();
+        }
+
+        [HttpPost("approve-approval-request", Name = "ApproveCase")]
+        [InvalidateQueryTags("Dashboard")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult> ApproveCase([FromBody] ChangeWorkflowStatusEntityDto payload)
+        {
+            await mediator.Send(new ApproveCaseCommand(payload.Id, payload.Note));
+            return Ok();
+        }
+
+        [HttpPost("reject-approval-request", Name = "RejectCaseApprovalRequest")]
+        [InvalidateQueryTags("Dashboard")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult> RejectCaseApprovalRequest([FromBody] ChangeWorkflowStatusEntityDto payload)
+        {
+            await mediator.Send(new RejectCaseApprovalRequestCommand(payload.Id, payload.Note));
+            return Ok();
         }
 
     }

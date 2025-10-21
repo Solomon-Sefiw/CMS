@@ -54,7 +54,6 @@ import {
   useGetEmployeeIdCountPerApprovalStatusQuery,
 } from "../../../app/api/HCMSApi";
 import { EmployeeIDApproveOrRejectRequestButton } from "../EmployeeIDApproveOrRejectRequestButton";
-import { EmployeeIdCard } from "../EmployeeIdCard";
 import { useEmployeeIdCardGivenMutation } from "../../../app/api/HCMSApi";
 import { enums } from "../../../app/api";
 export const EmployeeIdApprovalRequests = () => {

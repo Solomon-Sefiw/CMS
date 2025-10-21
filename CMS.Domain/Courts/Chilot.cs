@@ -17,5 +17,6 @@ namespace CMS.Domain.Courts
         public CMS.Domain.BusinessUnit? BusinessUnit { get; set; }
         public ICollection<JudgeAssignment> JudgeAssignments { get; set; } = new List<JudgeAssignment>();
         public ICollection<Case> Cases { get; set; } = new List<Case>();
+        public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Draft;
     }
 }

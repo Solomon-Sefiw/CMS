@@ -17,5 +17,6 @@ namespace CMS.Application.Features.Cases.CaseDetail.Chilot.Models
         public string? RoomNumber { get; set; }
         public int BusinessUnitId { get; set; }
         public string BusinessUnit { get; set; }
+        public ApprovalStatus ApprovalStatus { get; set; }
     }
 }

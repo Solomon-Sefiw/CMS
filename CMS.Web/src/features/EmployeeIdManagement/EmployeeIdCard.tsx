@@ -256,3 +256,213 @@ export const EmployeeIdCard = ({ employee, issueDate }: Props) => {
     </Box>
   );
 };
+
+// import { Box, Typography, Paper, Divider } from "@mui/material";
+// import { EmployeeDto } from "../../app/api/HCMSApi";
+// import logo from "../../images/823a89f4-cd31-4d5a-9124-d3705cf35cc3.png";
+
+// interface Props {
+//   employee: EmployeeDto;
+//   issueDate: string;
+//   validUntil: string;
+// }
+
+// export const EmployeeIDCard = ({ employee, issueDate, validUntil }: Props) => {
+//   return (
+//     <Box
+//       id="employee-id-card"
+//       sx={{
+//         display: "flex",
+//         flexDirection: "column",
+//         alignItems: "center",
+//         gap: 4,
+//         p: 2,
+//         backgroundColor: "#f2f6f7",
+//       }}
+//     >
+//       {/* FRONT SIDE */}
+//       <Paper
+//         elevation={3}
+//         sx={{
+//           width: "85.6mm",
+//           height: "54mm",
+//           borderRadius: 2,
+//           overflow: "hidden",
+//           display: "flex",
+//           flexDirection: "column",
+//           position: "relative",
+//           backgroundColor: "#ffffff",
+//         }}
+//       >
+//         {/* Header Background */}
+//         <Box
+//           sx={{
+//             backgroundColor: "#004a64",
+//             height: "35%",
+//             color: "white",
+//             display: "flex",
+//             flexDirection: "column",
+//             alignItems: "center",
+//             justifyContent: "center",
+//             p: 1,
+//           }}
+//         >
+//           <Box
+//             component="img"
+//             src={logo}
+//             alt="Organization Logo"
+//             sx={{ width: "40px", height: "40px", mb: 0.5 }}
+//           />
+//           <Typography fontSize={10} fontWeight={600}>
+//             የአማራ ክልል መንግሥት
+//           </Typography>
+//           <Typography fontSize={9}>ከፍተኛ ፍርድ ቤት</Typography>
+//         </Box>
+
+//         {/* Photo + Info */}
+//         <Box
+//           sx={{
+//             flex: 1,
+//             display: "flex",
+//             flexDirection: "column",
+//             alignItems: "center",
+//             justifyContent: "center",
+//             gap: 0.4,
+//             p: 1.2,
+//           }}
+//         >
+//           <Box
+//             component="img"
+//             src={employee?.photoUrl || "/no-photo.png"}
+//             alt="Employee"
+//             sx={{
+//               width: "55px",
+//               height: "55px",
+//               borderRadius: "50%",
+//               border: "2px solid #004a64",
+//               objectFit: "cover",
+//             }}
+//           />
+//           <Typography fontSize={11} fontWeight="bold" sx={{ mt: 0.5 }}>
+//             {employee?.amharicDisplayName || "ዮዲት ደበበ"}
+//           </Typography>
+//           <Typography fontSize={10} color="#004a64">
+//             {employee?.displayName || "Yodit Debebe"}
+//           </Typography>
+//           <Typography fontSize={9}>
+//             {employee?.jobTitle || "GENERAL MANAGER"}
+//           </Typography>
+//           <Typography fontSize={8} mt={0.3}>
+//             ID NO: {employee?.id || "0001"}
+//           </Typography>
+//         </Box>
+
+//         {/* Footer */}
+//         <Box
+//           sx={{
+//             backgroundColor: "#004a64",
+//             height: "12%",
+//             color: "white",
+//             textAlign: "center",
+//             fontSize: "8px",
+//             display: "flex",
+//             alignItems: "center",
+//             justifyContent: "center",
+//           }}
+//         >
+//           www.asc.com
+//         </Box>
+//       </Paper>
+
+//       {/* BACK SIDE */}
+//       <Paper
+//         elevation={3}
+//         sx={{
+//           width: "85.6mm",
+//           height: "54mm",
+//           borderRadius: 2,
+//           overflow: "hidden",
+//           display: "flex",
+//           flexDirection: "column",
+//           justifyContent: "space-between",
+//           backgroundColor: "#ffffff",
+//         }}
+//       >
+//         <Box sx={{ p: 1.2 }}>
+//           <Typography fontSize={8} mb={0.3}>
+//             ስልክ ቁጥር (Phone Number)
+//           </Typography>
+//           <Typography fontSize={8} fontWeight="bold">
+//             {employee?.contact?.value || "+251 900 000 000"}
+//           </Typography>
+
+//           <Typography fontSize={8} mt={0.8}>
+//             የደም ቡድን (Blood Type)
+//           </Typography>
+//           <Typography fontSize={8} fontWeight="bold">
+//             {employee?.hasAddressInfo ? "A+" : "A+"}
+//           </Typography>
+
+//           <Typography fontSize={8} mt={0.8}>
+//             አደጋ ጊዜ ያገኙት (Emergency Contact)
+//           </Typography>
+//           <Typography fontSize={8} fontWeight="bold">
+//             {employee?.hasEmergencyContactInfo ? "+251 900 000 000" : "+251 900 000 000"}
+//           </Typography>
+
+//           <Typography fontSize={8} mt={0.8}>
+//             የኩባንያ ስልክ (Company Phone Number)
+//           </Typography>
+//           <Typography fontSize={8} fontWeight="bold">
+//             +251 900 000 000
+//           </Typography>
+
+//           <Typography fontSize={8} mt={0.8}>
+//             የኩባንያ አድራሻ (Company Address)
+//           </Typography>
+//           <Typography fontSize={8} fontWeight="bold" lineHeight={1.3}>
+//             Amhara Regional State Supreme Court,
+//             <br />
+//             Bahir Dar, Ethiopia
+//           </Typography>
+//         </Box>
+
+//         <Divider sx={{ borderColor: "#004a64", opacity: 0.2 }} />
+
+//         <Box sx={{ px: 1.2, pb: 0.8 }}>
+//           <Typography fontSize={8}>
+//             የተፈቀደ ፊርማ (Authorized Signature)
+//           </Typography>
+//           <Typography
+//             fontSize={9}
+//             fontStyle="italic"
+//             fontWeight="bold"
+//             mt={0.4}
+//           >
+//             ______________________
+//           </Typography>
+
+//           <Box
+//             sx={{
+//               display: "flex",
+//               justifyContent: "space-between",
+//               mt: 0.8,
+//             }}
+//           >
+//             <Box>
+//               <Typography fontSize={7}>Issued: {issueDate}</Typography>
+//               <Typography fontSize={7}>Valid Until: {validUntil}</Typography>
+//             </Box>
+//             <Box
+//               component="img"
+//               src={logo}
+//               alt="Logo"
+//               sx={{ width: "28px", height: "28px", opacity: 0.5 }}
+//             />
+//           </Box>
+//         </Box>
+//       </Paper>
+//     </Box>
+//   );
+// };
+

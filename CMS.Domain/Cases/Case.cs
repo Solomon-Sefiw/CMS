@@ -1,5 +1,6 @@
 ﻿using CMS.Domain.Appointments;
 using CMS.Domain.Assignment;
+using CMS.Domain.Cases.CaseDocument;
 using CMS.Domain.Chat;
 using CMS.Domain.Common;
 using CMS.Domain.Courts;
@@ -38,7 +39,7 @@ namespace CMS.Domain.Cases
         public BusinessUnit? BusinessUnit { get; set; }
         public int? ChilotId { get; set; }
         public Chilot? Chilot { get; set; }
-        public ICollection<CaseDocument> Documents { get; set; } = new List<CaseDocument>();
+        public ICollection<CaseFileDocument> CaseFileDocuments { get; set; } = new List<CaseFileDocument>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public ICollection<Hearing> Hearings { get; set; } = new List<Hearing>();
         public ICollection<Judgment> Judgments { get; set; } = new List<Judgment>();

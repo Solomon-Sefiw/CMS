@@ -3,6 +3,7 @@ using CMS.Api.Filters;
 using CMS.Api.Services;
 using CMS.API.Configurations;
 using CMS.Application;
+using CMS.Application.CaseFile;
 using CMS.Application.EmployeeFile;
 using CMS.Common;
 using CMS.Infrastructure;
@@ -52,7 +53,10 @@ builder.Services.AddDataProtection()
 builder.Services.AddScoped<ApiExceptionFilterAttribute>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileService, FileService>();
+// paymemt services
+
 builder.Services.AddScoped<IAuditEmployeeFileDocumentService, AuditEmployeeFileDocumentService>();
+builder.Services.AddScoped<IAuditCaseFileDocumentService, AuditCaseFileDocumentService>();
 
 builder.Services.AddHttpClient();
 

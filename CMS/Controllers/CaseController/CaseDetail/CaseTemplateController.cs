@@ -23,7 +23,7 @@ namespace CMS.Api.Controllers.CaseController.CaseDetail
             return Ok(await mediator.Send(command));
         }
 
-        [HttpGet("GetById", Name = "GetCaseTemplateById")]
+        [HttpGet("GetTemplateById", Name = "GetCaseTemplateById")]
         public async Task<ActionResult<CaseTemplateDto>> GetCaseTemplateById(int id)
             => Ok(await mediator.Send(new GetCaseTemplateByIdQuery(id)));
 

@@ -98,30 +98,6 @@ import {
 } from "../features/BranchGrade/BranchGradeGrids";
 import { JobCategoryApprovalRequests } from "../features/Jobs/JobCatagory/JobCatagoryGrids/JobCategoryApprovalRequests";
 import { JobCategoryRejectedApprovalRequests } from "../features/Jobs/JobCatagory/JobCatagoryGrids/JobCategoryRejectedApprovalRequests";
-import { JobCatagoryHome } from "../features/Jobs/JobCatagory/JobCatagoryHome";
-import { ApprovedJobGrade, JobGradeApprovalRequests, JobGradeRejectedApprovalRequests, DraftJobGrade } from "../features/Jobs/JobGrade/JobGradeGrids";
-import { JobGradeHome } from "../features/Jobs/JobGrade/JobGradeHome";
-import { ApprovedJobRole, JobRoleApprovalRequests, JobRoleRejectedApprovalRequests, DraftJobRole } from "../features/Jobs/JobRole/JobRoleGrids";
-import { JobRoleHome } from "../features/Jobs/JobRole/JobRoleHome";
-import { ApprovedJobRoleCategories, JobRoleCategoryApprovalRequests, JobRoleCategoryRejected, DraftJobRoleCategories } from "../features/Jobs/JobRoleCategory/JobRoleCategoryGrids";
-import { JobRoleCategoryHome } from "../features/Jobs/JobRoleCategory/JobRoleCategoryHome";
-import { DraftEmployeeID, RejectedEmployeeID, EmployeeIdApprovalRequests } from "../features/EmployeeIdManagement/EmployeeIDGrids";
-import { ReplaceableEmployeeID } from "../features/EmployeeIdManagement/EmployeeIDGrids/ReplaceableEmployeeID";
-import { EmployeeIDHome } from "../features/EmployeeIdManagement/EmployeeIDHome";
-import { EmployeesIdManagementList } from "../features/EmployeeIdManagement/EmployeesIdManagementListList";
-import { ProbationApprovalRequests, DraftProbation, RejectedProbation } from "../features/Probation/ProbationGrids";
-import { ProbationHome } from "../features/Probation/ProbationHome";
-import { ActingHome } from "../features/Employee/ActivityTab/Acting/ActingHome";
-import { DelegationHome } from "../features/Employee/ActivityTab/Delegation/DelegationHome";
-import { EmployeeActivity } from "../features/Employee/ActivityTab/EmployeeActivity";
-import { CaseHome } from "../features/Case/CaseHome";
-import { ApprovedCases, SubmittedCases, RejectedCases, DraftCases } from "../features/Case/CaseGrids";
-import { CaseDetail } from "../features/Case/CaseDetail/CaseDetails";
-import { CaseSummaryTab } from "../features/Case/SummaryTab/CaseSummaryTab";
-import ChatList from "../features/Chat/ChatList";
-import ChatDetail from "../features/Chat/ChatDetail";
-import { JudgeAssignmentHome } from "../features/Case/SummaryTab/CaseJedgement/JudgeAssignmentHome";
-import { HearingHome } from "../features/Case/SummaryTab/CaseHearing/HearingHome";
 import { DraftJobCategory } from "../features/Jobs/JobCatagory/JobCatagoryGrids/DraftJobCatagory";
 import { ApprovedJobCategories } from "../features/Jobs/JobCatagory/JobCatagoryGrids/ApprovedJobCategory";
 import { BenefitUnitOfMeasurementHome } from "../features/Benefits/BenefitUnitOfMeasurement/BenefitUnitOfMeasurementHome";
@@ -213,6 +189,17 @@ import { ReemploymentHome } from "../features/Employee/SummaryTab/Reemployment/R
 import { ApprovedReemployments, ReemploymentApprovalRequests, ReemploymentRejectedApprovalRequest, DraftReemployments } from "../features/Employee/SummaryTab/Reemployment/EmployeeReemploymentGrids";
 import { RespondedLetters, ReceivedLetters, ArchivedLetters, PendingLetters } from "../features/Letter/LetterGrid";
 import { LetterHome } from "../features/Letter/LetterHome";
+import ChatList from "../features/Chat/ChatList";
+import ChatDetail from "../features/Chat/ChatDetail";
+import { CaseDetail } from "../features/Case/CaseDetail/CaseDetails";
+import { ApprovedCases, SubmittedCases, RejectedCases, DraftCases } from "../features/Case/CaseGrids";
+import { CaseHome } from "../features/Case/CaseHome";
+import { HearingHome } from "../features/Case/SummaryTab/CaseHearing/HearingHome";
+import { JudgeAssignmentHome } from "../features/Case/SummaryTab/CaseJudgeAssignment/JudgeAssignmentHome";
+import { CaseSummaryTab } from "../features/Case/SummaryTab/CaseSummaryTab";
+import { ChilotHome } from "../features/Case/Chilot/ChilotHome";
+import { ApprovedChilots, SubmittedChilots, RejectedChilots, DraftChilots } from "../features/Case/Chilot/ChilotGrids";
+import { JudgmentHome } from "../features/Case/SummaryTab/CaseJudgement/JudgmentHome";
 const AppRoutes = () => {
   const navigate = useNavigate();
   const { loggedIn } = useAuth();
@@ -237,8 +224,6 @@ const AppRoutes = () => {
       <Route path="login" element={<Login />} />
       <Route path="verify" element={<MFA />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
-      {/* AuthenticatedRoutes */}
-      
       <Route element={<AuthenticatedRoutes />}>
               <Route  path="message"  element={<ChatList />} />
         <Route  path="/chat/:chatPartnerId" element={<ChatDetail />} />
@@ -598,7 +583,18 @@ const AppRoutes = () => {
         {/* <Route path="case-summary" element={<CaseSummaryTab />} /> */}
         <Route path="other" element={<JudgeAssignmentHome />} />
         <Route path="hearing" element={<HearingHome />} />
+        <Route path="judgment" element={<JudgmentHome />} />
+        <Route path="documents" element={<DocumentsTab />} />
       </Route>
+              <Route path="chilot" element={<ChilotHome />}>
+          <Route index element={<ApprovedChilots />} />
+          <Route path="approval-requests" element={<SubmittedChilots />} />
+          <Route
+            path="rejected-approval-requests"
+            element={<RejectedChilots />}
+          />
+          <Route path="draft" element={<DraftChilots />} />
+        </Route>
 
 
       </Route>

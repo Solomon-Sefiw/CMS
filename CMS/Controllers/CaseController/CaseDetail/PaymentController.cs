@@ -27,7 +27,7 @@ namespace CMS.Api.Controllers.CaseController.CaseDetail
 
         [HttpGet("GetById", Name = "GetPaymentById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<PaymentDto>> GetById(int id)
+        public async Task<ActionResult<PaymentDto>> GetPaymentById(int id)
             => Ok(await mediator.Send(new GetPaymentByIdQuery(id)));
 
         [HttpGet("GetByCaseId", Name = "GetPaymentsByCaseId")]

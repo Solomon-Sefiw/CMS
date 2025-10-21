@@ -1,10 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
 import {
   DialogHeader,
-  Errors,
   FormSelectField,
   FormTextField,
-  SelectOption,
 } from "../../components";
 import {
   Box,
@@ -12,18 +10,30 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   Grid,
+  CircularProgress,
 } from "@mui/material";
-import { CaseDto, CreateCaseCommand, useCreateCaseMutation, useGetAllBusinessUnitsQuery, useUpdateCaseMutation, useUsersQuery } from "../../app/api";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import {
+  CaseDto,
+  CreateCaseCommand,
+  useCreateCaseMutation,
+  useUpdateCaseMutation,
+  useUsersQuery,
+  useUploadCaseFileDocumentMutation,
+  useGetCaseFileDocumentByCaseIdQuery,
+} from "../../app/api";
 import { removeEmptyFields } from "../../utils";
 import * as Yup from "yup";
-import { useAlert } from "../notification";
-import { getEnumOptions } from "../../components/form-controls/get-enum-list";
 import { Form, Formik } from "formik";
-import { useNavigateToCaseDetailPage } from "./useNavigateToCaseDetailPage";
-import { CaseStatus, CaseType } from "../../app/api/enums";
+import { getEnumOptions } from "../../components/form-controls/get-enum-list";
+import { useAlert } from "../notification";
+import { CaseStatus, CaseType, CaseDocumentType } from "../../app/api/enums";
 import { useAuth } from "../../hooks";
 import { useBusinessUnit } from "../BusinessUnit";
+import { useChilot } from "./useChilots";
+import { useNavigateToCaseDetailPage } from "./useNavigateToCaseDetailPage";
 
 const emptyCaseData: CreateCaseCommand = {
   caseNumber: "",
@@ -49,18 +59,45 @@ export const CaseDialog = ({
   title: string;
   caseData?: CaseDto;
 }) => {
-  const [formData, setFormData] = useState<CreateCaseCommand>();
   const { user } = useAuth();
-  const [addCase, { error: addCaseErr }] = useCreateCaseMutation();
-  const [updateCase, { error: updateCaseErr }] = useUpdateCaseMutation();
-  const { data: users, isLoading: areUsersLoading } = useUsersQuery();
+  const { chilotLookups } = useChilot();
+  const { businessUnitLookups } = useBusinessUnit();
+  const { data: users } = useUsersQuery();
   const { navigateToDetailPage } = useNavigateToCaseDetailPage();
   const { showSuccessAlert, showErrorAlert } = useAlert();
- const { businessUnitLookups } = useBusinessUnit();
-  const recipientOptions = (users || []).filter((u) => u.id !== user?.id).map((u) => ({
-    label: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown User",
-    value: u.id || "",
-  }));
+
+  const [formData, setFormData] = useState<CreateCaseCommand>();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadPreview, setUploadPreview] = useState<{ id: string; name: string } | null>(null);
+
+  // 🔹 For preview dialog
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewName, setPreviewName] = useState<string>("");
+
+  const [addCase] = useCreateCaseMutation();
+  const [updateCase] = useUpdateCaseMutation();
+  const [uploadCaseFile] = useUploadCaseFileDocumentMutation();
+
+  const { data: existingFiles, refetch: refetchFiles } = useGetCaseFileDocumentByCaseIdQuery(
+    { caseId: caseData?.id ?? 0 },
+    { skip: !caseData?.id }
+  ) as any;
+
+  useEffect(() => {
+    setFormData({ ...emptyCaseData, ...caseData });
+    if (existingFiles?.length) {
+      setUploadPreview({ id: existingFiles[0].id, name: existingFiles[0].fileName });
+    }
+  }, [caseData, existingFiles]);
+
+  const recipientOptions = (users || [])
+    .filter((u) => u.id !== user?.id)
+    .map((u) => ({
+      label: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown User",
+      value: u.id || "",
+    }));
+
   const validationSchema = Yup.object({
     caseNumber: Yup.string().required("Case Number is required."),
     plaintiffName: Yup.string().required("Plaintiff Name is required."),
@@ -68,71 +105,123 @@ export const CaseDialog = ({
     caseType: Yup.number().required("Case Type is required."),
     status: Yup.number().required("Status is required."),
     filedAt: Yup.date().required("Filed date is required."),
-    closedAt: Yup.date().nullable().min(
-      Yup.ref("filedAt"),
-      "Closed date cannot be before filed date."
-    ),
+    closedAt: Yup.date().nullable().min(Yup.ref("filedAt"), "Closed date cannot be before filed date."),
     businessUnitId: Yup.number().min(1, "Business Unit is required."),
   });
 
-  useEffect(() => {
-    setFormData({
-      ...emptyCaseData,
-      ...caseData,
-    });
-  }, [caseData]);
+  // ✅ File upload
+  const handleFileUpload = async (caseId: number, file: File) => {
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const form = new FormData();
+      form.append("caseId", caseId.toString());
+      form.append("caseDocumentType", CaseDocumentType.Attachment.toString());
+      form.append("file", file);
+      form.append("remark", "Case Attachment");
+
+      await uploadCaseFile(form as any).unwrap();
+      showSuccessAlert("Attachment uploaded successfully.");
+      await refetchFiles();
+      setSelectedFile(null);
+    } catch (err: any) {
+      showErrorAlert(err?.data?.message || "Attachment upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // ✅ File preview (proper PDF/image preview)
+  const handleViewFile = async () => {
+    if (!uploadPreview?.id || !caseData?.id) return;
+    try {
+      const response = await fetch(
+        `/api/CaseFileDocuments/DownloadCaseFileDocument/${uploadPreview.id}?caseId=${caseData?.id}`,
+        { headers: { Accept: "application/pdf, image/*" } }
+      );
+      if (!response.ok) throw new Error("Failed to fetch document");
+      const blob = await response.blob();
+
+      const fileType = blob.type || "application/octet-stream";
+      const url = URL.createObjectURL(blob);
+
+      // Open correct viewer
+      if (fileType.includes("pdf")) {
+        setPreviewUrl(url);
+        setPreviewName(uploadPreview.name);
+      } else if (fileType.startsWith("image/")) {
+        setPreviewUrl(url);
+        setPreviewName(uploadPreview.name);
+      } else {
+        // Download instead of showing screenshot
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = uploadPreview.name;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      console.error(err);
+      showErrorAlert("Failed to load document preview.");
+    }
+  };
+
+  const handleClosePreview = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+  };
 
   const handleSubmit = useCallback(
     async (values: CreateCaseCommand) => {
-      values.filedById = user?.id || '';
+      values.filedById = user?.id || "";
       const payload = removeEmptyFields(values);
 
       try {
+        let caseId: number | undefined;
+        let versionNumber: string | undefined;
+
         if (caseData?.id) {
-          await updateCase({ updateCaseCommand: payload }).unwrap();
+          const result = await updateCase({ updateCaseCommand: payload }).unwrap();
+          caseId = result;
           showSuccessAlert("Case updated successfully!");
-          onClose();
         } else {
           const result = await addCase({ createCaseCommand: payload }).unwrap();
-          if (result.id && result.versionNumber !== undefined) {
-            navigateToDetailPage({
-              id: result.id,
-              versionNumber: result.versionNumber,
-            })();
-            showSuccessAlert("New case created successfully!");
-          }
-          onClose();
+          caseId = result.id;
+          versionNumber = result.versionNumber;
+          showSuccessAlert("New case created successfully!");
         }
-      } catch (error: any) {
-        const errorMessage = error?.data?.detail || "Error saving case";
-        showErrorAlert(errorMessage);
-        console.error("Error saving case:", error);
+
+        if (selectedFile && caseId) {
+          await handleFileUpload(caseId, selectedFile);
+        }
+
+        if (!caseData?.id && caseId && versionNumber) {
+          navigateToDetailPage({ id: caseId, versionNumber })();
+        }
+
+        onClose();
+      } catch (err: any) {
+        showErrorAlert(err?.data?.detail || "Error saving case");
+        console.error("Error saving case:", err);
       }
     },
-    [onClose, addCase, updateCase, caseData, navigateToDetailPage, showErrorAlert, showSuccessAlert]
+    [addCase, updateCase, caseData, navigateToDetailPage, onClose, selectedFile]
   );
 
-  const errors = (caseData?.id ? updateCaseErr : (addCaseErr as any))
-    ?.data?.errors;
   return (
-    <Dialog scroll="paper" disableEscapeKeyDown={true} maxWidth="md" open={true}>
+    <Dialog scroll="paper" disableEscapeKeyDown maxWidth="md" open>
       {!!formData && (
         <Formik
           initialValues={formData}
-          enableReinitialize={true}
+          enableReinitialize
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
           {() => (
             <Form>
               <DialogHeader title={title} onClose={onClose} />
-              <DialogContent dividers={true}>
+              <DialogContent dividers>
                 <Grid container spacing={2}>
-                  {errors && (
-                    <Grid item xs={12}>
-                      <Errors errors={errors as any} />
-                    </Grid>
-                  )}
                   <Grid item xs={12}>
                     <FormTextField name="caseNumber" label="Case Number" />
                   </Grid>
@@ -147,16 +236,8 @@ export const CaseDialog = ({
                   </Grid>
                   <Grid item xs={12}>
                     <Box sx={{ display: "flex", gap: 1 }}>
-                      <FormSelectField
-                        name="caseType"
-                        label="Case Type"
-                        options={getEnumOptions(CaseType)}
-                      />
-                      <FormSelectField
-                        name="status"
-                        label="Status"
-                        options={getEnumOptions(CaseStatus)}
-                      />
+                      <FormSelectField name="caseType" label="Case Type" options={getEnumOptions(CaseType)} />
+                      <FormSelectField name="status" label="Status" options={getEnumOptions(CaseStatus)} />
                     </Box>
                   </Grid>
                   <Grid item xs={12}>
@@ -169,13 +250,33 @@ export const CaseDialog = ({
                     <FormSelectField name="assignedJudgeId" label="Assigned Judge" options={recipientOptions} />
                   </Grid>
                   <Grid item xs={12}>
-                    <FormSelectField
-                      name="businessUnitId"
-                      label="Business Unit"
-                      type="number"
-                      options={businessUnitLookups ?? []}
-                    />
-                    <FormTextField name="chilotId" label="Chilot ID" type="number" />
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <FormSelectField name="businessUnitId" label="Business Unit" options={businessUnitLookups ?? []} />
+                      <FormSelectField name="chilotId" label="Chilot" options={chilotLookups ?? []} />
+                    </Box>
+                  </Grid>
+
+                  {/* --- File Upload --- */}
+                  <Grid item xs={12}>
+                    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                      <input
+                        type="file"
+                        onChange={(e) => {
+                          if (e.target.files?.[0]) setSelectedFile(e.target.files[0]);
+                        }}
+                      />
+                      {uploadPreview && (
+                        <Button
+                          variant="outlined"
+                          startIcon={<VisibilityIcon />}
+                          onClick={handleViewFile}
+                          disabled={isUploading}
+                        >
+                          View
+                        </Button>
+                      )}
+                      {isUploading && <CircularProgress size={24} />}
+                    </Box>
                   </Grid>
                 </Grid>
               </DialogContent>
@@ -185,6 +286,31 @@ export const CaseDialog = ({
                   Save
                 </Button>
               </DialogActions>
+
+              {/* 🔹 Preview Modal */}
+              <Dialog open={!!previewUrl} onClose={handleClosePreview} maxWidth="md" fullWidth>
+                <DialogTitle>Preview: {previewName}</DialogTitle>
+                <DialogContent>
+                  {previewUrl && previewName.toLowerCase().endsWith(".pdf") ? (
+                    <iframe
+                      src={previewUrl}
+                      width="100%"
+                      height={600}
+                      title="PDF Preview"
+                      style={{ border: "none" }}
+                    />
+                  ) : (
+                    <img
+                      src={previewUrl!}
+                      alt="Preview"
+                      style={{ width: "100%", maxHeight: 600, objectFit: "contain" }}
+                    />
+                  )}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClosePreview}>Close</Button>
+                </DialogActions>
+              </Dialog>
             </Form>
           )}
         </Formik>

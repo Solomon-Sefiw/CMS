@@ -53,7 +53,6 @@ import {
   useGetAllEmployeeIdListQuery,
   useGetEmployeeIdCountPerApprovalStatusQuery,
 } from "../../../app/api/HCMSApi";
-import { EmployeeIdCard } from "../EmployeeIdCard";
 import { Print } from "@mui/icons-material";
 import { enums } from "../../../app/api";
 import { SubmitEmployeeId } from "../SubmitEmployeeId";

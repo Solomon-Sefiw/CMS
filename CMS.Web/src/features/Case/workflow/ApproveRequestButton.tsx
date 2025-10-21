@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
-import { useApproveEmployeeMutation } from "../../../app/api";
+import { useApproveCaseMutation } from "../../../app/api";
 import { WorkflowActionDialog } from "../../../components/workflow/WorkflowActionDialog";
 import { usePermission } from "../../../hooks";
 
@@ -9,7 +9,7 @@ export const ApproveRequestButton = ({ id }: { id: number }) => {
   const [submitting, setSubmitting] = useState(false);
 
   const [approve, { error: approveError, reset: approveReset }] =
-    useApproveEmployeeMutation();
+    useApproveCaseMutation();
   const permissions = usePermission();
   const onDialogClose = useCallback(() => {
     approveReset();
@@ -45,7 +45,6 @@ export const ApproveRequestButton = ({ id }: { id: number }) => {
       <Button
         size="large"
         variant="contained"
-        disabled={!permissions.CanApproveRejectEmployeePersonalInfo}
         sx={{ mr: 1 }}
         onClick={() => {
           setShowDialog(true);

@@ -144,11 +144,11 @@ namespace CMS.Application.Profiles
             CreateMap<CreatePaymentCommand, Payment>();
             CreateMap<UpdatePaymentCommand, Payment>();
 
-            CreateMap<Payment, PaymentDto>()
-                .ForMember(d => d.CaseNumber, opt => opt.MapFrom(s => s.Case != null ? s.Case.CaseNumber : null))
-                .ForMember(d => d.ProcessedByName, opt => opt.MapFrom(s => s.ProcessedBy != null ? s.ProcessedBy.FirstName : null))
-                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
+            CreateMap<CreatePaymentCommand, Payment>()
+                           .ForMember(d => d.Id, opt => opt.Ignore());
 
+            CreateMap<Payment, PaymentDto>()
+                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
 
 
             CreateMap<CreateDocketEntryCommand, DocketEntry>();

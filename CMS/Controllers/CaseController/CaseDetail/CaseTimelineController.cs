@@ -23,7 +23,7 @@ namespace CMS.Api.Controllers.CaseController.CaseDetail
             return Ok(await mediator.Send(command));
         }
 
-        [HttpGet("GetById", Name = "GetCaseTimelineById")]
+        [HttpGet("GetTimelineById", Name = "GetCaseTimelineById")]
         public async Task<ActionResult<CaseTimelineDto>> GetCaseTimelineById(int id)
             => Ok(await mediator.Send(new GetCaseTimelineByIdQuery(id)));
 

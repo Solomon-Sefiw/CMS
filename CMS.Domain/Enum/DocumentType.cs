@@ -22,4 +22,9 @@
         Suspension = 17,
         Resignation = 18,
     }
+    //public enum CaseDocumentType
+    //{
+    //    Other = 0,
+    //    Main = 1,
+    //}
 }

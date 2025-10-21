@@ -103,7 +103,7 @@ export const CaseHome: React.FC = () => {
         backgroundColor: (theme) => theme.palette.background.default, // Use theme background
       }}
     >
-      <PageHeader title={"Manage Letters"} icon={undefined} /> {/* Updated title */}
+      <PageHeader title={"Manage E-Filling"} icon={undefined} /> {/* Updated title */}
 
       {/* Search and Add Button Section */}
       <Paper

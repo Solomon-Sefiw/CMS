@@ -25,7 +25,7 @@ public class GetCaseDetailQueryHandler : IRequestHandler<GetCaseDetailQuery, Cas
     {
         var employee = await dataservice
             .Cases
-            .Include(s => s.Documents)
+            .Include(s => s.CaseFileDocuments)
             .AsSplitQuery()
             .FirstOrDefaultAsync(sh => sh.Id == request.Id);
 

@@ -669,6 +669,45 @@ const SetupMenu: React.FC = () => {
             </Typography>
           </Paper>
         </Grid>
+        {/* Chilot Card */}
+        <Grid item xs={12} sm={6} md={2}>
+          <Paper
+            onClick={() => navigate("/chilot")}
+            elevation={3}
+            sx={{
+              padding: 3,
+              borderRadius: "12px",
+              textAlign: "center",
+              cursor: "pointer",
+              backgroundColor: "#fff",
+              border: "2px solid #1976d2",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
+                backgroundColor: "#f0f0f0",
+              },
+            }}
+          >
+            <LocationCity sx={{ fontSize: 30, color: "#ff5722" }} />
+            <Typography
+              variant="h6"
+              sx={{
+                mt: 2,
+                fontWeight: "bold",
+                color: "rgb(4, 18, 99)",
+                fontSize: { xs: "0.9rem", sm: "1rem" },
+              }}
+            >
+              Chilots
+            </Typography>
+          </Paper>
+        </Grid>
 
         {/* Branch Grade Card */}
         {/* <Grid item xs={12} sm={6} md={2}>

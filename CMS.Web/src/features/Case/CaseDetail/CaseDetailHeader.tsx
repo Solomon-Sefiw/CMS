@@ -1,5 +1,5 @@
 import BlockIcon from "@mui/icons-material/Block";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // Import the checkmark icon
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import {
   Box,
   Divider,
@@ -12,7 +12,6 @@ import { useSearchParams } from "react-router-dom";
 import {
   EmployeeRecordVersions,
   useGetCaseInfoQuery,
-  useGetCaseRecordVersionsQuery,
 } from "../../../app/api";
 import {
   AssignmentInd,
@@ -26,14 +25,14 @@ import {
 } from "@mui/icons-material";
 import { usePrevious } from "../../../hooks";
 import { useCurrentVersion } from "../useCurrentVersion";
-import { ApprovalStatus } from "../../../app/api/enums"; // Assuming these are still valid
+import { ApprovalStatus } from "../../../app/api/enums";
 import { getDetailPageUrl } from "../useNavigateToCaseDetailPage";
 import { ChipComponent } from "../../../components/chipComponent";
 import {
   ApproveRequestButton,
   RejectRequestButton,
   SubmitForApprovalButton,
-} from "../workflow"; // Your workflow buttons
+} from "../workflow";
 import { ApprovalStatusChip } from "../../../components/approvalStatusChip";
 import dayjs from "dayjs";
 import { useCaseId } from "./useCaseId";
@@ -43,29 +42,24 @@ export const CaseDetailHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { loadCurrentVersion } = useCurrentVersion();
 
-  const { data: caseinfo , refetch} = useGetCaseInfoQuery(
+  const { data: caseinfo, refetch } = useGetCaseInfoQuery(
     {
       id,
       version,
     },
-    {
-      skip: !id,
-    }
+    { skip: !id }
   );
+
   const { data: versions } = useGetCaseRecordVersionsQuery(
-    {
-      id,
-    },
-    {
-      skip: !id,
-    }
+    { id },
+    { skip: !id }
   );
 
   const prevVersions = usePrevious(versions);
+
   useEffect(() => {
     const shouldSwitchToDraft =
       prevVersions?.current && prevVersions.current !== versions?.current;
-
     shouldSwitchToDraft && loadCurrentVersion();
   }, [loadCurrentVersion, prevVersions, versions]);
 
@@ -103,7 +97,7 @@ export const CaseDetailHeader = () => {
 
       if (
         latestVersion ===
-        ApprovalStatus[caseinfo.approvalStatus]?.toLowerCase() ||
+          ApprovalStatus[caseinfo.approvalStatus]?.toLowerCase() ||
         isStaleVersion
       ) {
         searchParams.delete("version");
@@ -143,16 +137,8 @@ export const CaseDetailHeader = () => {
 
       return result;
     }
-  }, [
-    id,
-    searchParams,
-    setSearchParams,
-    caseinfo,
-    version,
-    versions,
-  ]);
+  }, [id, searchParams, setSearchParams, caseinfo, version, versions]);
 
-  // Determine if all required fields are complete for submission
   const areRequiredFieldsComplete = useMemo(() => {
     if (!caseinfo) return false;
     return (
@@ -166,26 +152,8 @@ export const CaseDetailHeader = () => {
   return (
     <>
       {caseinfo && (
-        <Box
-          sx={{ pb: 2, display: "flex", position: "relative", height: "100%" }}
-        >
-          {/* Employee Photo Box */}
-          {/* <Box
-            sx={{
-              mr: 1,
-              paddingRight: 1,
-              paddingTop: 2,
-              width: 180,
-              height: 150,
-              overflow: "hidden",
-              borderRadius: 1,
-              boxShadow: 3,
-            }}
-          >
-            <EmployeePhoto employee={employee} /> 
-          </Box> */}
-
-          {/* First Info Box: Personal Details */}
+        <Box sx={{ pb: 2, display: "flex", position: "relative", height: "100%" }}>
+          {/* First Info Box */}
           <Box
             sx={{
               display: "flex",
@@ -212,20 +180,16 @@ export const CaseDetailHeader = () => {
                 )}
               </Typography>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center", paddingBottom: 1 }}>
-              <Icon
-                component={Person}
-                sx={{ marginRight: 1, color: "primary.dark" }}
-              />
+              <Icon component={Person} sx={{ marginRight: 1, color: "primary.dark" }} />
               <Typography variant="body1" color="primary.dark">
                 {caseinfo?.accusedName ? caseinfo.plaintiffName : " -"}
               </Typography>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Icon
-                component={Cake}
-                sx={{ marginRight: 1, color: "primary.dark" }}
-              />
+              <Icon component={Cake} sx={{ marginRight: 1, color: "primary.dark" }} />
               <Typography variant="body1" color="primary.dark">
                 Birth Date:{" "}
                 {caseinfo?.filedAt
@@ -233,32 +197,23 @@ export const CaseDetailHeader = () => {
                   : " -"}
               </Typography>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Icon
-                component={HowToReg}
-                sx={{ marginRight: 1, color: "primary.dark" }}
-              />
+              <Icon component={HowToReg} sx={{ marginRight: 1, color: "primary.dark" }} />
               <Typography variant="subtitle2" color="text.secondary">
                 Registration Date:{" "}
-                <Typography
-                  component="span"
-                  variant="caption"
-                  color="text.primary"
-                >
+                <Typography component="span" variant="caption" color="text.primary">
                   {!caseinfo?.closedAt
                     ? " - "
                     : Dayjs(caseinfo?.filedAt).format("MMMM D, YYYY")}
                 </Typography>
               </Typography>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Icon
-                component={Badge}
-                sx={{ marginRight: 1, color: "primary.dark" }}
-              />
+              <Icon component={Badge} sx={{ marginRight: 1, color: "primary.dark" }} />
               <Typography variant="subtitle2" color="text.secondary">
-                Employee #:{" "}
-                {!caseinfo?.caseNumber ? " - " : caseinfo?.caseNumber}
+                Employee #: {!caseinfo?.caseNumber ? " - " : caseinfo?.caseNumber}
               </Typography>
             </Box>
           </Box>
@@ -273,7 +228,7 @@ export const CaseDetailHeader = () => {
             }}
           />
 
-          {/* Second Info Box: Job Details */}
+          {/* Second Info Box */}
           <Box
             sx={{
               display: "flex",
@@ -296,6 +251,7 @@ export const CaseDetailHeader = () => {
                 {!caseinfo?.businessUnit?.name ? " - " : caseinfo?.businessUnit.name}
               </Typography>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Icon
                 component={AssignmentInd}
@@ -305,23 +261,17 @@ export const CaseDetailHeader = () => {
                 Job Title : {!caseinfo?.accusedName ? " - " : caseinfo?.accusedName}
               </Typography>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Icon
-                component={Bolt}
-                sx={{ marginRight: 1, color: "primary.dark" }}
-              />
+              <Icon component={Bolt} sx={{ marginRight: 1, color: "primary.dark" }} />
               <Typography variant="subtitle2" color="text.secondary">
                 Marital Status :{" "}
-                {!caseinfo?.accusedName
-                  ? " - "
-                  : caseinfo?.accusedName}
+                {!caseinfo?.accusedName ? " - " : caseinfo?.accusedName}
               </Typography>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Icon
-                component={Wc}
-                sx={{ marginRight: 1, color: "primary.dark" }}
-              />
+              <Icon component={Wc} sx={{ marginRight: 1, color: "primary.dark" }} />
               <Typography variant="subtitle2" color="text.secondary">
                 Gender : {!caseinfo?.accusedName ? " - " : caseinfo?.caseType}
               </Typography>
@@ -338,7 +288,97 @@ export const CaseDetailHeader = () => {
             }}
           />
 
-          {/* Third Box: Submission Criteria */}
+          {/* ✅ Third Box: Submission Criteria */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              pt: 4,
+              p: 2,
+              borderRadius: 2,
+              backgroundColor: "background.paper",
+              transition: "all 0.3s ease",
+              boxShadow: 1,
+              "&:hover": {
+                boxShadow: 4,
+                transform: "translateY(-2px)",
+              },
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              sx={{
+                mb: 1,
+                fontWeight: "bold",
+                color: "primary.dark",
+                borderBottom: "2px solid",
+                borderColor: "primary.light",
+                display: "inline-block",
+                pb: 0.5,
+              }}
+            >
+              መሰረታዊ መረጃ ማያያዣያዎች:
+            </Typography>
+
+            {(
+              [
+                { key: "hasAddressInfo", label: "የፍ/ቤት እና የጉዳይመረጃ" },
+                { key: "hasContactInfo", label: "ቀናት" },
+                { key: "hasEmployeeFamilyInfo", label: "ክፍያ እና ገጾች" },
+                { key: "hasEmergencyContactInfo", label: "ፋይል ማያያዣያዎች" },
+                // { key: "hasLanguageSkillInfo", label: "ዳኛ" },
+              ] as const
+            ).map(({ key, label }) => {
+              type RequiredKeys =
+                | "hasAddressInfo"
+                | "hasContactInfo"
+                | "hasEmployeeFamilyInfo"
+                | "hasEmergencyContactInfo";
+                // | "hasLanguageSkillInfo";
+              const complete = caseinfo?.[key as RequiredKeys];
+              return (
+                <Box
+                  key={key}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 0.6,
+                    p: 0.8,
+                    borderRadius: 1,
+                    transition: "background-color 0.3s ease",
+                    backgroundColor: complete
+                      ? "rgba(76, 175, 80, 0.06)"
+                      : "rgba(244, 67, 54, 0.06)",
+                    "&:hover": {
+                      backgroundColor: complete
+                        ? "rgba(76, 175, 80, 0.15)"
+                        : "rgba(244, 67, 54, 0.15)",
+                    },
+                  }}
+                >
+                  <Icon
+                    component={complete ? CheckCircleOutlineIcon : BlockIcon}
+                    sx={{
+                      mr: 1,
+                      color: complete ? "success.main" : "error.main",
+                      fontSize: 20,
+                    }}
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: complete ? "success.main" : "error.main",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {label}: {complete ? "Complete" : "Missing"}
+                  </Typography>
+                </Box>
+              );
+            })}
+          </Box>
+                    {/* ✅ Third Box: Submission Criteria */}
           <Box
             sx={{
               display: "flex",
@@ -351,47 +391,7 @@ export const CaseDetailHeader = () => {
               backgroundColor: "background.paper",
             }}
           >
-            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold' }}>
-              Submission Requirements:
-            </Typography>
-            <Typography variant="body2" color={caseinfo.hasAddressInfo ? "success.main" : "error.main"}>
-              <Icon component={caseinfo.hasAddressInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Employee Address Info: {caseinfo.hasAddressInfo ? "Complete" : "Missing"}
-            </Typography>
-            <Typography variant="body2" color={caseinfo.hasContactInfo ? "success.main" : "error.main"}>
-              <Icon component={caseinfo.hasContactInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Employee Contact Info: {caseinfo.hasContactInfo ? "Complete" : "Missing"}
-            </Typography>
-            <Typography variant="body2" color={caseinfo.hasEmployeeFamilyInfo ? "success.main" : "error.main"}>
-              <Icon component={caseinfo.hasEmployeeFamilyInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Employee Family: {caseinfo.hasEmployeeFamilyInfo ? "Complete" : "Missing"}
-            </Typography>
-            <Typography variant="body2" color={caseinfo.hasEmergencyContactInfo ? "success.main" : "error.main"}>
-              <Icon component={caseinfo.hasEmergencyContactInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Emergency Contact: {caseinfo.hasEmergencyContactInfo ? "Complete" : "Missing"}
-            </Typography>
-             <Typography variant="body2" color={caseinfo.hasLanguageSkillInfo ? "success.main" : "error.main"}>
-              <Icon component={caseinfo.hasLanguageSkillInfo ? CheckCircleOutlineIcon : BlockIcon} sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-              Language Skill: {caseinfo.hasLanguageSkillInfo ? "Complete" : "Missing"}
-            </Typography>
-
-            {!areRequiredFieldsComplete && caseinfo?.approvalStatus === ApprovalStatus.Draft && (
-                <Typography variant="caption" color="error" sx={{ mt: 1 }}>
-                    Please complete all required information before submitting for approval.
-                </Typography>
-            )}
-          </Box>
-
-          {/* Workflow Action Buttons */}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              mr: 1,
-              flex: 1,
-            }}
-          ></Box>
-
+                      {/* Workflow Buttons */}
           {caseinfo?.id && (
             <Box sx={{ display: "flex" }}>
               <Box
@@ -404,8 +404,8 @@ export const CaseDetailHeader = () => {
                     caseinfo?.approvalStatus === ApprovalStatus.Approved
                       ? "green"
                       : caseinfo?.approvalStatus === ApprovalStatus.Rejected
-                        ? "red"
-                        : "orange", // Adjusted to a common palette color
+                      ? "red"
+                      : "orange",
                   color: "white",
                   fontWeight: "bold",
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
@@ -417,7 +417,7 @@ export const CaseDetailHeader = () => {
                   status={caseinfo?.approvalStatus}
                   size="medium"
                 />
-                <Divider sx={{ padding: "4px" }}></Divider>
+                <Divider sx={{ padding: "4px" }} />
                 {caseinfo?.approvalStatus === ApprovalStatus.Submitted && (
                   <>
                     <Box>
@@ -430,7 +430,7 @@ export const CaseDetailHeader = () => {
                   <Box>
                     <SubmitForApprovalButton
                       id={caseinfo?.id}
-                      isSubmissionAllowed={!!areRequiredFieldsComplete} // Pass the new prop, always boolean
+                      isSubmissionAllowed={!!areRequiredFieldsComplete}
                     />
                   </Box>
                 )}
@@ -438,45 +438,6 @@ export const CaseDetailHeader = () => {
             </Box>
           )}
 
-          {/* Other versions display area (if any) */}
-          <Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                position: "relative",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "end",
-                  }}
-                >
-                  {!!otherVersions?.length && (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 0.5,
-                        alignItems: "center",
-                        mt: 1,
-                      }}
-                    >
-                      {/* You can render other versions here if needed */}
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-            </Box>
           </Box>
         </Box>
       )}

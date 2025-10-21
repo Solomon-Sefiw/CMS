@@ -48,7 +48,7 @@ namespace CMS.Persistance.Configuration
                    .HasForeignKey(x => x.ChilotId)
                    .OnDelete(DeleteBehavior.SetNull);
 
-            builder.HasMany(x => x.Documents)
+            builder.HasMany(x => x.CaseFileDocuments)
                    .WithOne(d => d.Case)
                    .HasForeignKey(d => d.CaseId)
                    .OnDelete(DeleteBehavior.Cascade);

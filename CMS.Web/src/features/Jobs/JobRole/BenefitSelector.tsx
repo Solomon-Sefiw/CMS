@@ -4,6 +4,11 @@ import { useFormikContext } from "formik";
 import { useBenefits } from "./useBenefits";
 import { BenefitRow } from "./BenefitRow";
 
+interface Benefit {
+  id: number;
+  name: string;
+}
+
 interface BenefitSelectorProps {
   selectedBenefitsField: string;
 }
@@ -13,6 +18,10 @@ export const BenefitSelector: React.FC<BenefitSelectorProps> = ({
 }) => {
   const { jobRoleBenefits } = useBenefits();
   const { values } = useFormikContext<any>();
+
+  // Explicitly type the benefits array
+  const typedBenefits = jobRoleBenefits as Benefit[];
+
   return (
     <div>
       <Typography
@@ -33,11 +42,8 @@ export const BenefitSelector: React.FC<BenefitSelectorProps> = ({
         Grant Benefits
       </Typography>
 
-      {jobRoleBenefits
-        .filter(
-          (benefit): benefit is { id: number; name: string } =>
-            typeof benefit.id === "number"
-        )
+      {typedBenefits
+        .filter((benefit) => typeof benefit.id === "number")
         .map((benefit) => (
           <BenefitRow
             key={benefit.id}

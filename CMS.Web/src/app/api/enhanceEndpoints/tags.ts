@@ -7,5 +7,7 @@ export enum Tag {
   Letter = "Letter",
   LetterDto = "LetterDto",
     EmployeeFileDocuments = "EmployeeFileDocuments",
+    CaseFileDocuments = "CaseFileDocuments",
+
 
 }

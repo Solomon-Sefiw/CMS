@@ -32,6 +32,10 @@ export const CaseDetailTabs = () => {
         href: `/case-detail/${caseId}/other`,
       },
       {
+        label: "Judgment",
+        href: `/case-detail/${caseId}/judgment`,
+      },
+      {
         label: "Hearing",
         href: `/case-detail/${caseId}/hearing`,
       },
