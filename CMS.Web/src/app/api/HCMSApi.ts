@@ -9,6 +9,7 @@ export const addTagTypes = [
   "BusinessUnit",
   "Admin",
   "Appointment",
+  "Attendance",
   "AuditEmployeeFileDocument",
   "Awards",
   "Benefit",
@@ -482,6 +483,84 @@ const injectedRtkApi = api
           params: { id: queryArg.id },
         }),
         invalidatesTags: ["Appointment"],
+      }),
+      dailySummary: build.query<DailySummaryApiResponse, DailySummaryApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Attendance/daily-summary`,
+          params: {
+            date: queryArg.date,
+            businessUnitId: queryArg.businessUnitId,
+          },
+        }),
+        providesTags: ["Attendance"],
+      }),
+      registerDevice: build.mutation<
+        RegisterDeviceApiResponse,
+        RegisterDeviceApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Attendance/devices`,
+          method: "POST",
+          body: queryArg.registerDeviceDto,
+        }),
+        invalidatesTags: ["Attendance", "Dashboard"],
+      }),
+      getDevices: build.query<GetDevicesApiResponse, GetDevicesApiArg>({
+        query: () => ({ url: `/api/Attendance/devices` }),
+        providesTags: ["Attendance"],
+      }),
+      updateDevice: build.mutation<UpdateDeviceApiResponse, UpdateDeviceApiArg>(
+        {
+          query: (queryArg) => ({
+            url: `/api/Attendance/devices/${queryArg.id}`,
+            method: "PUT",
+            body: queryArg.updateDeviceDto,
+          }),
+          invalidatesTags: ["Attendance", "Dashboard"],
+        }
+      ),
+      logs: build.query<LogsApiResponse, LogsApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Attendance/logs`,
+          params: {
+            fromUtc: queryArg.fromUtc,
+            toUtc: queryArg.toUtc,
+            employeeId: queryArg.employeeId,
+            pageNumber: queryArg.pageNumber,
+            pageSize: queryArg.pageSize,
+          },
+        }),
+        providesTags: ["Attendance"],
+      }),
+      manual: build.mutation<ManualApiResponse, ManualApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Attendance/manual`,
+          method: "POST",
+          body: queryArg.manualAttendanceDto,
+        }),
+        invalidatesTags: ["Attendance", "Dashboard"],
+      }),
+      monthlySummary: build.query<
+        MonthlySummaryApiResponse,
+        MonthlySummaryApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Attendance/monthly-summary`,
+          params: {
+            year: queryArg.year,
+            month: queryArg.month,
+            employeeId: queryArg.employeeId,
+          },
+        }),
+        providesTags: ["Attendance"],
+      }),
+      push: build.mutation<PushApiResponse, PushApiArg>({
+        query: (queryArg) => ({
+          url: `/api/Attendance/push`,
+          method: "POST",
+          body: queryArg.attendancePushDto,
+        }),
+        invalidatesTags: ["Attendance"],
       }),
       getAuditEmployeeDocumentFileByEmployeeId: build.query<
         GetAuditEmployeeDocumentFileByEmployeeIdApiResponse,
@@ -5045,6 +5124,46 @@ export type UpdateAppointmentApiArg = {
   id?: number;
   updateAppointmentCommand: UpdateAppointmentCommand;
 };
+export type DailySummaryApiResponse =
+  /** status 200 Success */ DailyAttendanceSummaryDtoRead[];
+export type DailySummaryApiArg = {
+  date?: string;
+  businessUnitId?: number;
+};
+export type RegisterDeviceApiResponse = /** status 200 Success */ Device;
+export type RegisterDeviceApiArg = {
+  registerDeviceDto: RegisterDeviceDto;
+};
+export type GetDevicesApiResponse = /** status 200 Success */ Device[];
+export type GetDevicesApiArg = void;
+export type UpdateDeviceApiResponse = unknown;
+export type UpdateDeviceApiArg = {
+  id: number;
+  updateDeviceDto: UpdateDeviceDto;
+};
+export type LogsApiResponse = /** status 200 Success */ AttendanceLogDto[];
+export type LogsApiArg = {
+  fromUtc?: string;
+  toUtc?: string;
+  employeeId?: number;
+  pageNumber?: number;
+  pageSize?: number;
+};
+export type ManualApiResponse = /** status 200 Success */ number;
+export type ManualApiArg = {
+  manualAttendanceDto: ManualAttendanceDto;
+};
+export type MonthlySummaryApiResponse =
+  /** status 200 Success */ DailyAttendanceSummaryDtoRead[];
+export type MonthlySummaryApiArg = {
+  year?: number;
+  month?: number;
+  employeeId?: number;
+};
+export type PushApiResponse = /** status 200 Success */ void;
+export type PushApiArg = {
+  attendancePushDto: AttendancePushDto;
+};
 export type GetAuditEmployeeDocumentFileByEmployeeIdApiResponse =
   /** status 200 Success */ AuditEmployeeFileDocumentDto[];
 export type GetAuditEmployeeDocumentFileByEmployeeIdApiArg = {
@@ -8815,6 +8934,108 @@ export type UpdateAppointmentCommand = {
   status?: string | null;
   notes?: string | null;
 };
+export type TimeOnly = {
+  hour?: number;
+  minute?: number;
+};
+export type TimeOnlyRead = {
+  hour?: number;
+  minute?: number;
+  second?: number;
+  millisecond?: number;
+  microsecond?: number;
+  nanosecond?: number;
+  ticks?: number;
+};
+export type TimeSpan = {
+  ticks?: number;
+};
+export type TimeSpanRead = {
+  ticks?: number;
+  days?: number;
+  hours?: number;
+  milliseconds?: number;
+  microseconds?: number;
+  nanoseconds?: number;
+  minutes?: number;
+  seconds?: number;
+  totalDays?: number;
+  totalHours?: number;
+  totalMilliseconds?: number;
+  totalMicroseconds?: number;
+  totalNanoseconds?: number;
+  totalMinutes?: number;
+  totalSeconds?: number;
+};
+export type DailyAttendanceSummaryDto = {
+  date?: string;
+  employeeId?: number;
+  employeeDisplayName?: string | null;
+  morningIn?: TimeOnly;
+  morningOut?: TimeOnly;
+  afternoonIn?: TimeOnly;
+  afternoonOut?: TimeOnly;
+  totalHours?: TimeSpan;
+  lateMinutes?: TimeSpan;
+  earlyLeaveMinutes?: TimeSpan;
+  isAbsent?: boolean;
+};
+export type DailyAttendanceSummaryDtoRead = {
+  date?: string;
+  employeeId?: number;
+  employeeDisplayName?: string | null;
+  morningIn?: TimeOnlyRead;
+  morningOut?: TimeOnlyRead;
+  afternoonIn?: TimeOnlyRead;
+  afternoonOut?: TimeOnlyRead;
+  totalHours?: TimeSpanRead;
+  lateMinutes?: TimeSpanRead;
+  earlyLeaveMinutes?: TimeSpanRead;
+  isAbsent?: boolean;
+};
+export type Device = {
+  id?: number;
+  serialNumber?: string | null;
+  model?: string | null;
+  ipAddress?: string | null;
+  isActive?: boolean;
+  location?: string | null;
+  registeredAtUtc?: string;
+};
+export type RegisterDeviceDto = {
+  serialNumber?: string | null;
+  model?: string | null;
+  ipAddress?: string | null;
+  location?: string | null;
+};
+export type UpdateDeviceDto = {
+  isActive?: boolean;
+  location?: string | null;
+};
+export type AttendanceLogDto = {
+  id?: number;
+  employeeId?: number;
+  employeeDisplayName?: string | null;
+  deviceSerial?: string | null;
+  timestampUtc?: string;
+  session?: string | null;
+  action?: string | null;
+  isManual?: boolean;
+  notes?: string | null;
+};
+export type ManualAttendanceDto = {
+  employeeId?: number;
+  timestampUtc?: string;
+  deviceSerial?: string | null;
+  notes?: string | null;
+  forceOut?: boolean;
+};
+export type AttendancePushDto = {
+  deviceSerial?: string | null;
+  empCode?: string | null;
+  status?: string | null;
+  timestamp?: string | null;
+};
 export type AuditEmployeeFileDocumentDto = {
   entityName?: string | null;
   actionType?: string | null;
@@ -11954,6 +12175,18 @@ export const {
   useGetAppointmentByIdQuery,
   useLazyGetAppointmentByIdQuery,
   useUpdateAppointmentMutation,
+  useDailySummaryQuery,
+  useLazyDailySummaryQuery,
+  useRegisterDeviceMutation,
+  useGetDevicesQuery,
+  useLazyGetDevicesQuery,
+  useUpdateDeviceMutation,
+  useLogsQuery,
+  useLazyLogsQuery,
+  useManualMutation,
+  useMonthlySummaryQuery,
+  useLazyMonthlySummaryQuery,
+  usePushMutation,
   useGetAuditEmployeeDocumentFileByEmployeeIdQuery,
   useLazyGetAuditEmployeeDocumentFileByEmployeeIdQuery,
   useGetAuditEmployeeFileDocumentLogsQuery,
