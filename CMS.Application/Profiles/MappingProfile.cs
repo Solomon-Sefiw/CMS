@@ -29,7 +29,6 @@ using CMS.Application.Features.Cases.CaseDetail.Payments.Models;
 using CMS.Application.Features.Cases.CaseDetail.Timelines.Commands.CreateCaseTimeline;
 using CMS.Application.Features.Cases.CaseDetail.Timelines.Commands.UpdateCaseTimeline;
 using CMS.Application.Features.Cases.CaseDetail.Timelines.Models;
-using CMS.Application.Features.Commands.CreateLetter;
 using CMS.Application.Features.Educations.Setups.Award.Models;
 using CMS.Application.Features.Educations.Setups.EducationLevel.Models;
 using CMS.Application.Features.Educations.Setups.FieldOfStudy.Models;
@@ -44,8 +43,8 @@ using CMS.Application.Features.Employees.EmployeeActivities.Suspensions.Models;
 using CMS.Application.Features.Employees.Family.Model;
 using CMS.Application.Features.Employees.Queries;
 using CMS.Application.Features.Jobs.JobRoles.Setups.JobRoleCatagory.Models;
+using CMS.Application.Features.Letter.Commands.CreateLetter;
 using CMS.Application.Features.Letter.Commands.UpdateLetter;
-using CMS.Application.Features.Letter.Models;
 using CMS.Application.Models;
 using CMS.Domain;
 using CMS.Domain.Acting;
@@ -82,6 +81,16 @@ namespace CMS.Application.Profiles
             CreateMap<CreateLetterCommand, Letter>().ReverseMap();
             CreateMap<UpdateLetterCommand, Letter>().ReverseMap();
             CreateMap<Letter, LetterDto>().ReverseMap();
+
+            CreateMap<Letter, LetterDto>()
+             .ForMember(dest => dest.RecipientIds, opt => opt.Ignore())
+             .ForMember(dest => dest.CCUserIds, opt => opt.Ignore())
+             .ForMember(dest => dest.CCDepartmentIds, opt => opt.Ignore());
+
+            CreateMap<LetterDto, Letter>()
+                .ForMember(dest => dest.Recipients, opt => opt.Ignore())
+                .ForMember(dest => dest.CCRecipients, opt => opt.Ignore());
+
             CreateMap<CreateEmployeeProfileCommand, Employee>().ReverseMap();
             CreateMap<CreateCaseCommand, Case>().ReverseMap();
             CreateMap<BusinessUnit, BusinessUnitDto>();

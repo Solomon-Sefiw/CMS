@@ -56,9 +56,9 @@ export const LetterHome: React.FC = () => {
       if (letter.sender?.firstName?.toLowerCase().includes(searchTerm)) {
         options.add(letter.sender.firstName);
       }
-      if (letter.recipient?.firstName?.toLowerCase().includes(searchTerm)) {
-        options.add(letter.recipient.firstName);
-      }
+      // if (letter.recipient?.firstName?.toLowerCase().includes(searchTerm)) {
+      //   options.add(letter.recipient.firstName);
+      // }
       if (letter.businessUnits?.name?.toLowerCase().includes(searchTerm)) {
         options.add(letter.businessUnits.name);
       }

@@ -1,8 +1,8 @@
 import { Button } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
-import { useApproveCaseMutation } from "../../../app/api";
 import { WorkflowActionDialog } from "../../../components/workflow/WorkflowActionDialog";
 import { usePermission } from "../../../hooks";
+import { useApproveCaseMutation } from "../../../app/api/HCMSApi";
 
 export const ApproveRequestButton = ({ id }: { id: number }) => {
   const [showDialog, setShowDialog] = useState(false);

@@ -5,6 +5,7 @@ using CMS.API.Configurations;
 using CMS.Application;
 using CMS.Application.CaseFile;
 using CMS.Application.EmployeeFile;
+using CMS.Application.Features.Attendance.Interface;
 using CMS.Common;
 using CMS.Infrastructure;
 using CMS.Persistance.DBContext;
@@ -57,7 +58,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddScoped<IAuditEmployeeFileDocumentService, AuditEmployeeFileDocumentService>();
 builder.Services.AddScoped<IAuditCaseFileDocumentService, AuditCaseFileDocumentService>();
-
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddHttpClient();
 
 builder.Services

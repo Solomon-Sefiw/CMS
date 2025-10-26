@@ -12,6 +12,7 @@ import { useSearchParams } from "react-router-dom";
 import {
   EmployeeRecordVersions,
   useGetCaseInfoQuery,
+  useGetCaseRecordVersionsQuery,
 } from "../../../app/api";
 import {
   AssignmentInd,

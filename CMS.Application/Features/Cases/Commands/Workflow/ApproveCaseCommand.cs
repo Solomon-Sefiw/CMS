@@ -32,11 +32,9 @@ public class ApproveCaseCommandHandler : IRequestHandler<ApproveCaseCommand>
         {
             Case.ApprovalStatus = ApprovalStatus.Approved;
             await dataService.SaveAsync(cancellationToken);
-            //await mediator.Send(new AddCaseCommentCommand(request.Id, CommentType.Approval, request.Note));
+            await mediator.Send(new AddCaseCommentCommand(request.Id, CommentType.Approval, request.Note));
 
         }
     }
-   
-
 
 }

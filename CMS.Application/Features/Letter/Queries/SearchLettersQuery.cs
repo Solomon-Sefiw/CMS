@@ -1,53 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CMS.Application.Features.Letter.Models;
+﻿
 using CMS.Services.DataService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Application.Features.Letter.Queries
 {
-    public record SearchLettersQuery(string userId) : IRequest<List<LetterDto>>;
+    public class SearchLettersQuery : IRequest<List<LetterDto>>
+    {
+        public string UserId { get; }
+        public SearchLettersQuery(string userId) { UserId = userId; }
+    }
 
     public class SearchLettersQueryHandler : IRequestHandler<SearchLettersQuery, List<LetterDto>>
     {
-        private readonly IDataService _dataService;
+        private readonly IDataService dataService;
 
         public SearchLettersQueryHandler(IDataService dataService)
         {
-            _dataService = dataService;
+            this.dataService = dataService;
         }
 
         public async Task<List<LetterDto>> Handle(SearchLettersQuery request, CancellationToken cancellationToken)
         {
-            var letters = await _dataService.Letters
+            var userId = request.UserId;
+
+            var letters = await dataService.Letters
                 .Include(l => l.Sender)
-                .Include(l => l.Recipient)
                 .Include(l => l.BusinessUnits)
-                .Include(l => l.LetterDocuments)
-                .Where(l =>  l.SenderId == request.userId || l.RecipientId == request.userId)
+                .Include(l => l.LetterDocument)
+                .Where(l =>
+                    l.SenderId == userId ||
+                    dataService.LetterRecipients.Any(r => r.LetterId == l.Id && r.RecipientId == userId) ||
+                    dataService.LetterCCs.Any(c => c.LetterId == l.Id && c.CCUserId == userId)
+                )
                 .ToListAsync(cancellationToken);
 
-            return letters.Select(l => new LetterDto
+            var result = letters.Select(l =>
             {
-                Id = l.Id,
-                ReferenceNumber = l.ReferenceNumber,
-                Subject = l.Subject,
-                Content = l.Content,
-                LetterType = l.LetterType,
-                Status = l.Status,
-                ReceivedDate = l.ReceivedDate,
-                SentDate = l.SentDate,
-                SenderId = l.SenderId,
-                Sender = l.Sender,
-                RecipientId = l.RecipientId,
-                Recipient = l.Recipient,
-                BusinessUnitId = l.BusinessUnitId,
-                BusinessUnits = l.BusinessUnits
+                return new LetterDto
+                {
+                    Id = l.Id,
+                    ReferenceNumber = l.ReferenceNumber,
+                    Subject = l.Subject,
+                    Content = l.Content,
+                    LetterType = l.LetterType,
+                    Status = l.Status,
+                    ReceivedDate = l.ReceivedDate,
+                    SentDate = l.SentDate,
+                    SenderId = l.SenderId,
+                    Sender = l.Sender,
+                    BusinessUnitId = l.BusinessUnitId,
+                    BusinessUnits = l.BusinessUnits,
+                    LetterDocument = l.LetterDocument,
+                    RecipientIds = dataService.LetterRecipients.Where(r => r.LetterId == l.Id).Select(r => r.RecipientId).ToList(),
+                    CCUserIds = dataService.LetterCCs.Where(c => c.LetterId == l.Id && c.CCUserId != null).Select(c => c.CCUserId).ToList(),
+                    CCDepartmentIds = dataService.LetterCCs.Where(c => c.LetterId == l.Id && c.CCDepartmentId != null).Select(c => c.CCDepartmentId!.Value).ToList()
+                };
             }).ToList();
+
+            return result;
         }
     }
 }

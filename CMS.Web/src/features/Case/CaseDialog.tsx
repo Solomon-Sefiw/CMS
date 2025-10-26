@@ -1,10 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
 import {
-  DialogHeader,
-  FormSelectField,
-  FormTextField,
-} from "../../components";
-import {
   Box,
   Button,
   Dialog,
@@ -23,6 +18,7 @@ import {
   useUsersQuery,
   useUploadCaseFileDocumentMutation,
   useGetCaseFileDocumentByCaseIdQuery,
+  useUpdateCaseFileDocumentMutation,
 } from "../../app/api";
 import { removeEmptyFields } from "../../utils";
 import * as Yup from "yup";
@@ -34,6 +30,13 @@ import { useAuth } from "../../hooks";
 import { useBusinessUnit } from "../BusinessUnit";
 import { useChilot } from "./useChilots";
 import { useNavigateToCaseDetailPage } from "./useNavigateToCaseDetailPage";
+import {
+  DialogHeader,
+  FormSelectField,
+  FormTextField,
+  DocumentUpload,
+} from "../../components";
+import { DocumentUploadCustom } from "../../components/DocumentUploadCustom";
 
 const emptyCaseData: CreateCaseCommand = {
   caseNumber: "",
@@ -66,28 +69,29 @@ export const CaseDialog = ({
   const { navigateToDetailPage } = useNavigateToCaseDetailPage();
   const { showSuccessAlert, showErrorAlert } = useAlert();
 
-  const [formData, setFormData] = useState<CreateCaseCommand>();
+  const [formData, setFormData] = useState<CreateCaseCommand>(emptyCaseData);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadPreview, setUploadPreview] = useState<{ id: string; name: string } | null>(null);
-
-  // 🔹 For preview dialog
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewName, setPreviewName] = useState<string>("");
 
   const [addCase] = useCreateCaseMutation();
   const [updateCase] = useUpdateCaseMutation();
   const [uploadCaseFile] = useUploadCaseFileDocumentMutation();
+  const [updateCaseFile] = useUpdateCaseFileDocumentMutation();
 
   const { data: existingFiles, refetch: refetchFiles } = useGetCaseFileDocumentByCaseIdQuery(
     { caseId: caseData?.id ?? 0 },
     { skip: !caseData?.id }
-  ) as any;
+  );
 
   useEffect(() => {
     setFormData({ ...emptyCaseData, ...caseData });
     if (existingFiles?.length) {
-      setUploadPreview({ id: existingFiles[0].id, name: existingFiles[0].fileName });
+      setUploadPreview({ id: existingFiles[0].id ?? "", name: existingFiles[0].fileName ?? "" });
+    } else {
+      setUploadPreview(null);
     }
   }, [caseData, existingFiles]);
 
@@ -109,7 +113,6 @@ export const CaseDialog = ({
     businessUnitId: Yup.number().min(1, "Business Unit is required."),
   });
 
-  // ✅ File upload
   const handleFileUpload = async (caseId: number, file: File) => {
     if (!file) return;
     setIsUploading(true);
@@ -120,18 +123,25 @@ export const CaseDialog = ({
       form.append("file", file);
       form.append("remark", "Case Attachment");
 
-      await uploadCaseFile(form as any).unwrap();
-      showSuccessAlert("Attachment uploaded successfully.");
+      if (existingFiles?.length && existingFiles[0].id) {
+        form.append("id", existingFiles[0].id);
+        await updateCaseFile(form as any).unwrap();
+        showSuccessAlert("Attachment updated successfully.");
+      } else {
+        await uploadCaseFile(form as any).unwrap();
+        showSuccessAlert("Attachment uploaded successfully.");
+      }
+
       await refetchFiles();
       setSelectedFile(null);
+      setUploadPreview(null);
     } catch (err: any) {
-      showErrorAlert(err?.data?.message || "Attachment upload failed");
+      showErrorAlert(err?.data?.message || "Attachment upload/update failed");
     } finally {
       setIsUploading(false);
     }
   };
 
-  // ✅ File preview (proper PDF/image preview)
   const handleViewFile = async () => {
     if (!uploadPreview?.id || !caseData?.id) return;
     try {
@@ -145,15 +155,10 @@ export const CaseDialog = ({
       const fileType = blob.type || "application/octet-stream";
       const url = URL.createObjectURL(blob);
 
-      // Open correct viewer
-      if (fileType.includes("pdf")) {
-        setPreviewUrl(url);
-        setPreviewName(uploadPreview.name);
-      } else if (fileType.startsWith("image/")) {
+      if (fileType.includes("pdf") || fileType.startsWith("image/")) {
         setPreviewUrl(url);
         setPreviewName(uploadPreview.name);
       } else {
-        // Download instead of showing screenshot
         const a = document.createElement("a");
         a.href = url;
         a.download = uploadPreview.name;
@@ -161,7 +166,6 @@ export const CaseDialog = ({
         URL.revokeObjectURL(url);
       }
     } catch (err) {
-      console.error(err);
       showErrorAlert("Failed to load document preview.");
     }
   };
@@ -256,21 +260,23 @@ export const CaseDialog = ({
                     </Box>
                   </Grid>
 
-                  {/* --- File Upload --- */}
                   <Grid item xs={12}>
                     <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                      <input
-                        type="file"
-                        onChange={(e) => {
-                          if (e.target.files?.[0]) setSelectedFile(e.target.files[0]);
-                        }}
+                      <DocumentUploadCustom
+                        label={existingFiles?.length ? "Update Attachment" : "Upload Attachment"}
+                        onAdd={(files) => setSelectedFile(files ? files[0] : null)}
+                        accepts={["PDF", "Image"]}
+                        disabled={isUploading}
+                        showIcon
+                        size="small"
                       />
                       {uploadPreview && (
                         <Button
                           variant="outlined"
                           startIcon={<VisibilityIcon />}
                           onClick={handleViewFile}
-                          disabled={isUploading}
+                          disabled={isUploading || !uploadPreview.id}
+                          size="small"
                         >
                           View
                         </Button>
@@ -287,7 +293,6 @@ export const CaseDialog = ({
                 </Button>
               </DialogActions>
 
-              {/* 🔹 Preview Modal */}
               <Dialog open={!!previewUrl} onClose={handleClosePreview} maxWidth="md" fullWidth>
                 <DialogTitle>Preview: {previewName}</DialogTitle>
                 <DialogContent>

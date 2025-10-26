@@ -23,7 +23,7 @@ using CMS.Domain.Hearings;
 using CMS.Domain.Jobs;
 using CMS.Domain.Judgments;
 using CMS.Domain.Language;
-using CMS.Domain.LetterDocument;
+using CMS.Domain.LetterDocuments;
 using CMS.Domain.letters;
 using CMS.Domain.Notifications;
 using CMS.Domain.Payments;
@@ -94,8 +94,11 @@ namespace CMS.Persistance.DBContext
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<HRRole> Roles { get; set; }
         public DbSet<Letter> Letters { get; set; }
+        public DbSet<LetterRecipient> LetterRecipients { get; set; }
+        public DbSet<LetterCC> LetterCCs { get; set; }
         public DbSet<LetterDocument> LetterDocuments { get; set; }
-
+        public DbSet<CMS.Domain.Attendance.AttendanceLog> AttendanceLogs { get; set; }
+        public DbSet<CMS.Domain.Attendance.Device> Devices { get; set; }
         /// <summary>
         /// Second
         /// </summary>

@@ -1,62 +1,59 @@
-// ✅ Production-Ready Cleaned LetterDialog (No Judge Signature Upload)
-
+// src/features/Letter/LetterDialog.tsx
+import React, { useState, useCallback, useEffect } from "react";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   Grid,
-  Alert,
-  Typography,
-  Divider,
-  Box,
+  CircularProgress,
+  Chip,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
-import { Formik, Form, FormikHelpers } from "formik";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Formik, Form } from "formik";
 import {
   DialogHeader,
-  DocumentUpload,
   FormSelectField,
   FormTextField,
 } from "../../components";
-import { DocumentType, LetterType, LetterStatus } from "../../app/api/enums";
-import { useCallback, useEffect, useState } from "react";
-import { Errors } from "../../components";
+import { LetterType, LetterStatus } from "../../app/api/enums";
 import { useAlert } from "../notification";
 import * as Yup from "yup";
 import {
-  LetterDocument,
   LetterDto,
-  useAddLetterDocumentMutation,
   useCreateLetterMutation,
   useUpdateLetterMutation,
   useUsersQuery,
+  useUploadLetterDocumentMutation,
+  useGetLetterDocumentQuery,
+  useUpdateLetterDocumentMutation,
 } from "../../app/api";
 import { useAuth } from "../../hooks";
 import { useBusinessUnit } from "../BusinessUnit";
-
 import htmlDocx from "html-docx-js/dist/html-docx";
 import { saveAs } from "file-saver";
 import { FormRichLetterTextField } from "../../components/form-controls/form-letter";
-import { DocumentDownload } from "../../components/DocumentDownload";
+import UploadIcon from "@mui/icons-material/Upload";
+import { DocumentUploadCustom } from "../../components/DocumentUploadCustom";
+import { LetterAttachmentPreviewModal } from "./LetterAttachmentPreviewModal";
 
-interface LetterTypeOption {
-  value: number;
+interface SelectOption {
   label: string;
+  value: string | number;
 }
 
-const useLetterTypesLookups = (): {
-  letterTypeLookups: LetterTypeOption[];
-  isLoading: boolean;
-} => {
-  return {
-    letterTypeLookups: [
-      { value: LetterType.Incoming, label: "Incoming" },
-      { value: LetterType.Outgoing, label: "Outgoing" },
-      { value: LetterType.InternalMemo, label: "Internal Memo" },
-    ],
-    isLoading: false,
-  };
-};
+const useLetterTypesLookups = (): { letterTypeLookups: SelectOption[]; isLoading: boolean } => ({
+  letterTypeLookups: [
+    { value: LetterType.Incoming, label: "Incoming" },
+    { value: LetterType.Outgoing, label: "Outgoing" },
+    { value: LetterType.InternalMemo, label: "Internal Memo" },
+  ],
+  isLoading: false,
+});
 
 interface LetterDialogProps {
   initialLetter?: LetterDto;
@@ -72,146 +69,272 @@ const emptyLetterData: LetterDto = {
   letterType: undefined,
   status: LetterStatus.pending,
   senderId: undefined,
-  recipientId: undefined,
+  recipientIds: [],
+  ccUserIds: [],
+  ccDepartmentIds: [],
   businessUnitId: undefined,
-  letterDocuments: [],
+  letterDocument: undefined,
 };
 
 export const LetterDialog = ({ onClose, initialLetter, title }: LetterDialogProps) => {
   const { user } = useAuth();
-  const [letterData, setLetterData] = useState<LetterDto>(emptyLetterData);
-  const [createLetter, { error: createLetterError, isLoading: isCreating }] = useCreateLetterMutation();
-  const [updateLetter, { error: updateLetterError, isLoading: isUpdating }] = useUpdateLetterMutation();
-  const [addLetterDocument] = useAddLetterDocumentMutation();
-  const { showSuccessAlert, showErrorAlert } = useAlert();
-  const [notification, setNotification] = useState<string>("");
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [isLocked, setIsLocked] = useState(false);
-  const [selectedLetterAttachment, setSelectedLetterAttachment] = useState<File | null>(null);
+  const [formData, setFormData] = useState<LetterDto>(emptyLetterData);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadPreview, setUploadPreview] = useState<{ id: string; name: string } | null>(null);
 
-  const { letterTypeLookups, isLoading: areLetterTypesLoading } = useLetterTypesLookups();
-  const { data: users, isLoading: areUsersLoading } = useUsersQuery();
+  const [createLetter] = useCreateLetterMutation();
+  const [updateLetter] = useUpdateLetterMutation();
+  const [uploadLetterDocument] = useUploadLetterDocumentMutation();
+  const [updateLetterDocument] = useUpdateLetterDocumentMutation();
+
+  const { showSuccessAlert, showErrorAlert } = useAlert();
+  const { letterTypeLookups } = useLetterTypesLookups();
+  const { data: users } = useUsersQuery();
   const { businessUnitLookups } = useBusinessUnit();
-  const areLookupsLoading = areLetterTypesLoading || areUsersLoading;
+
+  const { data: existingFile, refetch: refetchFiles } = useGetLetterDocumentQuery(
+    { letterId: initialLetter?.id ?? 0 },
+    { skip: !initialLetter?.id }
+  );
 
   useEffect(() => {
-    setLetterData({
-      ...emptyLetterData,
-      ...initialLetter,
-      receivedDate: initialLetter?.receivedDate ? new Date(initialLetter.receivedDate).toISOString().split("T")[0] : "",
-      sentDate: initialLetter?.sentDate ? new Date(initialLetter.sentDate).toISOString().split("T")[0] : "",
-    });
-    setIsLocked(false);
-    setOpenSnackbar(false);
-    setNotification(initialLetter?.id ? "This letter is being viewed/edited." : "");
-    setSelectedLetterAttachment(null);
-  }, [initialLetter]);
+    setFormData({ ...emptyLetterData, ...initialLetter });
+    if (existingFile) {
+      setFormData((prev) => ({ ...prev, letterDocument: existingFile }));
+      setUploadPreview({ id: (existingFile as any).id ?? "", name: (existingFile as any).fileName ?? "" });
+    } else {
+      setUploadPreview(null);
+    }
+  }, [initialLetter, existingFile]);
+
+  const recipientOptions = (users || [])
+    .filter((u) => u.id !== user?.id)
+    .map((u) => ({
+      label: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown",
+      value: u.id!,
+    }));
 
   const validationSchema = Yup.object({
-    referenceNumber: Yup.string().required("Reference Number is required.").max(50),
-    subject: Yup.string().required("Subject is required.").max(200),
+    referenceNumber: Yup.string().required("Reference Number is required."),
+    subject: Yup.string().required("Subject is required."),
     content: Yup.string().required("Content is required."),
-    recipientId: Yup.string().nullable().when("businessUnitId", {
-      is: (val : number) => val && val > 0,
-      then: (schema) => schema.required("Recipient is required when a Business Unit is selected."),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-    businessUnitId: Yup.number().required("Business Unit is required.").nullable().min(1),
+    businessUnitId: Yup.number().min(1, "Business Unit is required."),
   });
 
-  const handleAddLetterAttachment = useCallback((files: File[]) => {
-    setSelectedLetterAttachment(files?.[0] || null);
-  }, []);
-
-  const handleSubmit = useCallback(async (values: LetterDto, { setSubmitting, resetForm }: FormikHelpers<LetterDto>) => {
-    const submitValues = { ...values, senderId: user?.id };
+  const handleFileUpload = async (letterId: number, file: File) => {
+    if (!file) return;
+    setIsUploading(true);
     try {
-      let actualLetterId: number | undefined;
-      if (initialLetter?.id) {
-        await updateLetter({ updateLetterCommand: submitValues }).unwrap();
-        actualLetterId = initialLetter.id;
+      const form = new FormData();
+      form.append("letterId", letterId.toString());
+      form.append("file", file);
+      form.append("remark", "Letter Attachment");
+
+      const existingFileId = (existingFile as any)?.id;
+      if (existingFileId) {
+        form.append("documentId", existingFileId.toString());
+        await updateLetterDocument(form as any).unwrap();
+        showSuccessAlert("Attachment updated successfully.");
       } else {
-        const created = await createLetter({ createLetterCommand: submitValues }).unwrap();
-        actualLetterId = typeof created === "number" ? created : (created as LetterDto)?.id;
-        if (!actualLetterId) throw new Error("Failed to retrieve ID for new letter.");
+        await uploadLetterDocument(form as any).unwrap();
+        showSuccessAlert("Attachment uploaded successfully.");
       }
-
-      if (selectedLetterAttachment && actualLetterId) {
-        const uploaded = await addLetterDocument({
-          id: actualLetterId,
-          documentType: DocumentType.LetterDocument,
-          body: { file: selectedLetterAttachment },
-        }).unwrap();
-        setLetterData((prev) => ({
-          ...prev,
-          letterDocuments: [...(prev.letterDocuments || []), uploaded as LetterDocument].filter((d) => !d.isDeleted),
-        }));
-      }
-
-      showSuccessAlert(initialLetter?.id ? "Letter updated successfully!" : "Letter created successfully!");
-      resetForm();
-      onClose();
+      await refetchFiles();
+      setSelectedFile(null);
+      setUploadPreview(null);
     } catch (err: any) {
-      console.log(err?.data?.detail)
+      showErrorAlert(err?.data?.message || "Attachment upload failed");
     } finally {
-      setSubmitting(false);
+      setIsUploading(false);
     }
-  }, [createLetter, updateLetter, addLetterDocument, initialLetter?.id, selectedLetterAttachment, showSuccessAlert, showErrorAlert, user?.id, onClose]);
-
-  const handleDownloadDocx = () => {
-    if (!letterData.content) return;
-    const contentHtml = `<html><head><meta charset='utf-8'></head><body>${letterData.content}</body></html>`;
-    const converted = htmlDocx.asBlob(contentHtml);
-    saveAs(converted, "letter.docx");
   };
 
-  const errors = (createLetterError as any)?.data?.errors || (updateLetterError as any)?.data?.errors;
-  const isSaving = isCreating || isUpdating;
-  const activeAttachments = (letterData.letterDocuments || []).filter((d) => d.documentType === DocumentType.LetterDocument && !d.isDeleted);
+  const handleSubmit = useCallback(
+    async (values: LetterDto) => {
+      values.senderId = user?.id || "";
+      try {
+        let letterId: number;
+
+        if (initialLetter?.id) {
+          await updateLetter({ id: initialLetter.id, updateLetterCommand: values }).unwrap();
+          letterId = initialLetter.id;
+          showSuccessAlert("Letter updated successfully!");
+        } else {
+          const result = await createLetter({ createLetterCommand: values }).unwrap();
+          letterId = typeof result === "number" ? result : result;
+          showSuccessAlert("Letter created successfully!");
+        }
+
+        if (selectedFile && letterId) {
+          await handleFileUpload(letterId, selectedFile);
+        }
+
+        onClose();
+      } catch (err: any) {
+        showErrorAlert(err?.data?.detail || "Error saving letter");
+      }
+    },
+    [createLetter, updateLetter, initialLetter, selectedFile, user, onClose, showErrorAlert, showSuccessAlert]
+  );
+
+  const handleDownloadDocx = () => {
+    if (!formData.content) return;
+    const html = `<html><body>${formData.content}</body></html>`;
+    const blob = htmlDocx.asBlob(html);
+    saveAs(blob, "letter.docx");
+  };
 
   return (
-    <Dialog scroll="paper" disableEscapeKeyDown open maxWidth="md" fullWidth onClose={onClose}>
-      {openSnackbar && notification && <Alert severity="warning" onClose={() => setOpenSnackbar(false)}>{notification}</Alert>}
-      {areLookupsLoading ? (
-        <DialogContent><Typography>Loading form data...</Typography></DialogContent>
-      ) : (
-        <>
-          <DialogHeader title={title} onClose={onClose} />
-          <Formik initialValues={letterData} enableReinitialize onSubmit={handleSubmit} validationSchema={validationSchema}>
-            {({ handleSubmit, isSubmitting, values, setFieldValue }) => {
-              const recipientOptions = (users || []).filter((u) => values.businessUnitId && u.branchId === values.businessUnitId && u.id !== user?.id).map((u) => ({
-                label: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown User",
-                value: u.id || "",
-              }));
-              return (
-                <Form onSubmit={handleSubmit}>
-                  <DialogContent dividers>
-                    <Grid container spacing={3}>
-                      {errors && <Grid item xs={12}><Errors errors={errors} /></Grid>}
-                      <Grid item xs={12} sm={6}><FormTextField name="referenceNumber" label="Reference Number" fullWidth disabled={isLocked} /></Grid>
-                      <Grid item xs={12} sm={6}><FormSelectField name="letterType" label="Letter Type" options={letterTypeLookups} fullWidth disabled={isLocked} /></Grid>
-                      <Grid item xs={12}><FormTextField name="subject" label="Subject" fullWidth disabled={isLocked} /></Grid>
-                      <Grid item xs={12} sm={6}><FormSelectField name="businessUnitId" label="Business Unit" options={businessUnitLookups} fullWidth disabled={isLocked} onChange={(e) => {
-                        setFieldValue("businessUnitId", e.target.value);
-                        setFieldValue("recipientId", undefined);
-                      }} /></Grid>
-                      {values.businessUnitId && <Grid item xs={12} sm={6}><FormSelectField name="recipientId" label="Recipient" options={recipientOptions} fullWidth disabled={isLocked || recipientOptions.length === 0} /></Grid>}
-                      <Grid item xs={12}><Box display="flex" alignItems="center" gap={2}><Typography variant="subtitle2">Letter Attachment</Typography><Box>{selectedLetterAttachment ? (<Typography variant="body2">Selected: {selectedLetterAttachment.name}</Typography>) : activeAttachments.map((d) => (<DocumentDownload key={d.id} documentId={d.documentId!} label={d.fileName || "Download"} />))}</Box><DocumentUpload onAdd={handleAddLetterAttachment} label={selectedLetterAttachment ? "Change Attachment" : "Upload Attachment"} /></Box><Divider sx={{ mt: 2 }} /></Grid>
+    <Dialog open maxWidth="md" fullWidth scroll="paper" disableEscapeKeyDown>
+      <Formik
+        initialValues={formData}
+        enableReinitialize
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+      >
+        {({ values, setFieldValue }) => {
+          const recipientOptionsFiltered = (users || [])
+            .filter((u) => u.branchId === values.businessUnitId && u.id !== user?.id)
+            .map((u) => ({ label: `${u.firstName} ${u.lastName}`, value: u.id! }));
 
-                      <Grid item xs={12}><FormRichLetterTextField name="content" /></Grid>
+          const ccOptions = (users || []).map((u) => ({
+            label: `${u.firstName} ${u.lastName}`,
+            value: u.id!,
+          }));
+
+          const deptOptions = (businessUnitLookups || []).map((bu) => ({
+            label: bu.label,
+            value: Number(bu.value),
+          }));
+
+          return (
+            <Form>
+              <DialogHeader title={title} onClose={onClose} />
+              <DialogContent dividers>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <FormTextField name="referenceNumber" label="Reference Number" />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormSelectField name="letterType" label="Letter Type" options={letterTypeLookups} />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <FormTextField name="subject" label="Subject" />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <FormSelectField
+                      name="businessUnitId"
+                      label="Business Unit"
+                      options={businessUnitLookups ?? []}
+                      onChange={(e) => {
+                        setFieldValue("businessUnitId", e.target.value);
+                        setFieldValue("recipientIds", []);
+                      }}
+                    />
+                  </Grid>
+
+                  {values.businessUnitId && (
+                    <Grid item xs={12} sm={6}>
+                      <Autocomplete
+                        multiple
+                        options={recipientOptions}
+                        getOptionLabel={(option: SelectOption) => option.label}
+                        value={recipientOptions.filter((r: SelectOption) =>
+                          values.recipientIds?.includes(r.value as string)
+                        )}
+                        onChange={(_, newValue) =>
+                          setFieldValue(
+                            "recipientIds",
+                            newValue.map((v) => v.value)
+                          )
+                        }
+                        renderTags={(tagValue, getTagProps) =>
+                          tagValue.map((option, index) => (
+                            <Chip
+                              {...getTagProps({ index })}
+                              key={option.value.toString()}
+                              label={option.label}
+                            />
+                          ))
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Recipients"
+                            placeholder="Select recipients"
+                          />
+                        )}
+                        disabled={recipientOptions.length === 0}
+                      />
                     </Grid>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={onClose} variant="outlined" disabled={isSaving || isSubmitting}>Cancel</Button>
-                    <Button onClick={handleDownloadDocx} variant="contained" color="secondary" disabled={!letterData.content || values.senderId != (user?.id ?? "")}>Download DOCX</Button>
-                    <Button type="submit" variant="contained" disabled={isSaving || isSubmitting || isLocked}>{isSaving || isSubmitting ? "Saving..." : "Save"}</Button>
-                  </DialogActions>
-                </Form>
-              );
-            }}
-          </Formik>
-        </>
-      )}
+                  )}
+
+                  <Grid item xs={12} sm={6}>
+                    <Autocomplete
+                      multiple
+                      options={ccOptions}
+                      getOptionLabel={(o) => o.label}
+                      value={ccOptions.filter((r) => values.ccUserIds?.includes(r.value as string))}
+                      onChange={(_, v) => setFieldValue("ccUserIds", v.map((x) => x.value))}
+                      renderInput={(params) => <TextField {...params} label="CC Users" />}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <Autocomplete
+                      multiple
+                      options={deptOptions}
+                      getOptionLabel={(o) => o.label}
+                      value={deptOptions.filter((r) => values.ccDepartmentIds?.includes(r.value as number))}
+                      onChange={(_, v) => setFieldValue("ccDepartmentIds", v.map((x) => x.value))}
+                      renderInput={(params) => <TextField {...params} label="CC Departments" />}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                      <DocumentUploadCustom
+                        label={existingFile ? "Change Attachment" : "Upload Attachment"}
+                        onAdd={(files) => setSelectedFile(files ? files[0] : null)}
+                        accepts={["PDF", "Image"]}
+                        showIcon
+                        startIcon={<UploadIcon />}
+                        size="small"
+                        disabled={isUploading}
+                      />
+                      {uploadPreview && (
+                        <LetterAttachmentPreviewModal
+                          documentId={uploadPreview.id}
+                          fileName={uploadPreview.name}
+                          onView={() => {}}
+                        />
+                      )}
+                      {isUploading && <CircularProgress size={24} />}
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <FormRichLetterTextField name="content" />
+                  </Grid>
+                </Grid>
+              </DialogContent>
+
+              <DialogActions>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={handleDownloadDocx} color="secondary" variant="outlined">
+                  Download DOCX
+                </Button>
+                <Button type="submit" variant="contained">
+                  Save
+                </Button>
+              </DialogActions>
+            </Form>
+          );
+        }}
+      </Formik>
     </Dialog>
   );
 };

@@ -1,6 +1,6 @@
+// src/components/RespondedLetters.tsx
 import {
   Box,
-  Button,
   Paper,
   Table,
   TableBody,
@@ -10,14 +10,18 @@ import {
   TableRow,
   Typography,
   Alert,
+  Chip,
+  Stack,
+  Button,
+  IconButton,
   Tooltip,
+  Collapse,
 } from "@mui/material";
-import { Fragment, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
 import { LetterStatus } from "../../../app/api/enums";
-import { ApproveOrRejectRequestButton } from "../ApproveOrRejectRequestButton";
 import { Pagination } from "../../../components/Pagination";
-import { LetterDialog } from "../LetterDialog";
+import { LetterDetailDialog } from "../LetterDetailDialog";
 import { useAuth, usePermission } from "../../../hooks";
 import {
   LetterDto,
@@ -25,215 +29,341 @@ import {
   useGetLettersForPaginationQuery,
 } from "../../../app/store";
 import { LetterApprovalButton } from "../LetterApprovalButton";
-import { DocumentType } from "../../../app/api/enums";
-import { DocumentDownload } from "../../../components/DocumentDownload";
-import { LetterDetailDialog } from "../LetterDetailDialog";
+import { ApproveOrRejectRequestButton } from "../ApproveOrRejectRequestButton";
+import { LetterAttachmentPreviewModal } from "../LetterAttachmentPreviewModal";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+
 interface PaginationState {
   pageNumber: number;
-  pageSize?: number;
+  pageSize: number;
 }
 
+/* Helper: extract valid main document */
+const getMainLetterDocument = (letter: LetterDto) => {
+  return letter.letterDocument ? letter.letterDocument : null;
+};
+
 export const RespondedLetters = () => {
+  const { user } = useAuth();
   const permissions = usePermission();
-   const { user } = useAuth();
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageNumber: 0,
     pageSize: 10,
   });
   const [selectedLetter, setSelectedLetter] = useState<LetterDto>();
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const { searchQuery } = useOutletContext<{ searchQuery: string }>();
 
   const { data: statusCounts, isLoading: isCountsLoading } =
-    useGetLetterCountPerStatusQuery({userId: user?.id || ''});
+    useGetLetterCountPerStatusQuery({ userId: user?.id ?? "" });
 
-  const {
-    data: lettersData,
-    isLoading: isListLoading,
-    refetch: refetchLetters,
-  } = useGetLettersForPaginationQuery({
-    pageNumber: paginationState.pageNumber + 1,
-    pageSize: paginationState.pageSize,
-    status: LetterStatus.responded,
-    userId: user?.id || ''
-  });
+  const { data: lettersData, isLoading: isLettersLoading, refetch } =
+    useGetLettersForPaginationQuery({
+      pageNumber: paginationState.pageNumber + 1,
+      pageSize: paginationState.pageSize,
+      status: LetterStatus.responded,
+      userId: user?.id ?? "",
+    });
 
-  const isDataLoading = isCountsLoading || isListLoading;
-  const respondedLetters = lettersData?.items || [];
+  const isLoading = isCountsLoading || isLettersLoading;
+  const letters = lettersData?.items ?? [];
 
-  const filteredRespondedLetters = searchQuery
-    ? respondedLetters.filter(
-        (letter) =>
-          letter.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          letter.referenceNumber
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          letter.sender?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          letter.recipient?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          letter.businessUnits?.name
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase())
-      )
-    : respondedLetters;
+  /* Search filter */
+  const filteredLetters = searchQuery
+    ? letters.filter((letter) => {
+        const q = searchQuery.toLowerCase();
+        return (
+          letter.subject?.toLowerCase().includes(q) ||
+          letter.referenceNumber?.toLowerCase().includes(q) ||
+          `${letter.sender?.firstName} ${letter.sender?.lastName}`
+            .toLowerCase()
+            .includes(q) ||
+          letter.recipients?.some((r) =>
+            `${r.recipient?.firstName} ${r.recipient?.lastName}`
+              .toLowerCase()
+              .includes(q)
+          ) ||
+          letter.ccUsers?.some((c) =>
+            `${c.ccUser?.firstName} ${c.ccUser?.lastName}`
+              .toLowerCase()
+              .includes(q)
+          ) ||
+          letter.ccDepartments?.some((c) =>
+            c.ccDepartment?.name?.toLowerCase().includes(q)
+          ) ||
+          letter.businessUnits?.name?.toLowerCase().includes(q)
+        );
+      })
+    : letters;
 
-  const showNoMatchingResultsAlert =
-    searchQuery && filteredRespondedLetters.length === 0 && !isDataLoading;
+  const showNoResults = searchQuery && filteredLetters.length === 0 && !isLoading;
 
   const handlePaginationChange = useCallback(
-    (newPaginationState: PaginationState) => {
-      setPaginationState(newPaginationState);
-    },
+    (newState: PaginationState) => setPaginationState(newState),
     []
   );
 
+  // Toggle the expanded state of a letter's recipients/CC
+  const handleToggleExpand = (letterId: string) => {
+    setExpandedRows((prev) => {
+      const newExpandedRows = new Set(prev);
+      if (newExpandedRows.has(letterId)) {
+        newExpandedRows.delete(letterId);
+      } else {
+        newExpandedRows.add(letterId);
+      }
+      return newExpandedRows;
+    });
+  };
+
+  console.log(lettersData?.items, "RespondedLetters render");
+
+  /* UI Render */
   return (
     <Box>
-      {isDataLoading ? (
-        <Typography sx={{ textAlign: "center", mt: 4 }}>Loading letters...</Typography>
+      {isLoading ? (
+        <Typography align="center" sx={{ mt: 4 }}>
+          Loading letters...
+        </Typography>
       ) : (
         <>
-          {showNoMatchingResultsAlert && (
+          {showNoResults && (
             <Alert severity="info" sx={{ m: 2 }}>
               No matching letters found
             </Alert>
           )}
 
-          {filteredRespondedLetters.length > 0 ? (
+          {filteredLetters.length > 0 ? (
             <Paper>
               <TableContainer>
-                <Table size="medium">
+                <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: "bold" }}>Reference No.</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Subject</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Sender</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Recipient</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Business Unit</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Sent Date</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Document</TableCell>
-                      {/* New Document column */}
-                      <TableCell align="center">Actions</TableCell>
+                      <TableCell><b>Reference No.</b></TableCell>
+                      <TableCell><b>Subject</b></TableCell>
+                      <TableCell><b>Sender</b></TableCell>
+                      <TableCell><b>Recipients</b></TableCell>
+                      <TableCell><b>CC</b></TableCell>
+                      <TableCell><b>Business Unit</b></TableCell>
+                      <TableCell><b>Sent Date</b></TableCell>
+                      <TableCell><b>Document</b></TableCell>
+                      <TableCell align="center"><b>Actions</b></TableCell>
+                      <TableCell /> {/* Expand icon column */}
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    {filteredRespondedLetters.map((item: LetterDto) => (
-                      <Fragment key={item.id}>
-                        <TableRow hover={false} key={item.id}>
-                          <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                            {item.referenceNumber}
-                          </TableCell>
-                          <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                            {item.subject}
-                          </TableCell>
-                          <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                            {item.sender?.firstName} {item.sender?.lastName}
-                          </TableCell>
-                          <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                            {item.recipient?.firstName} {item.recipient?.lastName}
-                          </TableCell>
-                          <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                            {item.businessUnits?.name || 'N/A'}
-                          </TableCell>
-                          <TableCell sx={{ verticalAlign: "top", width: 200 }}>
-                            {item.sentDate ? new Date(item.sentDate).toLocaleDateString() : 'N/A'}
-                          </TableCell>
-                                                    <TableCell sx={{ verticalAlign: "top", width: 150 }}>
-                            {item.letterDocuments &&
-                              item.letterDocuments
-                                .filter(
-                                  (doc) =>
-                                    doc.documentType === DocumentType.LetterDocument &&
-                                    !doc.isDeleted
-                                )
-                                .map((doc) => (
-                                  <Tooltip key={doc.id} title={doc.fileName || ""}>
-                                    <Box
-                                      sx={{
-                                        mb: 0.5,
-                                        maxWidth: '100%', // Ensure it respects the cell width
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      <DocumentDownload
-                                        documentId={doc.documentId!}
-                                        label={doc.fileName || "Download"}
-                                      />
-                                    </Box>
-                                  </Tooltip>
-                                ))}
-                            {(!item.letterDocuments || item.letterDocuments.filter(d => !d.isDeleted).length === 0) && (
-                               <Typography variant="body2" color="textSecondary">No Attachment</Typography>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                gap: 1,
-                              }}
-                            >
-                              {item.id && (
-                                <>
-                                 {item.status === LetterStatus.pending && (
-                                    <>
-                                      <LetterApprovalButton id={item.id} />
-                                    </>
-                                  )}
-                                  {item.status === LetterStatus.received && (
-                                    <>
-                                      <ApproveOrRejectRequestButton id={item.id} />
-                                    </>
-                                  )}
 
-                                  {(item.status === LetterStatus.pending ||
-                                    item.status === LetterStatus.archived) && (
-                                    <Button
-                                      size="small"
-                                      onClick={() => setSelectedLetter(item)}
-                                      disabled={!permissions.CanCreateUpdateLetter}
-                                    >
-                                      Edit
-                                    </Button>
-                                  )}
-                                 {(item.status === LetterStatus.responded ||
-                                    item.status === LetterStatus.received) && (
-                                    <Button
-                                      size="small"
-                                      onClick={() => setSelectedLetter(item)}
-                                    //  disabled={!permissions.canApproveRejectSetup}
-                                    >
-                                      Detail
-                                    </Button>
-                                  )}
-                                </>
+                  <TableBody>
+                    {filteredLetters.map((letter) => {
+                      const doc = getMainLetterDocument(letter);
+                      const open = expandedRows.has(letter.id?.toString() ?? "");
+
+                      // Prepare first recipient
+                      const firstRecipient = letter.recipients?.[0]
+                        ? `${letter.recipients[0].recipient?.firstName ?? ""} ${
+                            letter.recipients[0].recipient?.lastName ?? ""
+                          }`.trim()
+                        : "-";
+                      const recipientTooltip = letter.recipients
+                        ?.map((r) =>
+                          `${r.recipient?.firstName ?? ""} ${r.recipient?.lastName ?? ""}`.trim()
+                        )
+                        .join(", ") || "-";
+
+                      // Prepare first CC (user or department)
+                      const firstCC =
+                        letter.ccUsers?.[0]
+                          ? `${letter.ccUsers[0].ccUser?.firstName ?? ""} ${
+                              letter.ccUsers[0].ccUser?.lastName ?? ""
+                            }`.trim()
+                          : letter.ccDepartments?.[0]
+                          ? letter.ccDepartments[0].ccDepartment?.name ?? "-"
+                          : "-";
+                      const ccTooltip = [
+                        ...(letter.ccUsers?.map((c) =>
+                          `CC: ${c.ccUser?.firstName ?? ""} ${c.ccUser?.lastName ?? ""}`.trim()
+                        ) || []),
+                        ...(letter.ccDepartments?.map((c) =>
+                          `CC: ${c.ccDepartment?.name ?? ""}`
+                        ) || []),
+                      ].join(", ") || "-";
+
+                      return (
+                        <>
+                          <TableRow key={letter.id}>
+                            <TableCell>{letter.referenceNumber}</TableCell>
+                            <TableCell>{letter.subject}</TableCell>
+                            <TableCell>
+                              {letter.sender
+                                ? `${letter.sender.firstName} ${letter.sender.lastName}`
+                                : "-"}
+                            </TableCell>
+                            <TableCell>
+                              <Tooltip title={recipientTooltip} placement="top">
+                                <Chip
+                                  size="small"
+                                  label={firstRecipient}
+                                  sx={{ height: 24 }}
+                                />
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                              <Tooltip title={ccTooltip} placement="top">
+                                <Chip
+                                  size="small"
+                                  label={`CC: ${firstCC}`}
+                                  color={letter.ccUsers?.[0] ? "warning" : "info"}
+                                  sx={{ height: 24 }}
+                                />
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                              {letter.businessUnits?.name ?? "N/A"}
+                            </TableCell>
+                            <TableCell>
+                              {letter.sentDate
+                                ? new Date(letter.sentDate).toLocaleDateString()
+                                : "N/A"}
+                            </TableCell>
+                            <TableCell>
+                              {doc ? (
+                                <LetterAttachmentPreviewModal
+                                  documentId={doc.id ?? ""}
+                                  fileName={doc.fileName!}
+                                  onView={() => {}}
+                                />
+                              ) : (
+                                <Typography variant="body2" color="text.secondary">
+                                  No Attachment
+                                </Typography>
                               )}
-                            </Box>
-                          </TableCell>
-                        </TableRow>
-                      </Fragment>
-                    ))}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={1} justifyContent="center">
+                                {letter.status === LetterStatus.pending && (
+                                  <LetterApprovalButton id={letter.id!} />
+                                )}
+                                {letter.status === LetterStatus.received && (
+                                  <ApproveOrRejectRequestButton id={letter.id!} />
+                                )}
+                                {(letter.status === LetterStatus.pending ||
+                                  letter.status === LetterStatus.archived) && (
+                                  <Button
+                                    size="small"
+                                    onClick={() => setSelectedLetter(letter)}
+                                    disabled={!permissions.CanCreateUpdateLetter}
+                                  >
+                                    Edit
+                                  </Button>
+                                )}
+                                {(letter.status === LetterStatus.responded ||
+                                  letter.status === LetterStatus.received) && (
+                                  <Button
+                                    size="small"
+                                    onClick={() => setSelectedLetter(letter)}
+                                    // disabled={!permissions.canApproveRejectSetup}
+                                  >
+                                    Detail
+                                  </Button>
+                                )}
+                              </Stack>
+                            </TableCell>
+                            <TableCell>
+                              {(letter.recipients?.length ?? 0) > 1 ||
+                              (letter.ccUsers?.length ?? 0) > 0 ||
+                              (letter.ccDepartments?.length ?? 0) > 0 ? (
+                                <Tooltip
+                                  title={open ? "Collapse Details" : "Expand Details"}
+                                  placement="top"
+                                >
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleToggleExpand(letter.id!.toString())}
+                                  >
+                                    {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                  </IconButton>
+                                </Tooltip>
+                              ) : null}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell colSpan={10} style={{ padding: 0 }}>
+                              <Collapse in={open} timeout="auto" unmountOnExit>
+                                <Box sx={{ pl: 4, pt: 1, pb: 2 }}>
+                                  <Typography variant="body2" sx={{ fontWeight: "bold", mb: 1 }}>
+                                    Recipients
+                                  </Typography>
+                                  {letter.recipients?.length ? (
+                                    letter.recipients.map((r) => (
+                                      <Typography
+                                        key={r.id}
+                                        variant="body2"
+                                        sx={{ color: "#555", ml: 2 }}
+                                      >
+                                        {`${r.recipient?.firstName ?? ""} ${r.recipient?.lastName ?? ""}`.trim()}
+                                      </Typography>
+                                    ))
+                                  ) : (
+                                    <Typography variant="body2" sx={{ color: "#555", ml: 2 }}>
+                                      None
+                                    </Typography>
+                                  )}
+                                  <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2, mb: 1 }}>
+                                    CC
+                                  </Typography>
+                                  {letter.ccUsers?.length || letter.ccDepartments?.length ? (
+                                    <>
+                                      {letter.ccUsers?.map((c) => (
+                                        <Typography
+                                          key={`u-${c.id}`}
+                                          variant="body2"
+                                          sx={{ color: "#555", ml: 2 }}
+                                        >
+                                          CC: {`${c.ccUser?.firstName ?? ""} ${c.ccUser?.lastName ?? ""}`.trim()}
+                                        </Typography>
+                                      ))}
+                                      {letter.ccDepartments?.map((c) => (
+                                        <Typography
+                                          key={`d-${c.id}`}
+                                          variant="body2"
+                                          sx={{ color: "#555", ml: 2 }}
+                                        >
+                                          CC: {c.ccDepartment?.name ?? ""}
+                                        </Typography>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <Typography variant="body2" sx={{ color: "#555", ml: 2 }}>
+                                      None
+                                    </Typography>
+                                  )}
+                                </Box>
+                              </Collapse>
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </TableContainer>
             </Paper>
           ) : (
-            !showNoMatchingResultsAlert && (
-              <Box sx={{ p: 2, display: "flex", justifyContent: "center" }}>
-                <Typography> No Data Available</Typography>
-              </Box>
+            !showNoResults && (
+              <Typography align="center" sx={{ mt: 2 }}>
+                No Data Available
+              </Typography>
             )
           )}
         </>
       )}
 
-      {!isDataLoading && (
+      {!isLoading && (
         <Pagination
           pageNumber={paginationState.pageNumber}
           pageSize={paginationState.pageSize}
           onChange={handlePaginationChange}
-          totalRowsCount={statusCounts?.received || 0}
+          totalRowsCount={statusCounts?.responded ?? 0}
           rowsPerPageOptions={[10, 20, 50]}
         />
       )}
@@ -241,11 +371,11 @@ export const RespondedLetters = () => {
       {selectedLetter && (
         <LetterDetailDialog
           initialLetter={selectedLetter}
+          title="Letter Details"
           onClose={() => {
             setSelectedLetter(undefined);
-            refetchLetters();
+            refetch();
           }}
-          title="Letter Details"
         />
       )}
     </Box>

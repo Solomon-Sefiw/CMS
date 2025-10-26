@@ -8,7 +8,6 @@ public class UploadCaseFileDocumentCommand : IRequest<Guid>
 {
   [FromForm]
     public int CaseId { get; set; }
-
     public CaseDocumentType CaseDocumentType { get; set; }
 
     [FromForm]

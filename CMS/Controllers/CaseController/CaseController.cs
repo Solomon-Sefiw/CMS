@@ -3,6 +3,7 @@ using CMS.API.Attributes;
 using CMS.Application;
 using CMS.Application.Features;
 using CMS.Application.Features.Cases.Queries;
+using CMS.Application.Features.Cases.Queries.GetCaseRecordVersions;
 using CMS.Application.Features.Employees;
 using CMS.Application.Features.Employees.Commands.UpdateEmployee;
 using CMS.Application.Security;
@@ -104,8 +105,16 @@ namespace CMS.API.Controllers.EmployeeController
 
             return searchResult;
         }
-        // this is small change
+
         [HttpGet("{id}/record-versions", Name = "GetCaseRecordVersions")]
+        [ProducesResponseType(200)]
+        public async Task<CaseRecordVersions> GetCaseRecordVersions(int id)
+        {
+            return await mediator.Send(new GetCaseRecordVersionsQuery(Id: id));
+        }
+
+        [HttpPost("submit-for-approval", Name = "SubmitCaseForApproval")]
+        [InvalidateQueryTags("Dashboard")]
         [ProducesResponseType(200)]
         public async Task<ActionResult> SubmitCaseForApproval([FromBody] ChangeWorkflowStatusEntityDto payload)
         {
@@ -130,6 +139,7 @@ namespace CMS.API.Controllers.EmployeeController
             await mediator.Send(new RejectCaseApprovalRequestCommand(payload.Id, payload.Note));
             return Ok();
         }
+
 
     }
 }

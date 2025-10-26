@@ -1,58 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using CMS.Domain.Enum;
+﻿using CMS.Domain.Enum;
+using CMS.Domain.letters;
 using CMS.Services.DataService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Application.Features.Letter.Commands.UpdateLetter
 {
-    public class UpdateLetterCommand : IRequest<int> // Common to return Unit for update commands
+    public class UpdateLetterCommand : IRequest<int>
     {
         public int Id { get; set; }
         public string ReferenceNumber { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
         public LetterType LetterType { get; set; }
+        public string SenderId { get; set; }
         public LetterStatus Status { get; set; }
-        public string? SenderId { get; set; }
-        public string? RecipientId { get; set; }
+        public List<string> RecipientIds { get; set; } = new();
+        public List<string> CCUserIds { get; set; } = new();
+        public List<int> CCDepartmentIds { get; set; } = new();
         public int BusinessUnitId { get; set; }
     }
 
-    public class UpdateLetterHandler : IRequestHandler<UpdateLetterCommand, int>
+    public class UpdateLetterCommandHandler : IRequestHandler<UpdateLetterCommand, int>
     {
-        private readonly IMapper _mapper;
-        private readonly IDataService _context;
+        private readonly IDataService _dataService;
 
-        public UpdateLetterHandler(IMapper mapper, IDataService context)
+        public UpdateLetterCommandHandler(IDataService dataService)
         {
-            _mapper = mapper;
-            _context = context;
+            _dataService = dataService;
         }
 
-        public async Task<int> Handle(UpdateLetterCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(UpdateLetterCommand command, CancellationToken cancellationToken)
         {
-            var letter = await _context.Letters.FirstOrDefaultAsync(l => l.Id == request.Id, cancellationToken);
+            var letter = await _dataService.Letters
+                .Include(l => l.Recipients)
+                .Include(l => l.CCRecipients)
+                .FirstOrDefaultAsync(l => l.Id == command.Id, cancellationToken);
 
-            if (letter.Status == LetterStatus.archived)
-            {
-                letter.Status = LetterStatus.pending; // Fixed assignment operator
-            }
-            else
-            {
-                letter.Status = request.Status; // Update the status if not archived
-            }
+            if (letter == null)
+                throw new Exception("Letter not found");
 
-            _mapper.Map(request, letter); // Map properties from request onto the existing letter entity
+            letter.ReferenceNumber = command.ReferenceNumber;
+            letter.Subject = command.Subject;
+            letter.Content = command.Content;
+            letter.LetterType = command.LetterType;
+            letter.SenderId = command.SenderId;
+            letter.Status = command.Status;
+            letter.BusinessUnitId = command.BusinessUnitId;
 
-            await _context.SaveAsync(cancellationToken);
+            // ✅ Replace Recipients
+            _dataService.LetterRecipients.RemoveRange(letter.Recipients);
+            letter.Recipients.Clear();
+            foreach (var recId in command.RecipientIds.Distinct())
+                letter.Recipients.Add(new LetterRecipient { LetterId = letter.Id, RecipientId = recId });
 
-            return letter.Id; // Return Unit.Value for IRequest<Unit>
+            // ✅ Replace CC Users and Departments
+            _dataService.LetterCCs.RemoveRange(letter.CCRecipients);
+            letter.CCRecipients.Clear();
+
+            foreach (var ccUserId in command.CCUserIds.Distinct())
+                letter.CCRecipients.Add(new LetterCC { LetterId = letter.Id, CCUserId = ccUserId });
+
+            foreach (var ccDeptId in command.CCDepartmentIds.Distinct())
+                letter.CCRecipients.Add(new LetterCC { LetterId = letter.Id, CCDepartmentId = ccDeptId });
+
+            _dataService.Letters.Update(letter);
+            await _dataService.SaveAsync(cancellationToken);
+
+            return letter.Id;
         }
     }
 }

@@ -10,9 +10,6 @@ using CMS.Domain.BranchGrade;
 using CMS.Domain.Cases;
 using CMS.Domain.Contacts;
 using CMS.Domain.Courts;
-using CMS.Domain.Benefit;
-using CMS.Domain.BranchGrade;
-using CMS.Domain.Contacts;
 using CMS.Domain.Delegations;
 using CMS.Domain.Document;
 using CMS.Domain.Education;
@@ -23,7 +20,6 @@ using CMS.Domain.Hearings;
 using CMS.Domain.Jobs;
 using CMS.Domain.Judgments;
 using CMS.Domain.Language;
-using CMS.Domain.LetterDocument;
 using CMS.Domain.letters;
 using CMS.Domain.Notifications;
 using CMS.Domain.Payments;
@@ -31,15 +27,12 @@ using CMS.Domain.Templates;
 using CMS.Domain.Timelines;
 using CMS.Domain.Employee.EmployeeActivities;
 using CMS.Domain.EmployeeDocument;
-using CMS.Domain.Jobs;
-using CMS.Domain.Language;
-using CMS.Domain.LetterDocument;
-using CMS.Domain.letters;
 using CMS.Domain.Transfer;
 using CMS.Domain.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using CMS.Domain.Cases.CaseDocument;
+using CMS.Domain.LetterDocuments;
 
 namespace CMS.Services.DataService
 {
@@ -58,8 +51,11 @@ namespace CMS.Services.DataService
         public DbSet<HRRole> Roles { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<Letter> Letters { get; set; }
+        public DbSet<LetterRecipient> LetterRecipients { get; set; }
+        public DbSet<LetterCC> LetterCCs { get; set; }
         public DbSet<LetterDocument> LetterDocuments { get; set; }
-
+        public DbSet<CMS.Domain.Attendance.AttendanceLog> AttendanceLogs { get; set; }
+        public DbSet<CMS.Domain.Attendance.Device> Devices { get; set; }
         /// <summary>
         /// Second
         /// </summary>

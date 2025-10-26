@@ -1,4 +1,4 @@
-﻿using CMS.Application.Features.Letter.Models;
+﻿
 using CMS.Domain.Enum;
 using CMS.Services.DataService;
 using MediatR;
@@ -6,13 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Application.Features.Letter.Queries
 {
-    public record LetterLists(
-        List<LetterDto> archived,
-        List<LetterDto> responded,
-        List<LetterDto> received,
-        List<LetterDto> pending
-    );
-
+    public record LetterLists(List<LetterDto> archived, List<LetterDto> responded, List<LetterDto> received, List<LetterDto> pending);
     public record GetLettersQuery : IRequest<LetterLists>;
 
     public class GetLettersQueryHandler : IRequestHandler<GetLettersQuery, LetterLists>
@@ -26,37 +20,39 @@ namespace CMS.Application.Features.Letter.Queries
 
         public async Task<LetterLists> Handle(GetLettersQuery request, CancellationToken cancellationToken)
         {
-            // Fetch all letters from the data service
-            var letters = await _dataService.Letters.ToListAsync(cancellationToken);
+            var letters = await _dataService.Letters
+                .Include(l => l.Sender)
+                .Include(l => l.BusinessUnits)
+                .Include(l => l.LetterDocument)
+                .ToListAsync(cancellationToken);
 
-            // Map to LetterDto and categorize by ApprovalStatus
-            var categorizedLetters = letters.Select(l => new LetterDto
+            var dtos = letters.Select(l => new LetterDto
             {
                 Id = l.Id,
                 ReferenceNumber = l.ReferenceNumber,
                 Subject = l.Subject,
                 Content = l.Content,
                 LetterType = l.LetterType,
-                Status = l.Status, // Assuming 'Status' property in the Letter entity maps to ApprovalStatus or can be cast. If not, you need a specific ApprovalStatus property on your Letter entity.
+                Status = l.Status,
                 ReceivedDate = l.ReceivedDate,
                 SentDate = l.SentDate,
                 SenderId = l.SenderId,
                 Sender = l.Sender,
-                RecipientId = l.RecipientId,
-                Recipient = l.Recipient,
                 BusinessUnitId = l.BusinessUnitId,
-                BusinessUnits = l.BusinessUnits // Assuming this is a collection of related business units
-            })
-            // IMPORTANT CHANGE: Group by the 'Status' property (which should represent the ApprovalStatus)
-            .GroupBy(l => l.Status)
-            .ToDictionary(g => g.Key, g => g.ToList());
+                BusinessUnits = l.BusinessUnits,
+                LetterDocument = l.LetterDocument,
+                RecipientIds = _dataService.LetterRecipients.Where(r => r.LetterId == l.Id).Select(r => r.RecipientId).ToList(),
+                CCUserIds = _dataService.LetterCCs.Where(c => c.LetterId == l.Id && c.CCUserId != null).Select(c => c.CCUserId).ToList(),
+                CCDepartmentIds = _dataService.LetterCCs.Where(c => c.LetterId == l.Id && c.CCDepartmentId != null).Select(c => c.CCDepartmentId!.Value).ToList()
+            }).ToList();
 
-            // Construct and return the categorized lists
+            var grouped = dtos.GroupBy(d => d.Status).ToDictionary(g => g.Key, g => g.ToList());
+
             return new LetterLists(
-                pending: categorizedLetters.GetValueOrDefault(LetterStatus.pending, new List<LetterDto>()),
-                received: categorizedLetters.GetValueOrDefault(LetterStatus.received, new List<LetterDto>()),
-                responded: categorizedLetters.GetValueOrDefault(LetterStatus.responded, new List<LetterDto>()),
-                archived: categorizedLetters.GetValueOrDefault(LetterStatus.archived, new List<LetterDto>())
+                archived: grouped.GetValueOrDefault(LetterStatus.archived, new List<LetterDto>()),
+                responded: grouped.GetValueOrDefault(LetterStatus.responded, new List<LetterDto>()),
+                received: grouped.GetValueOrDefault(LetterStatus.received, new List<LetterDto>()),
+                pending: grouped.GetValueOrDefault(LetterStatus.pending, new List<LetterDto>())
             );
         }
     }

@@ -395,7 +395,7 @@ const { t } = useTranslation();
                             <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{`${item.sender?.firstName || ''} ${item.sender?.lastName || ''}`.trim() || 'N/A'}</Typography>
                           </TableCell>
                           <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
-                            <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{`${item.recipient?.firstName || ''} ${item.recipient?.lastName || ''}`.trim() || 'N/A'}</Typography>
+                            <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{`${item.recipientIds || ''} ${item.recipientIds || ''}`.trim() || 'N/A'}</Typography>
                           </TableCell>
                           <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
                             <Typography variant="body2" sx={{ fontSize: 'inherit' }}>

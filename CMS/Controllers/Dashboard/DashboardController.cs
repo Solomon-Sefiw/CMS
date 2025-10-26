@@ -1,7 +1,6 @@
 ﻿using CMS.API.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using CMS.Application.Features.Letter.Queries;
-using CMS.Application.Features.Letter.Models;
 using CMS.Application.Security;
 using Microsoft.AspNetCore.Authorization;
 using CMS.Application.Features.Dashboard.AnalyticsQueries;

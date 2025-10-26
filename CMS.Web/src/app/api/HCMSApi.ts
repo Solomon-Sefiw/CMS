@@ -1098,6 +1098,15 @@ const injectedRtkApi = api
         }),
         providesTags: ["Case"],
       }),
+      getCaseRecordVersions: build.query<
+        GetCaseRecordVersionsApiResponse,
+        GetCaseRecordVersionsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Case/${queryArg.id}/record-versions`,
+        }),
+        providesTags: ["Case"],
+      }),
       createCase: build.mutation<CreateCaseApiResponse, CreateCaseApiArg>({
         query: (queryArg) => ({
           url: `/api/Case/add`,
@@ -4016,25 +4025,13 @@ const injectedRtkApi = api
       updateLetter: build.mutation<UpdateLetterApiResponse, UpdateLetterApiArg>(
         {
           query: (queryArg) => ({
-            url: `/api/Letter`,
+            url: `/api/Letter/${queryArg.id}`,
             method: "PUT",
             body: queryArg.updateLetterCommand,
           }),
           invalidatesTags: ["Letter"],
         }
       ),
-      addLetterDocument: build.mutation<
-        AddLetterDocumentApiResponse,
-        AddLetterDocumentApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/api/Letter/${queryArg.id}/add-Document`,
-          method: "POST",
-          body: queryArg.body,
-          params: { documentType: queryArg.documentType },
-        }),
-        invalidatesTags: ["Letter"],
-      }),
       approveLetter: build.mutation<
         ApproveLetterApiResponse,
         ApproveLetterApiArg
@@ -4056,6 +4053,15 @@ const injectedRtkApi = api
         }),
         providesTags: ["Letter"],
       }),
+      downloadLetterDocument: build.query<
+        DownloadLetterDocumentApiResponse,
+        DownloadLetterDocumentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/DownloadLetterDocument/${queryArg.id}`,
+        }),
+        providesTags: ["Letter"],
+      }),
       createEditableLetter: build.mutation<
         CreateEditableLetterApiResponse,
         CreateEditableLetterApiArg
@@ -4066,6 +4072,15 @@ const injectedRtkApi = api
           body: queryArg.createEditableLetterCommand,
         }),
         invalidatesTags: ["Letter"],
+      }),
+      getLetterDocument: build.query<
+        GetLetterDocumentApiResponse,
+        GetLetterDocumentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/GetLetterDocument/${queryArg.letterId}`,
+        }),
+        providesTags: ["Letter"],
       }),
       getLettersForPagination: build.query<
         GetLettersForPaginationApiResponse,
@@ -4112,6 +4127,35 @@ const injectedRtkApi = api
           invalidatesTags: ["Letter"],
         }
       ),
+      updateLetterDocument: build.mutation<
+        UpdateLetterDocumentApiResponse,
+        UpdateLetterDocumentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/UpdateLetterDocument`,
+          method: "PUT",
+          body: queryArg.body,
+        }),
+        invalidatesTags: ["Letter"],
+      }),
+      uploadLetterDocument: build.mutation<
+        UploadLetterDocumentApiResponse,
+        UploadLetterDocumentApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/Letter/UploadLetterDocument`,
+          method: "POST",
+          body: queryArg.body,
+        }),
+        invalidatesTags: ["Letter"],
+      }),
+      viewLetterDocument: build.query<
+        ViewLetterDocumentApiResponse,
+        ViewLetterDocumentApiArg
+      >({
+        query: (queryArg) => ({ url: `/api/Letter/View/${queryArg.letterId}` }),
+        providesTags: ["Letter"],
+      }),
       getAllLookups: build.query<GetAllLookupsApiResponse, GetAllLookupsApiArg>(
         {
           query: () => ({ url: `/api/Lookup/all` }),
@@ -5268,6 +5312,11 @@ export type GetCaseInfoApiResponse = /** status 200 Success */ CaseDtoRead;
 export type GetCaseInfoApiArg = {
   id: number;
   version?: string;
+};
+export type GetCaseRecordVersionsApiResponse =
+  /** status 200 Success */ CaseRecordVersions;
+export type GetCaseRecordVersionsApiArg = {
+  id: number;
 };
 export type CreateCaseApiResponse =
   /** status 200 Success */ CreateCaseReturnType;
@@ -6556,16 +6605,8 @@ export type CreateLetterApiArg = {
 };
 export type UpdateLetterApiResponse = unknown;
 export type UpdateLetterApiArg = {
-  updateLetterCommand: UpdateLetterCommand;
-};
-export type AddLetterDocumentApiResponse =
-  /** status 200 Success */ DocumentMetadataDto;
-export type AddLetterDocumentApiArg = {
   id: number;
-  documentType?: DocumentType;
-  body: {
-    file?: Blob;
-  };
+  updateLetterCommand: UpdateLetterCommand;
 };
 export type ApproveLetterApiResponse = /** status 200 Success */ number;
 export type ApproveLetterApiArg = {
@@ -6576,9 +6617,17 @@ export type GetLetterCountPerStatusApiResponse =
 export type GetLetterCountPerStatusApiArg = {
   userId?: string;
 };
+export type DownloadLetterDocumentApiResponse = /** status 200 Success */ void;
+export type DownloadLetterDocumentApiArg = {
+  id: string;
+};
 export type CreateEditableLetterApiResponse = /** status 200 Success */ number;
 export type CreateEditableLetterApiArg = {
   createEditableLetterCommand: CreateEditableLetterCommand;
+};
+export type GetLetterDocumentApiResponse = /** status 200 Success */ void;
+export type GetLetterDocumentApiArg = {
+  letterId: number;
 };
 export type GetLettersForPaginationApiResponse =
   /** status 200 Success */ PaginatedLetterListRead;
@@ -6600,6 +6649,26 @@ export type SearchAllLettersApiArg = {
 export type SubmitLetterApiResponse = /** status 200 Success */ number;
 export type SubmitLetterApiArg = {
   submitLetterCommand: SubmitLetterCommand;
+};
+export type UpdateLetterDocumentApiResponse = unknown;
+export type UpdateLetterDocumentApiArg = {
+  body: {
+    documentId?: string;
+    file?: Blob;
+    remark?: string;
+  };
+};
+export type UploadLetterDocumentApiResponse = /** status 200 Success */ void;
+export type UploadLetterDocumentApiArg = {
+  body: {
+    letterId?: number;
+    file?: Blob;
+    remark?: string;
+  };
+};
+export type ViewLetterDocumentApiResponse = /** status 200 Success */ void;
+export type ViewLetterDocumentApiArg = {
+  letterId: number;
 };
 export type GetAllLookupsApiResponse = /** status 200 Success */ LookupDtoRead;
 export type GetAllLookupsApiArg = void;
@@ -7004,48 +7073,61 @@ export type UserRoleRead = {
 };
 export type LetterType = 1 | 2 | 3;
 export type LetterStatus = 1 | 2 | 3 | 4;
-export type DocumentType =
-  | 0
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | 13
-  | 14
-  | 15
-  | 16
-  | 17
-  | 18;
-export type LetterDocument = {
-  isDeleted?: boolean | null;
-  deletedBy?: string | null;
-  deletedAt?: string | null;
-  deletionComment?: string | null;
+export type LetterRecipient = {
   id?: number;
-  documentType?: DocumentType;
-  documentId?: string | null;
+  letterId?: number;
+  letter?: Letter;
+  recipientId?: string | null;
+  recipient?: HrUser;
+};
+export type LetterRecipientRead = {
+  id?: number;
+  letterId?: number;
+  letter?: Letter;
+  recipientId?: string | null;
+  recipient?: HrUser;
+};
+export type LetterCc = {
+  id?: number;
+  letterId?: number;
+  letter?: Letter;
+  ccUserId?: string | null;
+  ccUser?: HrUser;
+  ccDepartmentId?: number | null;
+  ccDepartment?: BusinessUnit;
+};
+export type LetterCcRead = {
+  id?: number;
+  letterId?: number;
+  letter?: Letter;
+  ccUserId?: string | null;
+  ccUser?: HrUser;
+  ccDepartmentId?: number | null;
+  ccDepartment?: BusinessUnit;
+};
+export type LetterDocument = {
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: string;
   fileName?: string | null;
-  isImage?: boolean;
+  filePath?: string | null;
+  contentType?: string | null;
+  remark?: string | null;
   letterId?: number;
   letter?: Letter;
 };
 export type LetterDocumentRead = {
-  isDeleted?: boolean | null;
-  deletedBy?: string | null;
-  deletedAt?: string | null;
-  deletionComment?: string | null;
-  id?: number;
-  documentType?: DocumentType;
-  documentId?: string | null;
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+  createdBy?: string | null;
+  modifiedBy?: string | null;
+  id?: string;
   fileName?: string | null;
-  isImage?: boolean;
+  filePath?: string | null;
+  contentType?: string | null;
+  remark?: string | null;
   letterId?: number;
   letter?: Letter;
 };
@@ -7076,9 +7158,11 @@ export type Letter = {
   sender?: HrUser;
   recipientId?: string | null;
   recipient?: HrUser;
+  recipients?: LetterRecipient[] | null;
+  ccRecipients?: LetterCc[] | null;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
-  letterDocuments?: LetterDocument[] | null;
+  letterDocument?: LetterDocument;
 };
 export type IDomainEvent = object;
 export type LetterRead = {
@@ -7109,10 +7193,31 @@ export type LetterRead = {
   sender?: HrUser;
   recipientId?: string | null;
   recipient?: HrUser;
+  recipients?: LetterRecipientRead[] | null;
+  ccRecipients?: LetterCcRead[] | null;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
-  letterDocuments?: LetterDocumentRead[] | null;
+  letterDocument?: LetterDocumentRead;
 };
+export type DocumentType =
+  | 0
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18;
 export type UserDocument = {
   isDeleted?: boolean | null;
   deletedBy?: string | null;
@@ -9175,6 +9280,13 @@ export type CaseDtoRead = {
   hasEmergencyContactInfo?: boolean;
   hasLanguageSkillInfo?: boolean;
 };
+export type CaseRecordVersions = {
+  current?: string | null;
+  approved?: string | null;
+  submitted?: string | null;
+  draft?: string | null;
+  rejected?: string | null;
+};
 export type CreateCaseReturnType = {
   id?: number;
   versionNumber?: string;
@@ -9386,11 +9498,15 @@ export type LetterDto = {
   sentDate?: string | null;
   senderId?: string | null;
   sender?: HrUser;
-  recipientId?: string | null;
-  recipient?: HrUser;
+  recipientIds?: string[] | null;
+  ccUserIds?: string[] | null;
+  ccDepartmentIds?: number[] | null;
+  recipients?: LetterRecipient[] | null;
+  ccUsers?: LetterCc[] | null;
+  ccDepartments?: LetterCc[] | null;
   businessUnitId?: number;
   businessUnits?: BusinessUnit;
-  letterDocuments?: LetterDocument[] | null;
+  letterDocument?: LetterDocument;
 };
 export type LetterDtoRead = {
   id?: number;
@@ -9403,11 +9519,15 @@ export type LetterDtoRead = {
   sentDate?: string | null;
   senderId?: string | null;
   sender?: HrUserRead;
-  recipientId?: string | null;
-  recipient?: HrUserRead;
+  recipientIds?: string[] | null;
+  ccUserIds?: string[] | null;
+  ccDepartmentIds?: number[] | null;
+  recipients?: LetterRecipientRead[] | null;
+  ccUsers?: LetterCcRead[] | null;
+  ccDepartments?: LetterCcRead[] | null;
   businessUnitId?: number;
   businessUnits?: BusinessUnitRead;
-  letterDocuments?: LetterDocumentRead[] | null;
+  letterDocument?: LetterDocumentRead;
 };
 export type ApproveDelegationCommand = {
   id?: number;
@@ -11295,15 +11415,15 @@ export type UpdateLanguageSkillCommand = {
   reading?: SkillLevelEnum;
 };
 export type CreateLetterCommand = {
-  id?: number;
   referenceNumber?: string | null;
   subject?: string | null;
   content?: string | null;
   letterType?: LetterType;
-  status?: LetterStatus;
   senderId?: string | null;
-  recipientId?: string | null;
   businessUnitId?: number;
+  recipientIds?: string[] | null;
+  ccUserIds?: string[] | null;
+  ccDepartmentIds?: number[] | null;
 };
 export type UpdateLetterCommand = {
   id?: number;
@@ -11311,9 +11431,11 @@ export type UpdateLetterCommand = {
   subject?: string | null;
   content?: string | null;
   letterType?: LetterType;
-  status?: LetterStatus;
   senderId?: string | null;
-  recipientId?: string | null;
+  status?: LetterStatus;
+  recipientIds?: string[] | null;
+  ccUserIds?: string[] | null;
+  ccDepartmentIds?: number[] | null;
   businessUnitId?: number;
 };
 export type ApproveLetterCommand = {
@@ -11926,6 +12048,8 @@ export const {
   useLazyGetCaseByBusinessUnitIdQuery,
   useGetCaseInfoQuery,
   useLazyGetCaseInfoQuery,
+  useGetCaseRecordVersionsQuery,
+  useLazyGetCaseRecordVersionsQuery,
   useCreateCaseMutation,
   useGetAllCasesQuery,
   useLazyGetAllCasesQuery,
@@ -12351,17 +12475,24 @@ export const {
   useUpdateLanguageSkillMutation,
   useCreateLetterMutation,
   useUpdateLetterMutation,
-  useAddLetterDocumentMutation,
   useApproveLetterMutation,
   useGetLetterCountPerStatusQuery,
   useLazyGetLetterCountPerStatusQuery,
+  useDownloadLetterDocumentQuery,
+  useLazyDownloadLetterDocumentQuery,
   useCreateEditableLetterMutation,
+  useGetLetterDocumentQuery,
+  useLazyGetLetterDocumentQuery,
   useGetLettersForPaginationQuery,
   useLazyGetLettersForPaginationQuery,
   useRejectLetterMutation,
   useSearchAllLettersQuery,
   useLazySearchAllLettersQuery,
   useSubmitLetterMutation,
+  useUpdateLetterDocumentMutation,
+  useUploadLetterDocumentMutation,
+  useViewLetterDocumentQuery,
+  useLazyViewLetterDocumentQuery,
   useGetAllLookupsQuery,
   useLazyGetAllLookupsQuery,
   useGetUserConversationsQuery,
